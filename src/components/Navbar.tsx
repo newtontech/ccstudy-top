@@ -1,0 +1,147 @@
+"use client";
+
+import Link from "next/link";
+import { useTheme } from "next-themes";
+import { useState } from "react";
+
+const navLinks = [
+  { href: "/", label: "首页" },
+  { href: "/architecture", label: "架构" },
+  { href: "/tools", label: "工具" },
+  { href: "/commands", label: "命令" },
+  { href: "/ink", label: "UI框架" },
+  { href: "/plugins", label: "插件" },
+];
+
+export function Navbar() {
+  const { theme, setTheme } = useTheme();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  return (
+    <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-[#0a0a1a]/80 border-b border-[var(--card-border)] dark:border-b dark:border-purple-900/30 dark:shadow-[0_1px_12px_rgba(124,58,237,0.15)]">
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        {/* Logo */}
+        <Link
+          href="/"
+          className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"
+        >
+          CCStudy
+        </Link>
+
+        {/* Desktop nav links */}
+        <div className="hidden md:flex items-center gap-6">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-[var(--text-secondary)] hover:text-[var(--accent-purple)] transition-colors text-sm font-medium"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Right side: theme toggle + mobile menu button */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg hover:bg-[var(--card-border)] transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            )}
+          </button>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden p-2 rounded-lg hover:bg-[var(--card-border)] transition-colors"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle menu"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              {mobileOpen ? (
+                <>
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </>
+              ) : (
+                <>
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </>
+              )}
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="md:hidden border-t border-[var(--card-border)] bg-white/95 dark:bg-[#0a0a1a]/95 backdrop-blur-md">
+          <div className="px-4 py-3 flex flex-col gap-2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className="text-[var(--text-secondary)] hover:text-[var(--accent-purple)] transition-colors text-sm font-medium py-2"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+}
