@@ -16,8 +16,26 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CCStudy.top - Claude Code 源码解读",
-  description: "生动形象的 Claude Code 源代码架构解读，带动画效果的交互式学习网站",
+  title: {
+    default: "CCStudy.top - Claude Code 源码解读",
+    template: "%s | CCStudy.top",
+  },
+  description: "生动形象的 Claude Code 源代码架构解读，带动画效果的交互式学习网站。深入探索 Anthropic 最强 AI 编程助手的 40+ 工具、40+ 命令、多智能体协调等核心模块。",
+  keywords: ["Claude Code", "AI编程", "源码解读", "Anthropic", "TypeScript", "CLI", "AI Agent"],
+  authors: [{ name: "CCStudy" }],
+  openGraph: {
+    title: "CCStudy.top - Claude Code 源码解读",
+    description: "生动形象的 Claude Code 源代码架构解读",
+    url: "https://ccstudy.top",
+    siteName: "CCStudy.top",
+    locale: "zh_CN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CCStudy.top - Claude Code 源码解读",
+    description: "生动形象的 Claude Code 源代码架构解读",
+  },
 };
 
 export default function RootLayout({
