@@ -5,8 +5,15 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:local": "DEPLOY_TARGET=local next build",
+    "build:github": "DEPLOY_TARGET=github next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "serve": "node scripts/dev-server.mjs local",
+    "serve:github": "node scripts/dev-server.mjs github",
+    "preview:local": "npm run build:local && npm run serve",
+    "preview:github": "npm run build:github && npm run serve:github",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "framer-motion": "^12.38.0",
@@ -17,6 +24,7 @@
     "shiki": "^4.0.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
