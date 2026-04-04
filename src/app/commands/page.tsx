@@ -1,6 +1,4 @@
 import { ModuleLayout } from "@/components/ModuleLayout";
-import { CodeBlock } from "@/components/CodeBlock";
-import { CodeFlow } from "@/components/CodeFlow";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
@@ -237,21 +235,54 @@ export default function CommandsPage() {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// commands/commit/index.ts
-export async function commit(options: CommitOptions) {
-  // 1. 解析参数
-  const args = parseCommitArgs(options);
-
-  // 2. 执行命令逻辑
-  const result = await executeCommit(args);
-
-  // 3. 返回结果
-  return formatResult(result);
-}`}
-            language="typescript"
-            filename="commands/commit/index.ts"
-            highlights={[2, 3, 4, 6, 8, 9]}
+          {/* Command structure as ArchitectureDiagram - replaces CodeBlock #1 */}
+          <ArchitectureDiagram
+            title="命令模块结构 (以 commit 为例)"
+            nodes={[
+              {
+                id: "entry",
+                label: "index.ts",
+                x: 310,
+                y: 10,
+                color: "var(--accent-purple)",
+              },
+              {
+                id: "parse",
+                label: "1. parseArgs()",
+                x: 10,
+                y: 100,
+                color: "var(--accent-cyan)",
+              },
+              {
+                id: "execute",
+                label: "2. execute()",
+                x: 220,
+                y: 100,
+                color: "var(--accent-blue)",
+              },
+              {
+                id: "format",
+                label: "3. formatResult()",
+                x: 430,
+                y: 100,
+                color: "#10b981",
+              },
+              {
+                id: "return",
+                label: "return result",
+                x: 430,
+                y: 190,
+                color: "#f59e0b",
+              },
+            ]}
+            edges={[
+              { from: "entry", to: "parse", label: "options" },
+              { from: "parse", to: "execute", label: "args" },
+              { from: "execute", to: "format", label: "raw" },
+              { from: "format", to: "return", label: "" },
+            ]}
+            width={600}
+            height={260}
           />
 
           <div className="mt-8 space-y-4 text-[var(--text-secondary)] leading-relaxed">
@@ -392,72 +423,107 @@ export async function commit(options: CommitOptions) {
             </p>
           </div>
 
-          <CodeFlow
-            title="命令执行流程"
-            steps={[
+          {/* Command execution pipeline - replaces CodeFlow */}
+          <ArchitectureDiagram
+            title="命令执行管道"
+            nodes={[
               {
-                code: `// Step 1: Commander.js 解析 CLI 参数
-const program = new Command();
-program
-  .name('claude')
-  .version(VERSION)
-  .argument('[args...]')
-  .hook('preAction', async () => {
-    await initializeEntrypoint(isNonInteractive);
-    eagerLoadSettings();
-  });`,
-                highlight: [2, 3, 4, 5, 6, 7, 8, 9],
-                description:
-                  "CLI 参数首先被 Commander.js 解析。program 实例注册了全局钩子 preAction，在命令处理函数执行之前，先完成入口初始化和设置预加载。",
+                id: "cli-input",
+                label: "CLI Args",
+                x: 10,
+                y: 80,
+                color: "var(--accent-purple)",
               },
               {
-                code: `// Step 2: preAction 钩子执行
-program.hook('preAction', async () => {
-  // 初始化入口基础设施
-  await initializeEntrypoint(isNonInteractive);
-  // 预加载设置
-  eagerLoadSettings();
-});`,
-                highlight: [3, 4, 6],
-                description:
-                  "preAction 钩子在所有命令处理函数执行之前统一运行。它负责初始化配置系统、加载用户设置、设置运行环境。无论执行哪个命令，这些初始化步骤都是必须的。",
+                id: "commander",
+                label: "Commander.js",
+                x: 190,
+                y: 80,
+                color: "var(--accent-blue)",
               },
               {
-                code: `// Step 3: 命令处理器执行
-async function handleCommit(options) {
-  const args = parseCommitArgs(options);
-  const result = await executeCommit(args);
-  return formatResult(result);
-}`,
-                highlight: [2, 3, 4],
-                description:
-                  "经过初始化后，控制权交给具体的命令处理函数。每个处理器负责解析自己的参数、执行命令逻辑、格式化并返回结果。错误会被全局错误处理器捕获。",
+                id: "preaction",
+                label: "preAction Hook",
+                x: 370,
+                y: 10,
+                color: "var(--accent-cyan)",
               },
               {
-                code: `// Step 4: 结果输出与清理
-process.on('exit', () => {
-  flushTelemetry();
-  cleanupTempFiles();
-});`,
-                highlight: [2, 3],
-                description:
-                  "命令执行完成后，系统会进行清理工作：刷新遥测数据、清理临时文件、保存会话状态。在非交互模式下，结果会直接输出到 stdout，便于管道操作。",
+                id: "init",
+                label: "init()",
+                x: 370,
+                y: 150,
+                color: "#10b981",
+              },
+              {
+                id: "handler",
+                label: "Command Handler",
+                x: 550,
+                y: 80,
+                color: "#f59e0b",
+              },
+              {
+                id: "result",
+                label: "Result",
+                x: 730,
+                y: 80,
+                color: "#ef4444",
               },
             ]}
+            edges={[
+              { from: "cli-input", to: "commander", label: "parse" },
+              { from: "commander", to: "preaction", label: "hook" },
+              { from: "commander", to: "init", label: "" },
+              { from: "preaction", to: "handler", label: "" },
+              { from: "init", to: "handler", label: "" },
+              { from: "handler", to: "result", label: "output" },
+            ]}
+            width={900}
+            height={230}
           />
 
-          <div className="mt-8">
-            <CodeBlock
-              code={`// preAction 模式：所有命令的公共初始化入口
-program.hook('preAction', async () => {
-  await initializeEntrypoint(isNonInteractive);
-  eagerLoadSettings();
-});`}
-              language="typescript"
-              filename="cli.tsx"
-              highlights={[2, 3, 4]}
-            />
-          </div>
+          {/* preAction hook detail - replaces CodeBlock #2 */}
+          <ArchitectureDiagram
+            title="preAction 钩子初始化链"
+            nodes={[
+              {
+                id: "preaction-hook",
+                label: "preAction()",
+                x: 310,
+                y: 10,
+                color: "var(--accent-cyan)",
+              },
+              {
+                id: "init-entry",
+                label: "initializeEntrypoint()",
+                x: 10,
+                y: 110,
+                color: "var(--accent-purple)",
+              },
+              {
+                id: "eager-load",
+                label: "eagerLoadSettings()",
+                x: 310,
+                y: 110,
+                color: "var(--accent-blue)",
+              },
+              {
+                id: "ready",
+                label: "System Ready",
+                x: 310,
+                y: 210,
+                color: "#10b981",
+              },
+            ]}
+            edges={[
+              { from: "preaction-hook", to: "init-entry", label: "await" },
+              { from: "preaction-hook", to: "eager-load", label: "" },
+              { from: "init-entry", to: "ready", label: "" },
+              { from: "eager-load", to: "ready", label: "" },
+            ]}
+            width={600}
+            height={280}
+          />
 
           <div className="mt-8 space-y-4">
             {[
@@ -523,23 +589,71 @@ program.hook('preAction', async () => {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 检测是否为非交互式模式
-const isNonInteractive = !process.stdout.isTTY ||
-  hasNonInteractiveFlag(process.argv);
-
-// 根据模式选择不同的处理路径
-if (isNonInteractive) {
-  // 非交互式：直接执行，输出到 stdout
-  const result = await executeCommand(commandArgs);
-  console.log(JSON.stringify(result));
-} else {
-  // 交互式：启动 ink React 终端 UI
-  render(<App command={commandArgs} />);
-}`}
-            language="typescript"
-            filename="cli.tsx - 模式检测"
-            highlights={[2, 3, 5, 6, 7, 8, 10, 11]}
+          {/* Mode detection decision tree - replaces CodeBlock #3 */}
+          <ArchitectureDiagram
+            title="运行模式自动检测"
+            nodes={[
+              {
+                id: "startup",
+                label: "CLI 启动",
+                x: 310,
+                y: 10,
+                color: "var(--accent-purple)",
+              },
+              {
+                id: "tty-check",
+                label: "isTTY?",
+                x: 310,
+                y: 100,
+                color: "var(--accent-cyan)",
+              },
+              {
+                id: "flag-check",
+                label: "hasFlag?",
+                x: 100,
+                y: 100,
+                color: "var(--accent-cyan)",
+              },
+              {
+                id: "interactive",
+                label: "交互式模式",
+                x: 510,
+                y: 190,
+                color: "#10b981",
+              },
+              {
+                id: "ink-render",
+                label: "ink React UI",
+                x: 510,
+                y: 280,
+                color: "#10b981",
+              },
+              {
+                id: "noninteractive",
+                label: "非交互式模式",
+                x: 100,
+                y: 190,
+                color: "#ef4444",
+              },
+              {
+                id: "stdout",
+                label: "stdout JSON",
+                x: 100,
+                y: 280,
+                color: "#ef4444",
+              },
+            ]}
+            edges={[
+              { from: "startup", to: "tty-check", label: "" },
+              { from: "startup", to: "flag-check", label: "" },
+              { from: "tty-check", to: "interactive", label: "TTY=true" },
+              { from: "tty-check", to: "noninteractive", label: "no TTY" },
+              { from: "flag-check", to: "noninteractive", label: "flag set" },
+              { from: "interactive", to: "ink-render", label: "" },
+              { from: "noninteractive", to: "stdout", label: "" },
+            ]}
+            width={760}
+            height={350}
           />
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -592,22 +706,78 @@ if (isNonInteractive) {
             </div>
           </div>
 
-          <div className="mt-8">
-            <CodeBlock
-              code={`// 管道友好的非交互式使用示例
-// 在 CI 中执行代码审查
-$ claude review --non-interactive --output json
-
-# 输出 JSON 结果到文件
-$ claude diff --json > changes.json
-
-# 与其他工具组合使用
-$ claude status --quiet && echo "OK" || echo "FAIL"`}
-              language="bash"
-              filename="终端示例"
-              highlights={[2, 5, 8]}
-            />
-          </div>
+          {/* Pipeline usage flow - replaces CodeBlock #4 (bash examples) */}
+          <ArchitectureDiagram
+            title="非交互式管道工作流"
+            nodes={[
+              {
+                id: "review-cmd",
+                label: "claude review",
+                x: 10,
+                y: 10,
+                color: "var(--accent-blue)",
+              },
+              {
+                id: "diff-cmd",
+                label: "claude diff --json",
+                x: 10,
+                y: 110,
+                color: "var(--accent-cyan)",
+              },
+              {
+                id: "status-cmd",
+                label: "claude status",
+                x: 10,
+                y: 210,
+                color: "#10b981",
+              },
+              {
+                id: "json-out",
+                label: "JSON Output",
+                x: 260,
+                y: 10,
+                color: "#f59e0b",
+              },
+              {
+                id: "file-redirect",
+                label: "> changes.json",
+                x: 260,
+                y: 110,
+                color: "#f59e0b",
+              },
+              {
+                id: "exit-code",
+                label: "exit code 0/1",
+                x: 260,
+                y: 210,
+                color: "#ef4444",
+              },
+              {
+                id: "ci-cd",
+                label: "CI/CD Pipeline",
+                x: 470,
+                y: 60,
+                color: "var(--accent-purple)",
+              },
+              {
+                id: "automation",
+                label: "Automation",
+                x: 470,
+                y: 160,
+                color: "var(--accent-purple)",
+              },
+            ]}
+            edges={[
+              { from: "review-cmd", to: "json-out", label: "--output json" },
+              { from: "diff-cmd", to: "file-redirect", label: "pipe" },
+              { from: "status-cmd", to: "exit-code", label: "--quiet" },
+              { from: "json-out", to: "ci-cd", label: "" },
+              { from: "file-redirect", to: "ci-cd", label: "" },
+              { from: "exit-code", to: "automation", label: "&& / ||" },
+            ]}
+            width={640}
+            height={280}
+          />
         </section>
       </ScrollReveal>
     </ModuleLayout>

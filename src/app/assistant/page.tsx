@@ -1,6 +1,4 @@
 import { ModuleLayout } from "@/components/ModuleLayout";
-import { CodeBlock } from "@/components/CodeBlock";
-import { CodeFlow } from "@/components/CodeFlow";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
@@ -11,19 +9,19 @@ export default function AssistantPage() {
       title: "多智能体协调",
       href: "/coordinator",
       description: "多 Agent 编排系统",
-      icon: "\u{1F578}\uFE0F",
+      icon: "🕸️",
     },
     {
       title: "插件系统",
       href: "/plugins",
       description: "扩展机制",
-      icon: "\u{1F50C}",
+      icon: "🔌",
     },
     {
       title: "系统架构",
       href: "/architecture",
       description: "整体架构",
-      icon: "\u{1F3D7}\uFE0F",
+      icon: "🏗️",
     },
   ];
 
@@ -31,7 +29,7 @@ export default function AssistantPage() {
     <ModuleLayout
       title="KAIROS 助手模式"
       subtitle="Claude Code 的持久化 AI 助手模式 — 持续运行、主动行动、精简交互"
-      icon="\u{1F916}"
+      icon="🤖"
       category="核心架构"
       relatedModules={relatedModules}
     >
@@ -99,49 +97,47 @@ export default function AssistantPage() {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// KAIROS 会话生命周期
-interface KairosSession {
-  id: string;
-  startedAt: Date;
-  lastActiveAt: Date;
-  context: SessionContext;
-  history: Message[];
-}
-
-// 恢复会话
-async function restoreSession(id: string) {
-  const session = await fetchSessionHistory(id);
-  await loadContext(session.context);
-  return session;
-}`}
-            language="typescript"
-            filename="kairos/session.ts"
-            highlights={[2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14]}
+          <ArchitectureDiagram
+            title="KAIROS 会话数据结构"
+            nodes={[
+              { id: "session", label: "KairosSession", x: 310, y: 10, color: "var(--accent-purple)" },
+              { id: "sid", label: "id: string", x: 20, y: 100, color: "var(--accent-blue)" },
+              { id: "started", label: "startedAt: Date", x: 180, y: 100, color: "var(--accent-blue)" },
+              { id: "active", label: "lastActiveAt: Date", x: 350, y: 100, color: "var(--accent-blue)" },
+              { id: "ctx", label: "context: SessionContext", x: 520, y: 100, color: "var(--accent-cyan)" },
+              { id: "hist", label: "history: Message[]", x: 690, y: 100, color: "var(--accent-cyan)" },
+            ]}
+            edges={[
+              { from: "session", to: "sid", label: "" },
+              { from: "session", to: "started", label: "" },
+              { from: "session", to: "active", label: "" },
+              { from: "session", to: "ctx", label: "" },
+              { from: "session", to: "hist", label: "" },
+            ]}
+            width={860}
+            height={180}
           />
 
-          <CodeFlow
+          <ArchitectureDiagram
             title="会话生命周期管理"
-            steps={[
-              {
-                code: `// Step 1: 创建新会话\nconst session: KairosSession = {\n  id: generateSessionId(),\n  startedAt: new Date(),\n  lastActiveAt: new Date(),\n  context: await initContext(),\n  history: [],\n};\nawait persistSession(session);`,
-                highlight: [2, 3, 4, 5],
-                description:
-                  "创建新的 KAIROS 会话。每个会话拥有唯一 ID，记录启动时间和初始上下文，为后续持久化恢复奠定基础。",
-              },
-              {
-                code: `// Step 1: 创建新会话\nconst session = { id: generateSessionId(), ... };\nawait persistSession(session);\n\n// Step 2: 会话运行中 — 持续更新\nsession.lastActiveAt = new Date();\nsession.history.push(userMessage);\nsession.history.push(assistantResponse);\nawait persistSession(session);`,
-                highlight: [6, 7, 8, 9],
-                description:
-                  "会话运行期间，每次交互都会更新 lastActiveAt 时间戳并追加历史消息。会话状态被持续持久化，确保随时可以恢复。",
-              },
-              {
-                code: `// Step 1: 创建新会话\n// Step 2: 持续更新\n\n// Step 3: 恢复会话 — 跨终端保持状态\nasync function restoreSession(id: string) {\n  const session = await fetchSessionHistory(id);\n  await loadContext(session.context);\n  // 从上次中断处继续\n  return session;\n}`,
-                highlight: [6, 7, 8, 9, 10],
-                description:
-                  "终端重新启动时，通过会话 ID 获取历史记录，加载之前保存的上下文状态，实现无缝恢复。用户无需重复说明之前的任务。",
-              },
+            nodes={[
+              { id: "create", label: "1. 创建会话", x: 20, y: 30, color: "#10b981" },
+              { id: "create-detail", label: "生成唯一 ID\n初始化上下文\n持久化存储", x: 20, y: 110, color: "#10b981" },
+              { id: "running", label: "2. 会话运行", x: 310, y: 30, color: "var(--accent-blue)" },
+              { id: "running-detail", label: "更新时间戳\n追加消息记录\n持续持久化", x: 310, y: 110, color: "var(--accent-blue)" },
+              { id: "restore", label: "3. 恢复会话", x: 600, y: 30, color: "var(--accent-purple)" },
+              { id: "restore-detail", label: "获取历史记录\n加载上下文\n无缝恢复", x: 600, y: 110, color: "var(--accent-purple)" },
             ]}
+            edges={[
+              { from: "create", to: "create-detail", label: "" },
+              { from: "create", to: "running", label: "启动" },
+              { from: "running", to: "running-detail", label: "" },
+              { from: "running", to: "restore", label: "终端关闭" },
+              { from: "restore", to: "restore-detail", label: "" },
+              { from: "restore", to: "running", label: "恢复运行" },
+            ]}
+            width={860}
+            height={200}
           />
         </section>
       </ScrollReveal>
@@ -196,24 +192,30 @@ async function restoreSession(id: string) {
             ))}
           </div>
 
-          <CodeBlock
-            code={`// 主动行动引擎
-async function monitorEnvironment() {
-  const changes = await detectFileChanges();
-  const issues = await analyzeChanges(changes);
-
-  if (issues.length > 0) {
-    // 主动向用户报告发现的问题
-    notifyUser({
-      type: 'proactive_insight',
-      message: \`发现 \${issues.length} 个潜在问题\`,
-      suggestions: issues.map(generateFix),
-    });
-  }
-}`}
-            language="typescript"
-            filename="kairos/proactive.ts"
-            highlights={[2, 3, 4, 6, 7, 8, 9, 10, 11]}
+          <ArchitectureDiagram
+            title="主动行动引擎流程"
+            nodes={[
+              { id: "monitor", label: "环境监控", x: 20, y: 60, color: "#f59e0b" },
+              { id: "detect", label: "变更检测", x: 210, y: 60, color: "var(--accent-blue)" },
+              { id: "analyze", label: "变更分析", x: 400, y: 60, color: "var(--accent-purple)" },
+              { id: "decision", label: "问题判定", x: 590, y: 60, color: "#f43f5e" },
+              { id: "notify", label: "主动通知用户", x: 590, y: 170, color: "var(--accent-cyan)" },
+              { id: "suggest", label: "生成修复建议", x: 400, y: 170, color: "#10b981" },
+              { id: "autofix", label: "授权自动修复", x: 210, y: 170, color: "#10b981" },
+              { id: "sources", label: "文件/Git/测试", x: 20, y: 170, color: "#64748b" },
+            ]}
+            edges={[
+              { from: "sources", to: "monitor", label: "数据源" },
+              { from: "monitor", to: "detect", label: "捕获" },
+              { from: "detect", to: "analyze", label: "送审" },
+              { from: "analyze", to: "decision", label: "评估" },
+              { from: "decision", to: "notify", label: "发现问题" },
+              { from: "notify", to: "suggest", label: "请求" },
+              { from: "suggest", to: "autofix", label: "授权" },
+              { from: "autofix", to: "sources", label: "应用修复" },
+            ]}
+            width={860}
+            height={260}
           />
         </section>
       </ScrollReveal>
@@ -269,29 +271,29 @@ async function monitorEnvironment() {
             </div>
           </div>
 
-          <CodeBlock
-            code={`// 简要模式配置
-interface BriefModeConfig {
-  enabled: boolean;
-  maxLength: number;       // 响应最大字符数
-  showCodeContext: boolean; // 是否显示代码上下文
-  verbosity: 'minimal' | 'compact' | 'normal';
-}
-
-// 简要模式下的输出格式化
-function briefFormat(issue: CodeIssue): string {
-  return \`\${issue.file}:\${issue.line} - \${issue.summary}\`;
-}
-
-// 普通模式下的输出格式化
-function normalFormat(issue: CodeIssue): string {
-  return \`我已经仔细检查了你的代码，发现 \${issue.file} 文件\`
-    + \`第\${issue.line}行有一个未处理的错误。\`
-    + \`建议添加 try-catch 块来捕获可能的异常...\`;
-}`}
-            language="typescript"
-            filename="kairos/briefMode.ts"
-            highlights={[2, 3, 4, 5, 9, 13, 14, 15]}
+          <ArchitectureDiagram
+            title="简要模式配置选项"
+            nodes={[
+              { id: "config", label: "BriefModeConfig", x: 310, y: 10, color: "var(--accent-purple)" },
+              { id: "enabled", label: "enabled: boolean", x: 10, y: 110, color: "#10b981" },
+              { id: "maxlen", label: "maxLength: number", x: 190, y: 110, color: "var(--accent-blue)" },
+              { id: "showctx", label: "showCodeContext: boolean", x: 380, y: 110, color: "var(--accent-blue)" },
+              { id: "verbosity", label: "verbosity", x: 580, y: 110, color: "#f59e0b" },
+              { id: "v-min", label: "minimal", x: 490, y: 210, color: "#64748b" },
+              { id: "v-cmp", label: "compact", x: 630, y: 210, color: "#64748b" },
+              { id: "v-norm", label: "normal", x: 760, y: 210, color: "#64748b" },
+            ]}
+            edges={[
+              { from: "config", to: "enabled", label: "" },
+              { from: "config", to: "maxlen", label: "" },
+              { from: "config", to: "showctx", label: "" },
+              { from: "config", to: "verbosity", label: "" },
+              { from: "verbosity", to: "v-min", label: "" },
+              { from: "verbosity", to: "v-cmp", label: "" },
+              { from: "verbosity", to: "v-norm", label: "" },
+            ]}
+            width={900}
+            height={280}
           />
         </section>
       </ScrollReveal>
@@ -376,31 +378,37 @@ function normalFormat(issue: CodeIssue): string {
             ))}
           </div>
 
-          <CodeBlock
-            code={`// KAIROS 模式激活
-export const kairosConfig = {
-  // 启用持久化会话
-  persistentSession: true,
-  // 启用环境监控
-  environmentWatch: {
-    fileChanges: true,
-    gitStatus: true,
-    testResults: true,
-  },
-  // 启用简要模式
-  briefMode: {
-    enabled: true,
-    verbosity: 'compact',
-  },
-  // 长期记忆
-  longTermMemory: {
-    enabled: true,
-    maxRetentionDays: 30,
-  },
-};`}
-            language="typescript"
-            filename="kairos/config.ts"
-            highlights={[2, 4, 5, 6, 7, 8, 10, 11, 12, 14, 15, 16]}
+          <ArchitectureDiagram
+            title="KAIROS 模式配置总览"
+            nodes={[
+              { id: "root", label: "kairosConfig", x: 360, y: 10, color: "var(--accent-purple)" },
+              { id: "persist", label: "persistentSession: true", x: 30, y: 110, color: "#10b981" },
+              { id: "env", label: "environmentWatch", x: 250, y: 110, color: "var(--accent-blue)" },
+              { id: "brief", label: "briefMode", x: 470, y: 110, color: "var(--accent-cyan)" },
+              { id: "memory", label: "longTermMemory", x: 680, y: 110, color: "#f59e0b" },
+              { id: "env-f", label: "fileChanges", x: 100, y: 210, color: "#64748b" },
+              { id: "env-g", label: "gitStatus", x: 260, y: 210, color: "#64748b" },
+              { id: "env-t", label: "testResults", x: 420, y: 210, color: "#64748b" },
+              { id: "brief-e", label: "enabled: true", x: 510, y: 210, color: "#64748b" },
+              { id: "brief-v", label: "verbosity: compact", x: 680, y: 210, color: "#64748b" },
+              { id: "mem-e", label: "enabled: true", x: 620, y: 210, color: "#64748b" },
+              { id: "mem-d", label: "maxRetention: 30d", x: 780, y: 210, color: "#64748b" },
+            ]}
+            edges={[
+              { from: "root", to: "persist", label: "" },
+              { from: "root", to: "env", label: "" },
+              { from: "root", to: "brief", label: "" },
+              { from: "root", to: "memory", label: "" },
+              { from: "env", to: "env-f", label: "" },
+              { from: "env", to: "env-g", label: "" },
+              { from: "env", to: "env-t", label: "" },
+              { from: "brief", to: "brief-e", label: "" },
+              { from: "brief", to: "brief-v", label: "" },
+              { from: "memory", to: "mem-e", label: "" },
+              { from: "memory", to: "mem-d", label: "" },
+            ]}
+            width={960}
+            height={290}
           />
         </section>
       </ScrollReveal>

@@ -1,6 +1,4 @@
 import { ModuleLayout } from "@/components/ModuleLayout";
-import { CodeBlock } from "@/components/CodeBlock";
-import { CodeFlow } from "@/components/CodeFlow";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
@@ -11,19 +9,19 @@ export default function HooksPage() {
       title: "UI框架",
       href: "/ink",
       description: "React 终端 UI",
-      icon: "\uD83C\uDFA8",
+      icon: "🎨",
     },
     {
       title: "工具系统",
       href: "/tools",
       description: "40+ 工具实现",
-      icon: "\uD83D\uDD27",
+      icon: "🔧",
     },
     {
       title: "系统架构",
       href: "/architecture",
       description: "整体架构",
-      icon: "\uD83C\uDFD7\uFE0F",
+      icon: "🏗️",
     },
   ];
 
@@ -31,7 +29,7 @@ export default function HooksPage() {
     <ModuleLayout
       title="React Hooks 系统"
       subtitle="Claude Code 中 80+ 自定义 React Hooks 的完整体系，覆盖 UI 交互、业务逻辑、外部集成与性能优化"
-      icon="\uD83E\uDDE9D"
+      icon="🧩"
       category="核心架构"
       relatedModules={relatedModules}
     >
@@ -116,7 +114,38 @@ export default function HooksPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ArchitectureDiagram
+            title="UI Hooks 数据流"
+            nodes={[
+              // Input sources
+              { id: "keyboard", label: "键盘输入", x: 10, y: 30, color: "#64748b" },
+              { id: "scroll", label: "滚动事件", x: 10, y: 100, color: "#64748b" },
+              // Hook layer
+              { id: "textInput", label: "useTextInput", x: 200, y: 20, color: "var(--accent-purple)" },
+              { id: "typeahead", label: "useTypeahead", x: 200, y: 80, color: "var(--accent-blue)" },
+              { id: "vScroll", label: "useVirtualScroll", x: 200, y: 140, color: "var(--accent-cyan)" },
+              { id: "debounce", label: "useDebouncedInput", x: 200, y: 200, color: "#10b981" },
+              // Output
+              { id: "buffer", label: "输入缓冲区", x: 420, y: 20, color: "var(--accent-purple)" },
+              { id: "suggestions", label: "补全建议", x: 420, y: 80, color: "var(--accent-blue)" },
+              { id: "visibleItems", label: "可见列表项", x: 420, y: 140, color: "var(--accent-cyan)" },
+              { id: "throttled", label: "防抖回调", x: 420, y: 200, color: "#10b981" },
+            ]}
+            edges={[
+              { from: "keyboard", to: "textInput", label: "按键" },
+              { from: "keyboard", to: "typeahead", label: "字符" },
+              { from: "scroll", to: "vScroll", label: "偏移" },
+              { from: "keyboard", to: "debounce", label: "输入" },
+              { from: "textInput", to: "buffer" },
+              { from: "typeahead", to: "suggestions" },
+              { from: "vScroll", to: "visibleItems" },
+              { from: "debounce", to: "throttled", label: "延迟" },
+            ]}
+            width={600}
+            height={270}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
             {/* useTextInput */}
             <div className="group p-5 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] transition-all duration-300 hover:shadow-lg hover:border-[var(--accent-purple)]">
               <div className="flex items-center gap-3 mb-3">
@@ -128,18 +157,15 @@ export default function HooksPage() {
                   useTextInput
                 </code>
               </div>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-3">
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                 管理文本输入状态，支持历史记录浏览、自动补全建议、多行编辑模式。
                 内部维护输入缓冲区和光标位置，处理退格、删除、方向键等复杂编辑操作。
               </p>
-              <div className="rounded-lg bg-[#0d1117] border border-gray-700/50 p-3 overflow-x-auto">
-                <pre className="text-xs font-mono text-gray-300 whitespace-pre">
-{`const { value, onChange, history, suggestions } = useTextInput({
-  maxHistory: 100,
-  enableSuggestions: true,
-  onSubmit: handleSubmit,
-});`}
-                </pre>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-purple)]/10 text-[var(--accent-purple)]">value</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-purple)]/10 text-[var(--accent-purple)]">onChange</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-purple)]/10 text-[var(--accent-purple)]">history</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-purple)]/10 text-[var(--accent-purple)]">suggestions</span>
               </div>
             </div>
 
@@ -154,18 +180,14 @@ export default function HooksPage() {
                   useVirtualScroll
                 </code>
               </div>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-3">
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                 高效渲染大数据列表，只渲染可视区域内的元素。通过计算滚动偏移量和可见索引范围，
                 将渲染开销从 O(n) 降至 O(viewport)，确保万级数据也能流畅滚动。
               </p>
-              <div className="rounded-lg bg-[#0d1117] border border-gray-700/50 p-3 overflow-x-auto">
-                <pre className="text-xs font-mono text-gray-300 whitespace-pre">
-{`const { containerProps, items, scrollTo } = useVirtualScroll({
-  itemCount: 10000,
-  itemHeight: 24,
-  overscan: 5,
-});`}
-                </pre>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-cyan)]/10 text-[var(--accent-cyan)]">containerProps</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-cyan)]/10 text-[var(--accent-cyan)]">items</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-cyan)]/10 text-[var(--accent-cyan)]">scrollTo</span>
               </div>
             </div>
 
@@ -180,18 +202,14 @@ export default function HooksPage() {
                   useTypeahead
                 </code>
               </div>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-3">
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                 命令和文件路径自动补全引擎。基于当前输入前缀，从命令列表、文件系统路径
                 或自定义候选集中匹配最相关的建议，支持模糊匹配和最近使用优先排序。
               </p>
-              <div className="rounded-lg bg-[#0d1117] border border-gray-700/50 p-3 overflow-x-auto">
-                <pre className="text-xs font-mono text-gray-300 whitespace-pre">
-{`const { query, suggestions, select } = useTypeahead({
-  sources: [commandList, filePaths],
-  maxSuggestions: 8,
-  fuzzyMatch: true,
-});`}
-                </pre>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]">query</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]">suggestions</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]">select</span>
               </div>
             </div>
 
@@ -206,17 +224,14 @@ export default function HooksPage() {
                   useDebouncedInput
                 </code>
               </div>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-3">
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                 防抖输入 Hook，在用户停止输入指定时间后才触发回调，减少不必要的重渲染
                 和搜索请求。常用于搜索框、过滤条件等实时响应场景，配合 useMemo 优化性能。
               </p>
-              <div className="rounded-lg bg-[#0d1117] border border-gray-700/50 p-3 overflow-x-auto">
-                <pre className="text-xs font-mono text-gray-300 whitespace-pre">
-{`const { value, debouncedValue, onChange } = useDebouncedInput({
-  delay: 300,
-  onDebounce: (val) => searchFiles(val),
-});`}
-                </pre>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[#10b981]/10 text-[#10b981]">value</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[#10b981]/10 text-[#10b981]">debouncedValue</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[#10b981]/10 text-[#10b981]">onChange</span>
               </div>
             </div>
           </div>
@@ -239,24 +254,26 @@ export default function HooksPage() {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// useCanUseTool: 检查工具是否可用（权限、启用状态）
-function ToolButton({ tool, input }) {
-  const { canUse, reason } = useCanUseTool(tool, input);
-
-  if (!canUse) {
-    return <PermissionDenied reason={reason} />;
-  }
-
-  return (
-    <Button onPress={() => executeTool(tool, input)}>
-      执行 {tool.name}
-    </Button>
-  );
-}`}
-            language="typescript"
-            filename="useCanUseTool.tsx"
-            highlights={[3, 4, 6, 7, 8]}
+          {/* useCanUseTool flow diagram - replaces CodeBlock */}
+          <ArchitectureDiagram
+            title="useCanUseTool 权限校验流程"
+            nodes={[
+              { id: "component", label: "ToolButton 组件", x: 10, y: 30, color: "var(--accent-purple)" },
+              { id: "hook", label: "useCanUseTool", x: 220, y: 30, color: "var(--accent-cyan)" },
+              { id: "check", label: "权限检查", x: 430, y: 10, color: "var(--accent-blue)" },
+              { id: "enabled", label: "启用状态", x: 430, y: 70, color: "var(--accent-blue)" },
+              { id: "allowed", label: "渲染执行按钮", x: 620, y: 10, color: "#10b981" },
+              { id: "denied", label: "PermissionDenied", x: 620, y: 70, color: "#f43f5e" },
+            ]}
+            edges={[
+              { from: "component", to: "hook", label: "tool, input" },
+              { from: "hook", to: "check", label: "权限" },
+              { from: "hook", to: "enabled", label: "状态" },
+              { from: "check", to: "allowed", label: "通过" },
+              { from: "enabled", to: "denied", label: "不可用" },
+            ]}
+            width={800}
+            height={130}
           />
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -271,19 +288,15 @@ function ToolButton({ tool, input }) {
                   useReplBridge
                 </code>
               </div>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-3">
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                 REPL（Read-Eval-Print Loop）模式桥接 Hook。在 REPL 模式下管理
                 输入/输出循环，支持多行输入、表达式求值、结果格式化输出，
                 是交互式编程体验的核心基础设施。
               </p>
-              <div className="rounded-lg bg-[#0d1117] border border-gray-700/50 p-3 overflow-x-auto">
-                <pre className="text-xs font-mono text-gray-300 whitespace-pre">
-{`const { evaluate, history, isEvaluating } = useReplBridge({
-  mode: "interactive",
-  maxHistory: 50,
-  onResult: (result) => displayResult(result),
-});`}
-                </pre>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-cyan)]/10 text-[var(--accent-cyan)]">evaluate</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-cyan)]/10 text-[var(--accent-cyan)]">history</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-cyan)]/10 text-[var(--accent-cyan)]">isEvaluating</span>
               </div>
             </div>
 
@@ -298,18 +311,15 @@ function ToolButton({ tool, input }) {
                   useRemoteSession
                 </code>
               </div>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-3">
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                 远程会话管理 Hook。处理与远程服务器的连接建立、心跳维护、断线重连、
                 会话状态同步等复杂逻辑，确保长时间运行的远程操作不会因网络波动而中断。
               </p>
-              <div className="rounded-lg bg-[#0d1117] border border-gray-700/50 p-3 overflow-x-auto">
-                <pre className="text-xs font-mono text-gray-300 whitespace-pre">
-{`const { status, connect, disconnect, sessionId } = useRemoteSession({
-  endpoint: "wss://api.example.com",
-  reconnectInterval: 3000,
-  maxRetries: 5,
-});`}
-                </pre>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]">status</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]">connect</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]">disconnect</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]">sessionId</span>
               </div>
             </div>
 
@@ -329,14 +339,11 @@ function ToolButton({ tool, input }) {
                 提供 requestPermission / revokePermission 等方法，实现细粒度的工具访问控制。
                 当用户首次使用某个工具时自动触发授权流程，已授权的工具在后续调用中直接放行。
               </p>
-              <div className="rounded-lg bg-[#0d1117] border border-gray-700/50 p-3 overflow-x-auto">
-                <pre className="text-xs font-mono text-gray-300 whitespace-pre">
-{`const { permission, request, revoke } = useToolPermission({
-  toolName: "file_write",
-  defaultPolicy: "ask", // "allow" | "deny" | "ask"
-  onPermissionChange: (perm) => updateUI(perm),
-});`}
-                </pre>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[#f59e0b]/10 text-[#f59e0b]">permission</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[#f59e0b]/10 text-[#f59e0b]">request</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[#f59e0b]/10 text-[#f59e0b]">revoke</span>
+                <span className="px-2 py-0.5 rounded text-xs font-mono bg-[#f59e0b]/10 text-[#f59e0b]">defaultPolicy: ask</span>
               </div>
             </div>
           </div>
@@ -359,43 +366,62 @@ function ToolButton({ tool, input }) {
             </p>
           </div>
 
+          {/* Integration hooks architecture - replaces inline code blocks */}
+          <ArchitectureDiagram
+            title="集成 Hooks 架构"
+            nodes={[
+              // Central hub
+              { id: "app", label: "Claude Code App", x: 310, y: 30, color: "var(--accent-purple)" },
+              // Integration hooks
+              { id: "ide", label: "useIDEIntegration", x: 20, y: 120, color: "var(--accent-purple)" },
+              { id: "voice", label: "useVoiceIntegration", x: 220, y: 120, color: "var(--accent-cyan)" },
+              { id: "desktop", label: "useDesktopHandoff", x: 420, y: 120, color: "var(--accent-blue)" },
+              { id: "mobile", label: "useMobileSupport", x: 600, y: 120, color: "#10b981" },
+              // External systems
+              { id: "vscode", label: "VS Code / JetBrains", x: 20, y: 230, color: "#64748b" },
+              { id: "stt", label: "STT / TTS 服务", x: 220, y: 230, color: "#64748b" },
+              { id: "desktopApp", label: "桌面应用", x: 420, y: 230, color: "#64748b" },
+              { id: "device", label: "移动设备", x: 600, y: 230, color: "#64748b" },
+            ]}
+            edges={[
+              { from: "app", to: "ide", label: "LSP" },
+              { from: "app", to: "voice", label: "音频" },
+              { from: "app", to: "desktop", label: "交接" },
+              { from: "app", to: "mobile", label: "适配" },
+              { from: "ide", to: "vscode", label: "扩展 API" },
+              { from: "voice", to: "stt", label: "语音" },
+              { from: "desktop", to: "desktopApp", label: "IPC" },
+              { from: "mobile", to: "device", label: "触摸" },
+            ]}
+            width={800}
+            height={300}
+          />
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
             {[
               {
                 name: "useIDEIntegration",
                 color: "var(--accent-purple)",
                 desc: "IDE 集成 Hook，支持 VS Code、JetBrains 等 编辑器的文件打开、光标定位、诊断信息展示等交互功能。通过语言服务器协议（LSP）和编辑器扩展 API 实现深度集成。",
-                code: `const { openFile, showDiagnostics, connected } = useIDEIntegration({
-  editor: "vscode",
-  onFileChange: (path) => refreshPreview(path),
-});`,
+                apis: ["openFile", "showDiagnostics", "connected"],
               },
               {
                 name: "useVoiceIntegration",
                 color: "var(--accent-cyan)",
                 desc: "语音输入/输出 Hook，封装语音识别（STT）和语音合成（TTS）能力。支持实时语音转文字输入和 AI 回复的语音朗读，为无障碍访问和免提操作提供基础支持。",
-                code: `const { isListening, transcript, speak } = useVoiceIntegration({
-  language: "zh-CN",
-  onTranscript: (text) => processVoiceInput(text),
-});`,
+                apis: ["isListening", "transcript", "speak"],
               },
               {
                 name: "useDesktopHandoff",
                 color: "var(--accent-blue)",
                 desc: "桌面应用切换 Hook，处理 Claude Code CLI 与桌面应用之间的任务交接。支持将当前上下文、文件状态和对话历史无缝传递到桌面端，实现跨设备的连续工作流。",
-                code: `const { handoff, canHandoff, desktopStatus } = useDesktopHandoff({
-  targetApp: "claude-desktop",
-  onHandoffComplete: () => cleanupSession(),
-});`,
+                apis: ["handoff", "canHandoff", "desktopStatus"],
               },
               {
                 name: "useMobileSupport",
                 color: "#10b981",
                 desc: "移动端适配 Hook，检测设备类型和屏幕尺寸，动态调整 UI 布局和交互方式。处理触摸手势、软键盘弹出、屏幕旋转等移动端特有的交互场景。",
-                code: `const { isMobile, screenWidth, keyboardVisible } = useMobileSupport({
-  breakpoints: { tablet: 768, desktop: 1024 },
-  onLayoutChange: (layout) => adaptUI(layout),
-});`,
+                apis: ["isMobile", "screenWidth", "keyboardVisible"],
               },
             ].map((hook) => (
               <div
@@ -414,10 +440,19 @@ function ToolButton({ tool, input }) {
                 <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-3">
                   {hook.desc}
                 </p>
-                <div className="rounded-lg bg-[#0d1117] border border-gray-700/50 p-3 overflow-x-auto">
-                  <pre className="text-xs font-mono text-gray-300 whitespace-pre">
-                    {hook.code}
-                  </pre>
+                <div className="flex flex-wrap gap-2">
+                  {hook.apis.map((api) => (
+                    <span
+                      key={api}
+                      className="px-2 py-0.5 rounded text-xs font-mono"
+                      style={{
+                        background: `color-mix(in srgb, ${hook.color} 10%, transparent)`,
+                        color: hook.color,
+                      }}
+                    >
+                      {api}
+                    </span>
+                  ))}
                 </div>
               </div>
             ))}
@@ -442,28 +477,34 @@ function ToolButton({ tool, input }) {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 自定义性能 Hook 模式
-function useMemoizedCallbacks<T extends Record<string, Function>>(
-  callbacks: T
-): T {
-  const ref = useRef(callbacks);
-  // 只在依赖变化时更新
-  ref.current = useMemo(() => callbacks, [JSON.stringify(callbacks)]);
-  return ref.current;
-}
-
-// useLazyRef: 延迟初始化的 ref
-function useLazyRef<T>(initializer: () => T): MutableRefObject<T> {
-  const ref = useRef<T | null>(null);
-  if (ref.current === null) {
-    ref.current = initializer();
-  }
-  return ref as MutableRefObject<T>;
-}`}
-            language="typescript"
-            filename="performance-hooks.ts"
-            highlights={[2, 3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15]}
+          {/* useMemoizedCallbacks & useLazyRef patterns - replaces CodeBlock */}
+          <ArchitectureDiagram
+            title="性能 Hook 内部机制"
+            nodes={[
+              // useMemoizedCallbacks
+              { id: "callbacks", label: "callbacks 输入", x: 10, y: 20, color: "#f59e0b" },
+              { id: "useRef", label: "useRef (缓存)", x: 200, y: 20, color: "#f59e0b" },
+              { id: "useMemo", label: "useMemo (比较)", x: 400, y: 20, color: "#f59e0b" },
+              { id: "stableRef", label: "稳定引用输出", x: 590, y: 20, color: "#10b981" },
+              // useLazyRef
+              { id: "initializer", label: "initializer ()", x: 10, y: 110, color: "#ec4899" },
+              { id: "nullCheck", label: "ref === null?", x: 200, y: 110, color: "#ec4899" },
+              { id: "execute", label: "执行初始化", x: 400, y: 80, color: "#ec4899" },
+              { id: "cached", label: "返回缓存值", x: 400, y: 140, color: "#10b981" },
+              { id: "lazyOutput", label: "延迟初始化输出", x: 590, y: 110, color: "#10b981" },
+            ]}
+            edges={[
+              { from: "callbacks", to: "useRef", label: "传入" },
+              { from: "useRef", to: "useMemo", label: "JSON.stringify" },
+              { from: "useMemo", to: "stableRef", label: "依赖不变" },
+              { from: "initializer", to: "nullCheck" },
+              { from: "nullCheck", to: "execute", label: "是" },
+              { from: "nullCheck", to: "cached", label: "否" },
+              { from: "execute", to: "lazyOutput" },
+              { from: "cached", to: "lazyOutput" },
+            ]}
+            width={750}
+            height={190}
           />
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -502,59 +543,38 @@ function useLazyRef<T>(initializer: () => T): MutableRefObject<T> {
             </div>
           </div>
 
+          {/* Performance optimization flow - replaces CodeFlow */}
           <div className="mt-8">
-            <CodeFlow
-              title="性能优化流程"
-              steps={[
-                {
-                  code: `// Step 1: 识别渲染瓶颈
-function ChatView({ messages, onSend }) {
-  // 每次渲染都创建新的回调引用
-  const handleSend = (text) => onSend(text);
-  const handleDelete = (id) => deleteMessage(id);
-  const handleEdit = (id, text) => editMessage(id, text);
-
-  return <MessageList onSend={handleSend} ... />;
-}`,
-                  highlight: [3, 4, 5, 6, 8],
-                  description:
-                    "问题：每次父组件渲染时，所有回调函数都会重新创建，导致接收这些回调的子组件也跟着重渲染，即使实际数据没有变化。",
-                },
-                {
-                  code: `// Step 2: 使用 useMemoizedCallbacks 优化
-function ChatView({ messages, onSend }) {
-  const callbacks = useMemoizedCallbacks({
-    onSend: (text) => onSend(text),
-    onDelete: (id) => deleteMessage(id),
-    onEdit: (id, text) => editMessage(id, text),
-  });
-
-  return <MessageList {...callbacks} />;
-}`,
-                  highlight: [3, 4, 5, 6, 7, 9],
-                  description:
-                    "通过 useMemoizedCallbacks 包裹回调集合，当依赖没有实质性变化时返回相同引用，子组件的 memo 检查通过，跳过重渲染。",
-                },
-                {
-                  code: `// Step 3: 配合 React.memo 实现完整优化
-const MessageList = React.memo(function MessageList({
-  onSend, onDelete, onEdit
-}) {
-  // 只在 props 真正变化时才重渲染
-  console.log("MessageList rendered");
-  return (
-    <ScrollView>
-      {messages.map(msg => (
-        <Message key={msg.id} onEdit={onEdit} />
-      ))}
-    </ScrollView>
-  );
-});`,
-                  highlight: [2, 3, 5, 6],
-                  description:
-                    "配合 React.memo，当 useMemoizedCallbacks 返回相同引用时，React.memo 的浅比较会判定 props 未变化，从而跳过整个子树的渲染。",
-                },
+            <ArchitectureDiagram
+              title="性能优化流程：从瓶颈到流畅"
+              nodes={[
+                // Step 1: Problem
+                { id: "chatView", label: "ChatView 渲染", x: 10, y: 20, color: "#f43f5e" },
+                { id: "newCallbacks", label: "每次创建新回调", x: 200, y: 20, color: "#f43f5e" },
+                { id: "childReRender", label: "子组件重渲染", x: 420, y: 20, color: "#f43f5e" },
+                // Step 2: Solution
+                { id: "memoized", label: "useMemoizedCallbacks", x: 10, y: 100, color: "var(--accent-cyan)" },
+                { id: "sameRef", label: "返回相同引用", x: 200, y: 100, color: "var(--accent-cyan)" },
+                { id: "memoPass", label: "React.memo 通过", x: 420, y: 100, color: "var(--accent-cyan)" },
+                // Step 3: Result
+                { id: "final", label: "跳过重渲染", x: 10, y: 180, color: "#10b981" },
+                { id: "perf60", label: "保持 60fps", x: 200, y: 180, color: "#10b981" },
+                { id: "stable", label: "稳定 UI", x: 420, y: 180, color: "#10b981" },
               ]}
+              edges={[
+                // Problem flow
+                { from: "chatView", to: "newCallbacks", label: "触发" },
+                { from: "newCallbacks", to: "childReRender", label: "引用变化" },
+                // Solution flow
+                { from: "memoized", to: "sameRef", label: "依赖不变" },
+                { from: "sameRef", to: "memoPass", label: "浅比较" },
+                // Result flow
+                { from: "memoPass", to: "final", label: "props 未变" },
+                { from: "final", to: "perf60" },
+                { from: "perf60", to: "stable" },
+              ]}
+              width={600}
+              height={250}
             />
           </div>
         </section>
@@ -625,41 +645,37 @@ const MessageList = React.memo(function MessageList({
             ))}
           </div>
 
+          {/* Composition pattern diagram - replaces CodeBlock */}
           <div className="mt-8">
-            <CodeBlock
-              code={`// 组合模式示例：useIDEIntegration 内部组合多个子 Hook
-function useIDEIntegration(config) {
-  // 组合子 Hooks
-  const fs = useFileSystem(config.editor);
-  const diagnostics = useDiagnostics(config.projectRoot);
-  const cursor = useCursorPosition(config.editor);
-  const terminal = useEmbeddedTerminal(config.shell);
-
-  // 统一的 IDE 操作接口
-  const openFile = useCallback(async (path: string, line?: number) => {
-    await fs.open(path);
-    if (line) cursor.moveToLine(line);
-  }, [fs, cursor]);
-
-  const showProblems = useCallback(() => {
-    const items = diagnostics.getAll().map(d => ({
-      file: d.file,
-      line: d.line,
-      message: d.message,
-    }));
-    return items;
-  }, [diagnostics]);
-
-  return {
-    openFile,
-    showProblems,
-    runInTerminal: terminal.execute,
-    connected: fs.connected && diagnostics.connected,
-  };
-}`}
-              language="typescript"
-              filename="composition-pattern.ts"
-              highlights={[3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27]}
+            <ArchitectureDiagram
+              title="组合模式：useIDEIntegration 内部 Hook 组合"
+              nodes={[
+                // Parent hook
+                { id: "ide", label: "useIDEIntegration", x: 250, y: 20, color: "#10b981" },
+                // Sub-hooks
+                { id: "fs", label: "useFileSystem", x: 10, y: 120, color: "var(--accent-purple)" },
+                { id: "diag", label: "useDiagnostics", x: 170, y: 120, color: "var(--accent-cyan)" },
+                { id: "cursor", label: "useCursorPosition", x: 340, y: 120, color: "var(--accent-blue)" },
+                { id: "term", label: "useEmbeddedTerminal", x: 510, y: 120, color: "#f59e0b" },
+                // Output APIs
+                { id: "openFile", label: "openFile()", x: 60, y: 230, color: "#10b981" },
+                { id: "showProblems", label: "showProblems()", x: 230, y: 230, color: "#10b981" },
+                { id: "runInTerminal", label: "runInTerminal()", x: 410, y: 230, color: "#10b981" },
+                { id: "connected", label: "connected", x: 580, y: 230, color: "#10b981" },
+              ]}
+              edges={[
+                { from: "ide", to: "fs", label: "组合" },
+                { from: "ide", to: "diag", label: "组合" },
+                { from: "ide", to: "cursor", label: "组合" },
+                { from: "ide", to: "term", label: "组合" },
+                { from: "fs", to: "openFile", label: "open + moveToLine" },
+                { from: "diag", to: "showProblems", label: "getAll" },
+                { from: "term", to: "runInTerminal", label: "execute" },
+                { from: "fs", to: "connected", label: "状态" },
+                { from: "diag", to: "connected", label: "状态" },
+              ]}
+              width={750}
+              height={300}
             />
           </div>
         </section>

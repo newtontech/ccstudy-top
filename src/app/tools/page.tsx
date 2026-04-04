@@ -1,6 +1,4 @@
 import { ModuleLayout } from "@/components/ModuleLayout";
-import { CodeBlock } from "@/components/CodeBlock";
-import { CodeFlow } from "@/components/CodeFlow";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
@@ -11,25 +9,25 @@ export default function ToolsPage() {
       title: "系统架构",
       href: "/architecture",
       description: "整体架构概览",
-      icon: "\uD83C\uDFD7\uFE0F",
+      icon: "🏗️",
     },
     {
       title: "命令系统",
       href: "/commands",
       description: "CLI 命令详解",
-      icon: "\u2328\uFE0F",
+      icon: "⌨️",
     },
     {
       title: "插件系统",
       href: "/plugins",
       description: "MCP 与扩展",
-      icon: "\uD83D\uDD0C",
+      icon: "🔌",
     },
     {
       title: "多智能体",
       href: "/coordinator",
       description: "Agent 工具详解",
-      icon: "\uD83D\uDD78\uFE0F",
+      icon: "🕸️",
     },
   ];
 
@@ -244,7 +242,7 @@ export default function ToolsPage() {
     <ModuleLayout
       title="工具系统"
       subtitle="Claude Code 40+ 内置工具的深度剖析 —— 接口设计、注册机制、执行流程与并发控制"
-      icon="\uD83D\uDD27"
+      icon="🔧"
       category="核心架构"
       relatedModules={relatedModules}
     >
@@ -322,21 +320,36 @@ export default function ToolsPage() {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 基础工具接口 —— 所有工具的统一契约
-export type Tool<Input, Output, P> = {
-  name: string;                    // 工具名称（全局唯一标识符）
-  description: (input) => string;  // 动态描述，根据输入生成
-  inputSchema: Input;              // Zod 输入 Schema（参数校验）
-  call: (args, context) => Result; // 核心执行函数
-  isReadOnly: (input) => boolean;  // 是否只读（影响并发策略）
-  isConcurrencySafe: (input) => boolean; // 是否并发安全
-  checkPermissions: (input, ctx) => Result; // 权限检查
-  isEnabled: () => boolean;        // 当前环境是否启用
-};`}
-            language="typescript"
-            filename="tools/types.ts"
-            highlights={[3, 4, 5, 6, 7, 8, 9, 10]}
+          <ArchitectureDiagram
+            title="Tool<Input, Output, P> 接口结构"
+            nodes={[
+              // Center hub
+              { id: "tool", label: "Tool<I, O, P>", x: 330, y: 140, color: "var(--accent-purple)" },
+              // Identity row (top-left)
+              { id: "name", label: "name: string", x: 40, y: 20, color: "var(--accent-cyan)" },
+              { id: "description", label: "description()", x: 200, y: 20, color: "var(--accent-cyan)" },
+              { id: "inputSchema", label: "inputSchema: Zod", x: 490, y: 20, color: "var(--accent-cyan)" },
+              // Execution (right)
+              { id: "call", label: "call(args, ctx)", x: 530, y: 140, color: "var(--accent-blue)" },
+              // Safety row (bottom-left)
+              { id: "isReadOnly", label: "isReadOnly()", x: 40, y: 260, color: "var(--accent-purple)" },
+              { id: "isConcurrencySafe", label: "isConcurrencySafe()", x: 200, y: 260, color: "var(--accent-purple)" },
+              // Permission row (bottom-right)
+              { id: "checkPermissions", label: "checkPermissions()", x: 390, y: 260, color: "var(--accent-blue)" },
+              { id: "isEnabled", label: "isEnabled()", x: 550, y: 260, color: "var(--accent-blue)" },
+            ]}
+            edges={[
+              { from: "tool", to: "name", label: "标识" },
+              { from: "tool", to: "description", label: "描述" },
+              { from: "tool", to: "inputSchema", label: "校验" },
+              { from: "tool", to: "call", label: "执行" },
+              { from: "tool", to: "isReadOnly", label: "只读" },
+              { from: "tool", to: "isConcurrencySafe", label: "并发" },
+              { from: "tool", to: "checkPermissions", label: "权限" },
+              { from: "tool", to: "isEnabled", label: "开关" },
+            ]}
+            width={700}
+            height={310}
           />
 
           <div className="mt-8 space-y-4 text-[var(--text-secondary)] leading-relaxed">
@@ -418,51 +431,45 @@ export type Tool<Input, Output, P> = {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 第一阶段：组装所有内置工具
-export function getAllBaseTools(): Tools {
-  return [
-    // 智能体管理
-    AgentTool,
-    // 系统交互
-    BashTool,
-    // 文件搜索
-    GlobTool, GrepTool,
-    // 文件操作
-    FileReadTool, FileEditTool, FileWriteTool,
-    // Notebook 编辑
-    NotebookEditTool,
-    // 网络搜索
-    WebFetchTool, WebSearchTool,
-    // 任务管理
-    TaskCreateTool, TaskUpdateTool, TaskListTool,
-    TaskGetTool,
-    // 团队协调
-    TeamCreateTool, TeamDeleteTool,
-    // 计划模式
-    EnterPlanModeTool, ExitPlanModeTool,
-    // 调度
-    CronCreateTool, CronDeleteTool, CronListTool,
-    // MCP 扩展
-    MCPTool,
-    // ...更多工具
-  ];
-}
-
-// 第二阶段：根据上下文过滤可用工具
-export function getTools(context: ToolContext): Tools {
-  const allTools = getAllBaseTools();
-  return allTools.filter(tool => {
-    // 检查 feature flag
-    if (!tool.isEnabled()) return false;
-    // 检查权限模式是否允许
-    if (!isAllowedByPermissionMode(tool, context)) return false;
-    return true;
-  });
-}`}
-            language="typescript"
-            filename="tools/registry.ts"
-            highlights={[3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 29, 30, 31, 32, 33, 34]}
+          <ArchitectureDiagram
+            title="两阶段注册管线"
+            nodes={[
+              // Stage 1: getAllBaseTools - tool sources
+              { id: "agent", label: "AgentTool", x: 20, y: 20, color: "var(--accent-cyan)" },
+              { id: "bash2", label: "BashTool", x: 180, y: 20, color: "var(--accent-cyan)" },
+              { id: "fileops", label: "File*Tools", x: 340, y: 20, color: "var(--accent-cyan)" },
+              { id: "search", label: "SearchTools", x: 500, y: 20, color: "var(--accent-cyan)" },
+              { id: "task", label: "TaskTools", x: 20, y: 80, color: "var(--accent-blue)" },
+              { id: "cron", label: "CronTools", x: 180, y: 80, color: "var(--accent-blue)" },
+              { id: "mcp", label: "MCPTool", x: 340, y: 80, color: "var(--accent-blue)" },
+              { id: "more", label: "...更多", x: 500, y: 80, color: "var(--accent-blue)" },
+              // Stage 1 hub
+              { id: "base", label: "getAllBaseTools()", x: 210, y: 175, color: "var(--accent-purple)" },
+              // Filter nodes
+              { id: "flag", label: "isEnabled?", x: 40, y: 275, color: "var(--accent-blue)" },
+              { id: "perm", label: "Permission?", x: 200, y: 275, color: "var(--accent-blue)" },
+              // Stage 2 output
+              { id: "result", label: "getTools(ctx)", x: 420, y: 275, color: "var(--accent-purple)" },
+            ]}
+            edges={[
+              // Sources to stage 1 hub
+              { from: "agent", to: "base", label: "" },
+              { from: "bash2", to: "base", label: "" },
+              { from: "fileops", to: "base", label: "" },
+              { from: "search", to: "base", label: "" },
+              { from: "task", to: "base", label: "" },
+              { from: "cron", to: "base", label: "" },
+              { from: "mcp", to: "base", label: "" },
+              { from: "more", to: "base", label: "" },
+              // Stage 1 to filters
+              { from: "base", to: "flag", label: "过滤" },
+              { from: "base", to: "perm", label: "过滤" },
+              // Filters to output
+              { from: "flag", to: "result", label: "" },
+              { from: "perm", to: "result", label: "" },
+            ]}
+            width={700}
+            height={320}
           />
 
           <div className="mt-8 space-y-4 text-[var(--text-secondary)] leading-relaxed">
@@ -595,47 +602,82 @@ export function getTools(context: ToolContext): Tools {
             </p>
           </div>
 
-          <CodeFlow
+          <ArchitectureDiagram
             title="工具调用执行流程"
-            steps={[
-              {
-                code: `// Step 1: Claude 返回工具调用
-const toolUse = response.toolCalls[0];
-// { name: 'FileReadTool', input: { path: '/src/app.ts' } }`,
-                highlight: [1, 2],
-                description:
-                  "Claude API 响应中包含工具调用请求，指定工具名称和输入参数。Claude 根据对话上下文自主决定是否需要调用工具以及调用哪个工具。",
-              },
-              {
-                code: `// Step 2: 查找并验证工具
-const tool = tools.find(t => t.name === toolUse.name);
-const validation = await tool.validateInput(toolUse.input);`,
-                highlight: [1, 2],
-                description:
-                  "从工具注册表中查找目标工具。找到后使用 Zod Schema 验证输入参数的合法性，包括类型检查、必填字段校验和值约束验证。",
-              },
-              {
-                code: `// Step 3: 权限检查
-const permission = await tool.checkPermissions(toolUse.input, context);
-if (permission.behavior !== 'allow') {
-  // 请求用户授权（弹窗确认）
-  const consent = await requestUserConsent(toolUse);
-  if (!consent.approved) return;
-}`,
-                highlight: [1, 2, 3, 4, 5],
-                description:
-                  "检查工具权限：先检查 deny 规则（黑名单），再检查 allow 规则（白名单），最后根据权限模式决定是否弹出用户授权对话框。用户可以选择一次性批准或本次会话始终允许。",
-              },
-              {
-                code: `// Step 4: 执行工具
-const result = await tool.call(toolUse.input, context);
-// result: { content: '文件内容...', isError: false }`,
-                highlight: [1, 2],
-                description:
-                  "工具执行核心逻辑，返回结果。只读工具可并发执行以提升效率，写操作串行执行以保证数据一致性。执行结果将作为 tool_result 消息反馈给 Claude 继续推理。",
-              },
+            nodes={[
+              // Step 1
+              { id: "s1", label: "1. Claude API", x: 30, y: 60, color: "var(--accent-cyan)" },
+              { id: "s1detail", label: "toolCalls[].name", x: 220, y: 60, color: "var(--accent-cyan)" },
+              // Step 2
+              { id: "s2", label: "2. 查找工具", x: 30, y: 145, color: "var(--accent-blue)" },
+              { id: "s2detail", label: "Zod Schema 校验", x: 220, y: 145, color: "var(--accent-blue)" },
+              // Step 3
+              { id: "s3", label: "3. 权限检查", x: 30, y: 230, color: "var(--accent-purple)" },
+              { id: "s3detail", label: "deny/allow/consent", x: 220, y: 230, color: "var(--accent-purple)" },
+              // Step 4
+              { id: "s4", label: "4. 执行工具", x: 30, y: 315, color: "var(--accent-blue)" },
+              { id: "s4detail", label: "tool_result", x: 220, y: 315, color: "var(--accent-blue)" },
+              // Error branch
+              { id: "err", label: "错误处理", x: 430, y: 185, color: "var(--accent-purple)" },
             ]}
+            edges={[
+              { from: "s1", to: "s1detail", label: "" },
+              { from: "s1detail", to: "s2", label: "" },
+              { from: "s2", to: "s2detail", label: "" },
+              { from: "s2detail", to: "s3", label: "" },
+              { from: "s3", to: "s3detail", label: "" },
+              { from: "s3detail", to: "s4", label: "" },
+              { from: "s4", to: "s4detail", label: "" },
+              // Error paths
+              { from: "s2detail", to: "err", label: "校验失败" },
+              { from: "s3detail", to: "err", label: "拒绝" },
+            ]}
+            width={600}
+            height={360}
           />
+
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              {
+                step: "Step 1: Claude API 响应",
+                desc: "Claude API 响应中包含工具调用请求，指定工具名称和输入参数。Claude 根据对话上下文自主决定是否需要调用工具以及调用哪个工具。",
+                color: "var(--accent-cyan)",
+              },
+              {
+                step: "Step 2: 查找与校验",
+                desc: "从工具注册表中查找目标工具。找到后使用 Zod Schema 验证输入参数的合法性，包括类型检查、必填字段校验和值约束验证。",
+                color: "var(--accent-blue)",
+              },
+              {
+                step: "Step 3: 权限检查",
+                desc: "检查工具权限：先检查 deny 规则（黑名单），再检查 allow 规则（白名单），最后根据权限模式决定是否弹出用户授权对话框。",
+                color: "var(--accent-purple)",
+              },
+              {
+                step: "Step 4: 执行与反馈",
+                desc: "工具执行核心逻辑并返回结果。只读工具可并发执行以提升效率，写操作串行执行以保证数据一致性。结果反馈给 Claude 继续推理。",
+                color: "var(--accent-blue)",
+              },
+            ].map((item) => (
+              <div
+                key={item.step}
+                className="p-5 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)]"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ background: item.color }}
+                  />
+                  <h5 className="text-base font-semibold text-[var(--text-primary)]">
+                    {item.step}
+                  </h5>
+                </div>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
         </section>
       </ScrollReveal>
 
@@ -662,40 +704,45 @@ const result = await tool.call(toolUse.input, context);
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 只读工具并发执行，写操作工具串行执行
-export async function* runTools(toolCalls) {
-  for (const { isConcurrencySafe, blocks } of partitionToolCalls(toolCalls)) {
-    if (isConcurrencySafe) {
-      yield* runToolsConcurrently(blocks);  // 并发批处理
-    } else {
-      yield* runToolsSerially(blocks);       // 串行执行
-    }
-  }
-}
-
-// 工具分组策略
-function partitionToolCalls(toolCalls) {
-  const concurrent = [];
-  const serial = [];
-
-  for (const call of toolCalls) {
-    const tool = registry.get(call.name);
-    if (tool.isConcurrencySafe(call.input)) {
-      concurrent.push(call);
-    } else {
-      serial.push(call);
-    }
-  }
-
-  return [
-    { isConcurrencySafe: true, blocks: concurrent },
-    { isConcurrencySafe: false, blocks: serial },
-  ];
-}`}
-            language="typescript"
-            filename="tools/executor.ts"
-            highlights={[2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]}
+          <ArchitectureDiagram
+            title="并发调度策略：分区并行/串行"
+            nodes={[
+              // Input: tool calls arrive
+              { id: "input", label: "Tool Calls[]", x: 260, y: 15, color: "var(--accent-purple)" },
+              // Partition
+              { id: "partition", label: "partitionToolCalls()", x: 260, y: 95, color: "var(--accent-purple)" },
+              // Concurrent lane (left)
+              { id: "conc_label", label: "并发通道", x: 20, y: 185, color: "var(--accent-cyan)" },
+              { id: "fr", label: "FileReadTool", x: 170, y: 185, color: "var(--accent-cyan)" },
+              { id: "gl", label: "GlobTool", x: 320, y: 185, color: "var(--accent-cyan)" },
+              { id: "gr", label: "GrepTool", x: 470, y: 185, color: "var(--accent-cyan)" },
+              { id: "conc_run", label: "runConcurrently()", x: 170, y: 270, color: "var(--accent-cyan)" },
+              // Serial lane (right)
+              { id: "ser_label", label: "串行通道", x: 20, y: 335, color: "var(--accent-purple)" },
+              { id: "fw", label: "FileWriteTool", x: 170, y: 335, color: "var(--accent-purple)" },
+              { id: "fe", label: "FileEditTool", x: 320, y: 335, color: "var(--accent-purple)" },
+              { id: "ba", label: "BashTool", x: 470, y: 335, color: "var(--accent-purple)" },
+              { id: "ser_run", label: "runSerially()", x: 170, y: 410, color: "var(--accent-purple)" },
+            ]}
+            edges={[
+              { from: "input", to: "partition", label: "" },
+              // Partition to concurrent lane
+              { from: "partition", to: "conc_label", label: "safe=true" },
+              { from: "conc_label", to: "fr", label: "" },
+              { from: "conc_label", to: "gl", label: "" },
+              { from: "conc_label", to: "gr", label: "" },
+              { from: "fr", to: "conc_run", label: "" },
+              { from: "gl", to: "conc_run", label: "" },
+              { from: "gr", to: "conc_run", label: "" },
+              // Partition to serial lane
+              { from: "partition", to: "ser_label", label: "safe=false" },
+              { from: "ser_label", to: "fw", label: "" },
+              { from: "fw", to: "fe", label: "next" },
+              { from: "fe", to: "ba", label: "next" },
+              { from: "ba", to: "ser_run", label: "" },
+            ]}
+            width={660}
+            height={455}
           />
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -761,48 +808,39 @@ function partitionToolCalls(toolCalls) {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 四层权限检查流程
-async function checkToolPermission(tool, input, context) {
-  // Layer 1: Feature Flag —— 全局功能开关
-  if (!tool.isEnabled()) {
-    return { behavior: 'deny', reason: 'Tool disabled by feature flag' };
-  }
-
-  // Layer 2: Permission Mode —— 权限模式检查
-  // auto: 自动批准安全操作
-  // manual: 所有敏感操作需确认
-  // bypass: CI/CD 环境，受环境变量控制
-  const mode = context.permissionMode;
-
-  // Layer 3: Tool-Specific Rules —— 工具级规则
-  // 检查 deny/allow 规则列表
-  const denyRule = matchDenyRules(tool.name, input);
-  if (denyRule) {
-    return { behavior: 'deny', reason: denyRule };
-  }
-  const allowRule = matchAllowRules(tool.name, input);
-  if (allowRule) {
-    return { behavior: 'allow' };
-  }
-
-  // Layer 4: User Consent —— 用户确认（manual 模式）
-  if (mode === 'manual') {
-    const consent = await showConsentDialog({
-      tool: tool.name,
-      input,
-      risk: assessRisk(tool, input),
-    });
-    return consent.approved
-      ? { behavior: 'allow', sessionWide: consent.sessionWide }
-      : { behavior: 'deny', reason: 'User rejected' };
-  }
-
-  return { behavior: 'allow' };
-}`}
-            language="typescript"
-            filename="tools/permissions.ts"
-            highlights={[3, 4, 7, 8, 9, 10, 11, 14, 15, 16, 19, 20, 23, 24, 25, 26, 27, 28, 29, 30]}
+          <ArchitectureDiagram
+            title="四层权限检查纵深防御"
+            nodes={[
+              // Input
+              { id: "req", label: "工具调用请求", x: 260, y: 15, color: "var(--accent-cyan)" },
+              // Layer 1
+              { id: "l1", label: "L1: Feature Flags", x: 260, y: 90, color: "var(--accent-cyan)" },
+              // Layer 2
+              { id: "l2", label: "L2: Permission Modes", x: 260, y: 165, color: "var(--accent-blue)" },
+              // Layer 3
+              { id: "l3", label: "L3: Tool Rules", x: 120, y: 240, color: "var(--accent-purple)" },
+              { id: "l3deny", label: "deny 规则", x: 310, y: 240, color: "var(--accent-purple)" },
+              { id: "l3allow", label: "allow 规则", x: 490, y: 240, color: "var(--accent-purple)" },
+              // Layer 4
+              { id: "l4", label: "L4: User Consent", x: 260, y: 320, color: "var(--accent-cyan)" },
+              // Outcome
+              { id: "pass", label: "ALLOW", x: 120, y: 400, color: "var(--accent-cyan)" },
+              { id: "deny", label: "DENY", x: 400, y: 400, color: "var(--accent-purple)" },
+            ]}
+            edges={[
+              { from: "req", to: "l1", label: "" },
+              { from: "l1", to: "l2", label: "enabled" },
+              { from: "l2", to: "l3", label: "" },
+              { from: "l3", to: "l3deny", label: "" },
+              { from: "l3", to: "l3allow", label: "" },
+              { from: "l3allow", to: "l4", label: "no rule" },
+              { from: "l4", to: "pass", label: "approved" },
+              { from: "l4", to: "deny", label: "rejected" },
+              { from: "l3deny", to: "deny", label: "matched" },
+              { from: "l1", to: "deny", label: "disabled" },
+            ]}
+            width={650}
+            height={445}
           />
 
           <div className="mt-8 space-y-4">

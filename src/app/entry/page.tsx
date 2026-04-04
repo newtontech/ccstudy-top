@@ -1,6 +1,4 @@
 import { ModuleLayout } from "@/components/ModuleLayout";
-import { CodeBlock } from "@/components/CodeBlock";
-import { CodeFlow } from "@/components/CodeFlow";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
@@ -107,17 +105,25 @@ export default function EntryPage() {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// Fast path: 并行启动关键子进程
-// 这些操作在模块加载阶段就开始执行，不阻塞主线程
-import { startMdmRawRead } from './utils/settings/mdm/rawRead.js';
-startMdmRawRead();
-
-import { startKeychainPrefetch } from './utils/secureStorage/keychainPrefetch.js';
-startKeychainPrefetch();`}
-            language="typescript"
-            filename="main.tsx"
-            highlights={[2, 3, 6]}
+          <ArchitectureDiagram
+            title="模块加载阶段 - 并行预取策略"
+            nodes={[
+              { id: "main", label: "main.tsx 入口", x: 40, y: 60, color: "var(--accent-purple)" },
+              { id: "mdm", label: "startMdmRawRead()", x: 300, y: 10, color: "var(--accent-blue)" },
+              { id: "keychain", label: "startKeychainPrefetch()", x: 300, y: 110, color: "var(--accent-cyan)" },
+              { id: "mdmResult", label: "MDM 配置就绪", x: 560, y: 10, color: "var(--accent-blue)" },
+              { id: "keychainResult", label: "认证凭据就绪", x: 560, y: 110, color: "var(--accent-cyan)" },
+              { id: "modules", label: "其余模块加载中...", x: 300, y: 200, color: "var(--text-secondary)" },
+            ]}
+            edges={[
+              { from: "main", to: "mdm", label: "异步启动" },
+              { from: "main", to: "keychain", label: "异步启动" },
+              { from: "main", to: "modules", label: "同步加载" },
+              { from: "mdm", to: "mdmResult", label: "I/O 并行" },
+              { from: "keychain", to: "keychainResult", label: "I/O 并行" },
+            ]}
+            width={800}
+            height={260}
           />
 
           <div className="space-y-4 text-[var(--text-secondary)] leading-relaxed">
@@ -152,15 +158,21 @@ startKeychainPrefetch();`}
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 零模块加载，直接输出版本号
-if (args.length === 1 && (args[0] === '--version' || args[0] === '-v')) {
-  console.log(\`\${MACRO.VERSION} (Claude Code)\`);
-  return;
-}`}
-            language="typescript"
-            filename="main.tsx - Fast Path"
-            highlights={[2, 3, 4]}
+          <ArchitectureDiagram
+            title="快速路径决策 - 零模块加载"
+            nodes={[
+              { id: "args", label: "解析命令行参数", x: 40, y: 60, color: "var(--accent-purple)" },
+              { id: "check", label: "匹配快速路径?", x: 280, y: 60, color: "var(--accent-purple)" },
+              { id: "fast", label: "直接输出并退出", x: 540, y: 10, color: "#10b981" },
+              { id: "full", label: "进入完整初始化", x: 540, y: 110, color: "var(--accent-blue)" },
+            ]}
+            edges={[
+              { from: "args", to: "check", label: "检查" },
+              { from: "check", to: "fast", label: "--version 等" },
+              { from: "check", to: "full", label: "其他命令" },
+            ]}
+            width={740}
+            height={180}
           />
 
           <div className="mt-8 mb-6">
@@ -205,28 +217,27 @@ if (args.length === 1 && (args[0] === '--version' || args[0] === '-v')) {
             </div>
           </div>
 
-          <CodeFlow
-            title="main() 快速路径执行流程"
-            steps={[
-              {
-                code: `function main(args) {\n  // Step 1: 检查版本号\n  if (args === '--version') {\n    console.log(VERSION);\n    return; // 快速退出\n  }\n  // Step 2: 启动并行预取\n  startMdmRawRead();\n  startKeychainPrefetch();\n  // Step 3: 初始化核心\n  await init();\n  // Step 4: 运行命令\n  await run();\n}`,
-                highlight: [2, 3, 4],
-                description:
-                  "检查是否是 --version 快速路径。如果是，直接输出版本号后返回，无需加载任何模块，响应时间接近零。",
-              },
-              {
-                code: `function main(args) {\n  if (args === '--version') {\n    console.log(VERSION);\n    return;\n  }\n  // Step 2: 启动并行预取\n  startMdmRawRead();\n  startKeychainPrefetch();\n  // Step 3: 初始化核心\n  await init();\n  await run();\n}`,
-                highlight: [5, 6],
-                description:
-                  "并行启动 MDM 配置读取和 macOS 钥匙串预取。这两个操作是异步的，不阻塞主线程，在后续初始化完成前就可能已经拿到结果。",
-              },
-              {
-                code: `function main(args) {\n  if (args === '--version') {\n    console.log(VERSION);\n    return;\n  }\n  startMdmRawRead();\n  startKeychainPrefetch();\n  // Step 3: 初始化核心\n  await init();\n  await run();\n}`,
-                highlight: [7, 8],
-                description:
-                  "调用 init() 初始化配置系统、遥测服务、优雅关闭处理等核心基础设施，然后进入主运行循环 run()。",
-              },
+          <ArchitectureDiagram
+            title="main() 执行流程"
+            nodes={[
+              { id: "start", label: "main() 入口", x: 40, y: 40, color: "var(--accent-purple)" },
+              { id: "step1", label: "1. 快速路径检测", x: 220, y: 40, color: "#10b981" },
+              { id: "step2", label: "2. 并行预取", x: 400, y: 40, color: "var(--accent-blue)" },
+              { id: "step3", label: "3. init() 初始化", x: 580, y: 40, color: "var(--accent-cyan)" },
+              { id: "step4", label: "4. run() 主循环", x: 760, y: 40, color: "var(--accent-purple)" },
+              { id: "mdm", label: "MDM 读取", x: 400, y: 140, color: "var(--accent-blue)" },
+              { id: "keychain", label: "钥匙串预取", x: 580, y: 140, color: "var(--accent-cyan)" },
             ]}
+            edges={[
+              { from: "start", to: "step1", label: "启动" },
+              { from: "step1", to: "step2", label: "通过" },
+              { from: "step2", to: "step3", label: "预取完成" },
+              { from: "step3", to: "step4", label: "就绪" },
+              { from: "step2", to: "mdm", label: "异步" },
+              { from: "step2", to: "keychain", label: "异步" },
+            ]}
+            width={940}
+            height={210}
           />
         </section>
       </ScrollReveal>
@@ -248,21 +259,29 @@ if (args.length === 1 && (args[0] === '--version' || args[0] === '-v')) {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 核心状态定义
-type State = {
-  originalCwd: string;        // 原始工作目录（启动时锁定）
-  projectRoot: string;        // 项目根目录（向上查找 git/markdown 根）
-  totalCostUSD: number;       // 总费用追踪（API 调用成本累计）
-  isInteractive: boolean;     // 交互式模式标志（终端 vs 管道输入）
-  kairosActive: boolean;      // KAIROS 助手模式（企业定制版本）
-  clientType: string;         // 客户端类型检测（CLI / SDK / CI）
-  sessionId: SessionId;       // 当前会话唯一标识符
-  // ...更多状态字段
-};`}
-            language="typescript"
-            filename="bootstrap/state.ts"
-            highlights={[3, 4, 5, 6, 7, 8, 9]}
+          <ArchitectureDiagram
+            title="bootstrap/state.ts - 核心状态结构"
+            nodes={[
+              { id: "state", label: "State (全局状态)", x: 300, y: 10, color: "var(--accent-purple)" },
+              { id: "cwd", label: "originalCwd", x: 40, y: 100, color: "var(--accent-blue)" },
+              { id: "root", label: "projectRoot", x: 220, y: 100, color: "var(--accent-blue)" },
+              { id: "cost", label: "totalCostUSD", x: 400, y: 100, color: "#f59e0b" },
+              { id: "interactive", label: "isInteractive", x: 580, y: 100, color: "var(--accent-cyan)" },
+              { id: "kairos", label: "kairosActive", x: 40, y: 190, color: "#10b981" },
+              { id: "client", label: "clientType", x: 220, y: 190, color: "var(--accent-blue)" },
+              { id: "session", label: "sessionId", x: 400, y: 190, color: "var(--accent-cyan)" },
+            ]}
+            edges={[
+              { from: "state", to: "cwd", label: "工作目录" },
+              { from: "state", to: "root", label: "项目根" },
+              { from: "state", to: "cost", label: "费用追踪" },
+              { from: "state", to: "interactive", label: "模式标志" },
+              { from: "state", to: "kairos", label: "助手模式" },
+              { from: "state", to: "client", label: "客户端类型" },
+              { from: "state", to: "session", label: "会话标识" },
+            ]}
+            width={760}
+            height={260}
           />
 
           <div className="space-y-4 text-[var(--text-secondary)] leading-relaxed">
@@ -298,24 +317,29 @@ type State = {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 通过环境变量检测客户端类型
-const clientType = (() => {
-  // GitHub Actions 环境
-  if (isEnvTruthy(process.env.GITHUB_ACTIONS)) return 'github-action';
-
-  // TypeScript SDK 调用
-  if (process.env.CLAUDE_CODE_ENTRYPOINT === 'sdk-ts') return 'sdk-typescript';
-
-  // Python SDK 调用
-  if (process.env.CLAUDE_CODE_ENTRYPOINT === 'sdk-py') return 'sdk-python';
-
-  // 默认：命令行界面
-  return 'cli';
-})();`}
-            language="typescript"
-            filename="bootstrap/state.ts"
-            highlights={[3, 6, 9, 12]}
+          <ArchitectureDiagram
+            title="客户端类型检测决策流程"
+            nodes={[
+              { id: "detect", label: "环境变量检测", x: 40, y: 70, color: "var(--accent-purple)" },
+              { id: "gh", label: "GITHUB_ACTIONS?", x: 280, y: 10, color: "var(--accent-blue)" },
+              { id: "ts", label: "ENTRYPOINT=sdk-ts?", x: 280, y: 80, color: "var(--accent-cyan)" },
+              { id: "py", label: "ENTRYPOINT=sdk-py?", x: 280, y: 150, color: "#10b981" },
+              { id: "ghResult", label: "github-action", x: 520, y: 10, color: "var(--accent-blue)" },
+              { id: "tsResult", label: "sdk-typescript", x: 520, y: 80, color: "var(--accent-cyan)" },
+              { id: "pyResult", label: "sdk-python", x: 520, y: 150, color: "#10b981" },
+              { id: "default", label: "cli (默认)", x: 520, y: 220, color: "var(--text-secondary)" },
+            ]}
+            edges={[
+              { from: "detect", to: "gh", label: "检查" },
+              { from: "detect", to: "ts", label: "检查" },
+              { from: "detect", to: "py", label: "检查" },
+              { from: "gh", to: "ghResult", label: "是" },
+              { from: "ts", to: "tsResult", label: "是" },
+              { from: "py", to: "pyResult", label: "是" },
+              { from: "py", to: "default", label: "全部否" },
+            ]}
+            width={720}
+            height={280}
           />
 
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -415,18 +439,23 @@ const clientType = (() => {
           </div>
 
           <div className="mt-8">
-            <CodeBlock
-              code={`// 传输层 URL 转换模式
-// HTTP 基础 URL → WebSocket URL
-const wsUrl = httpUrl
-  .replace('https://', 'wss://')
-  .replace('http://', 'ws://');
-
-// SSE 端点追加路径
-const sseUrl = \`\${httpUrl}/sse\`;`}
-              language="typescript"
-              filename="transport/url.ts"
-              highlights={[3, 4, 7]}
+            <ArchitectureDiagram
+              title="传输层 URL 转换模式"
+              nodes={[
+                { id: "http", label: "HTTP 基础 URL", x: 40, y: 60, color: "var(--accent-blue)" },
+                { id: "ws", label: "WebSocket URL", x: 320, y: 20, color: "var(--accent-cyan)" },
+                { id: "sse", label: "SSE 端点 URL", x: 320, y: 100, color: "#10b981" },
+                { id: "wsResult", label: "wss:// 或 ws://", x: 560, y: 20, color: "var(--accent-cyan)" },
+                { id: "sseResult", label: "/sse 路径追加", x: 560, y: 100, color: "#10b981" },
+              ]}
+              edges={[
+                { from: "http", to: "ws", label: "协议替换" },
+                { from: "http", to: "sse", label: "路径追加" },
+                { from: "ws", to: "wsResult", label: "https -> wss" },
+                { from: "sse", to: "sseResult", label: "+ /sse" },
+              ]}
+              width={760}
+              height={170}
             />
           </div>
         </section>
@@ -453,29 +482,25 @@ const sseUrl = \`\${httpUrl}/sse\`;`}
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 核心初始化函数 —— memoize 确保只执行一次
-export const init = memoize(async (): Promise<void> => {
-  // 1. 启用配置系统
-  enableConfigs();
-
-  // 2. 应用安全相关的环境变量
-  applySafeConfigEnvironmentVariables();
-
-  // 3. 设置优雅关闭处理（SIGINT、SIGTERM）
-  setupGracefulShutdown();
-
-  // 4. 并行初始化遥测和分析服务
-  void Promise.all([
-    import('../services/analytics/firstPartyEventLogger.js'),
-    import('../services/analytics/growthbook.js'),
-  ]);
-
-  // ...更多初始化步骤
-});`}
-            language="typescript"
-            filename="core/init.ts"
-            highlights={[1, 3, 6, 9, 12, 13, 14, 15, 16]}
+          <ArchitectureDiagram
+            title="init() 初始化流程 (memoize 包装，仅执行一次)"
+            nodes={[
+              { id: "init", label: "init()", x: 40, y: 60, color: "var(--accent-purple)" },
+              { id: "config", label: "1. enableConfigs()", x: 240, y: 10, color: "var(--accent-blue)" },
+              { id: "safe", label: "2. applySafeEnv()", x: 440, y: 10, color: "var(--accent-cyan)" },
+              { id: "shutdown", label: "3. setupGracefulShutdown()", x: 240, y: 110, color: "#f59e0b" },
+              { id: "analytics", label: "4. Promise.all()", x: 440, y: 110, color: "#10b981" },
+              { id: "analyticsDetail", label: "analytics + growthbook", x: 640, y: 110, color: "#10b981" },
+            ]}
+            edges={[
+              { from: "init", to: "config", label: "配置" },
+              { from: "config", to: "safe", label: "安全" },
+              { from: "init", to: "shutdown", label: "信号" },
+              { from: "init", to: "analytics", label: "异步加载" },
+              { from: "analytics", to: "analyticsDetail", label: "并行 import" },
+            ]}
+            width={820}
+            height={180}
           />
 
           <div className="mt-8 space-y-4 text-[var(--text-secondary)] leading-relaxed">
