@@ -11,19 +11,19 @@ export default function AssistantPage() {
       title: "多智能体协调",
       href: "/coordinator",
       description: "多 Agent 编排系统",
-      icon: "\u{1F578}\uFE0F",
+      icon: "🕸️",
     },
     {
       title: "插件系统",
       href: "/plugins",
       description: "扩展机制",
-      icon: "\u{1F50C}",
+      icon: "🔌",
     },
     {
       title: "系统架构",
       href: "/architecture",
       description: "整体架构",
-      icon: "\u{1F3D7}\uFE0F",
+      icon: "🏗️",
     },
   ];
 
@@ -31,7 +31,7 @@ export default function AssistantPage() {
     <ModuleLayout
       title="KAIROS 助手模式"
       subtitle="Claude Code 的持久化 AI 助手模式 — 持续运行、主动行动、精简交互"
-      icon="\u{1F916}"
+      icon="🤖"
       category="核心架构"
       relatedModules={relatedModules}
     >
