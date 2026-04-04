@@ -1,8 +1,7 @@
 import { HeroSection } from "@/components/HeroSection";
-import { ArchitectureMap } from "@/components/ArchitectureMap";
-import { FeatureGrid } from "@/components/FeatureGrid";
 import { SectionTitle } from "@/components/SectionTitle";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
+import { ArchitectureMap, FeatureGrid } from "@/components/ClientComponents";
 
 export default function Home() {
   return (
