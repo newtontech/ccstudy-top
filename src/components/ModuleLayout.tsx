@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ScrollReveal } from "./animations/ScrollReveal";
 import { RelatedModules } from "./RelatedModules";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface RelatedModule {
   title: string;
@@ -31,6 +32,7 @@ export function ModuleLayout({
   relatedModules,
 }: ModuleLayoutProps) {
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -81,8 +83,7 @@ export function ModuleLayout({
                   href="/"
                   className="hover:text-[var(--accent-purple)] transition-colors"
                 >
-                  首页
-                </Link>
+                  {t.layout.homeBreadcrumb}                </Link>
               </li>
               <li className="text-[var(--text-secondary)] opacity-50">/</li>
               <li>

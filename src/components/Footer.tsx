@@ -1,9 +1,15 @@
+"use client";
+
+import { useLanguage } from "@/i18n/LanguageContext";
+
 export function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="border-t border-[var(--card-border)] bg-[var(--bg-secondary)] mt-auto">
       <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col items-center gap-3 text-sm text-[var(--text-secondary)]">
         <p className="font-semibold text-[var(--text-primary)]">
-          CCStudy.top - Claude Code 源码解读
+          {t.footer.title}
         </p>
         <div className="flex items-center gap-4">
           <a
@@ -14,7 +20,7 @@ export function Footer() {
           >
             GitHub
           </a>
-          <span>&copy; 2026</span>
+          <span>{t.footer.copyright}</span>
         </div>
       </div>
     </footer>

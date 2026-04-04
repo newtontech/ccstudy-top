@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface RelatedModule {
   title: string;
@@ -15,10 +16,12 @@ interface RelatedModulesProps {
 }
 
 export function RelatedModules({ modules }: RelatedModulesProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="mt-16 pt-12 border-t border-[var(--card-border)]">
       <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-6">
-        相关模块
+        {t.layout.relatedModules}
       </h3>
 
       <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin">
