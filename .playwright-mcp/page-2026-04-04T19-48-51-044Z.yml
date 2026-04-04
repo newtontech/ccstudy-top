@@ -1,0 +1,388 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "CCStudy" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e5]:
+        - link "首页" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - link "架构" [ref=e7] [cursor=pointer]:
+          - /url: /architecture
+        - link "工具" [ref=e8] [cursor=pointer]:
+          - /url: /tools
+        - link "命令" [ref=e9] [cursor=pointer]:
+          - /url: /commands
+        - link "UI框架" [ref=e10] [cursor=pointer]:
+          - /url: /ink
+        - link "插件" [ref=e11] [cursor=pointer]:
+          - /url: /plugins
+      - generic [ref=e12]:
+        - button "Toggle theme" [ref=e13]:
+          - img [ref=e14]
+        - button "Toggle menu" [ref=e16]:
+          - img [ref=e17]
+  - main [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - navigation [ref=e22]:
+          - list [ref=e23]:
+            - listitem [ref=e24]:
+              - link "首页" [ref=e25] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e26]: /
+            - listitem [ref=e27]: 趣味系统
+            - listitem [ref=e28]: /
+            - listitem [ref=e29]: Buddy 伴侣系统
+        - generic [ref=e30]:
+          - text: 🐆
+          - generic [ref=e31]:
+            - heading "Buddy 伴侣系统" [level=1] [ref=e32]
+            - paragraph [ref=e33]: Claude Code 内置的 Tamagotchi 风格伴侣系统 —— 确定性抽卡、ASCII 精灵、五维属性与灵魂描述
+          - generic [ref=e34]: 趣味系统
+      - generic [ref=e35]:
+        - generic [ref=e37]:
+          - generic [ref=e39]:
+            - generic [ref=e41]:
+              - heading "Buddy 系统概述" [level=2] [ref=e42]
+              - paragraph [ref=e43]: 终端里的电子宠物
+            - generic [ref=e44]:
+              - paragraph [ref=e45]:
+                - text: Claude Code 内置了一个
+                - strong [ref=e46]: Tamagotchi 风格的伴侣系统
+                - text: （Buddy System）。每个用户在首次使用时，都会获得一个独一无二的伙伴精灵。 这个系统不仅仅是装饰——它展示了确定性计算、过程化生成和 AI 意图理解的巧妙结合。
+              - paragraph [ref=e47]:
+                - text: 整个系统建立在几项核心机制之上：
+                - strong [ref=e48]: 确定性抽卡
+                - text: 确保每个用户基于其 ID 获得唯一的伙伴；
+                - strong [ref=e49]: 18 个物种
+                - text: 横跨五个稀有度等级；
+                - strong [ref=e50]: 1% 闪光几率
+                - text: 独立于稀有度的特殊变体； 以及由
+                - strong [ref=e51]: Claude 自身生成
+                - text: 的灵魂描述。
+            - generic [ref=e52]:
+              - generic [ref=e53]:
+                - generic [ref=e54]: Mulberry32 PRNG
+                - generic [ref=e55]: 确定性抽卡
+                - paragraph [ref=e56]: 基于用户 ID 的伪随机数生成器，保证唯一性
+              - generic [ref=e57]:
+                - generic [ref=e58]: "18"
+                - generic [ref=e59]: 物种总数
+                - paragraph [ref=e60]: 横跨五个稀有度等级的独特伙伴
+              - generic [ref=e61]:
+                - generic [ref=e62]: 1%
+                - generic [ref=e63]: 闪光几率
+                - paragraph [ref=e64]: 独立于稀有度的特殊闪光变体
+              - generic [ref=e65]:
+                - generic [ref=e66]: "5"
+                - generic [ref=e67]: 属性维度
+                - paragraph [ref=e68]: 过程化生成的五维伙伴属性
+            - generic [ref=e69]:
+              - heading "Buddy 系统架构" [level=4] [ref=e71]
+              - img [ref=e72]:
+                - generic [ref=e77]: 哈希
+                - generic [ref=e79]: 初始化
+                - generic [ref=e90]: 渲染
+                - generic [ref=e93]: AI 生成
+                - generic [ref=e100]: 用户 ID
+                - generic [ref=e105]: hashCode 种子
+                - generic [ref=e110]: Mulberry32 PRNG
+                - generic [ref=e115]: 物种选择
+                - generic [ref=e120]: 稀有度
+                - generic [ref=e125]: 五维属性
+                - generic [ref=e130]: 闪光判定
+                - generic [ref=e135]: ASCII 精灵
+                - generic [ref=e140]: 灵魂描述
+          - generic [ref=e142]:
+            - generic [ref=e144]:
+              - heading "确定性抽卡系统" [level=2] [ref=e145]
+              - paragraph [ref=e146]: 基于 Mulberry32 的伪随机数生成
+            - generic [ref=e147]:
+              - paragraph [ref=e148]:
+                - text: Buddy 系统的核心是一个
+                - strong [ref=e149]: 确定性随机数生成器
+                - text: （Deterministic PRNG）。与 JavaScript 内置的
+                - code [ref=e150]: Math.random()
+                - text: 不同，Mulberry32 算法使用固定种子，确保相同的输入始终产生相同的输出。 这意味着每个用户 ID 都会对应一个唯一的、可复现的伙伴。
+              - paragraph [ref=e151]: 为什么选择确定性而非真随机？因为确定性保证了公平性和可验证性—— 每个用户的伙伴由其 ID 唯一决定，不存在重复或遗漏，也不需要服务器端的状态存储。
+            - generic [ref=e152]:
+              - heading "Mulberry32 PRNG 算法流程" [level=4] [ref=e154]
+              - img [ref=e155]:
+                - generic [ref=e159]: 位或 0
+                - generic [ref=e161]: 异或移位
+                - generic [ref=e164]: t = imul(...)
+                - generic [ref=e166]: 61 | t
+                - generic [ref=e168]: XOR t
+                - generic [ref=e171]: / 2^32
+                - generic [ref=e176]: seed (32-bit int)
+                - generic [ref=e181]: seed += 0x6D2B79F5
+                - generic [ref=e186]: Math.imul 变换
+                - generic [ref=e191]: XOR + 位运算
+                - generic [ref=e196]: Math.imul 二次变换
+                - generic [ref=e201]: 右移 + XOR
+                - generic [ref=e206]: "[0, 1) 浮点数"
+            - generic [ref=e208]:
+              - heading "抽卡流程：从用户 ID 到伙伴诞生" [level=4] [ref=e210]
+              - img [ref=e211]:
+                - generic [ref=e215]: char 迭代
+                - generic [ref=e217]: 32-bit 种子
+                - generic [ref=e220]: rng() ⨯ 18
+                - generic [ref=e223]: rng() 分层
+                - generic [ref=e225]: 1% 判定
+                - generic [ref=e228]: 连续 5 次
+                - generic [ref=e239]: 用户 ID 字符串
+                - generic [ref=e244]: hashCode()
+                - generic [ref=e249]: mulberry32(seed)
+                - generic [ref=e254]: rng() → 物种
+                - generic [ref=e259]: rng() → 稀有度
+                - generic [ref=e264]: rng() < 0.01 → 闪光
+                - generic [ref=e269]: rng() × 5 → 属性
+                - generic [ref=e274]: 完整 Buddy 对象
+          - generic [ref=e276]:
+            - generic [ref=e278]:
+              - heading "物种与稀有度" [level=2] [ref=e279]
+              - paragraph [ref=e280]: 18 个物种，五个稀有度等级
+            - paragraph [ref=e282]:
+              - text: Buddy 系统包含
+              - strong [ref=e283]: 18 个独特物种
+              - text: ，每个物种都属于五个稀有度等级之一。稀有度不仅影响获取概率， 还决定了伙伴的视觉特效和动画复杂度。此外，任何稀有度的伙伴都有
+              - strong [ref=e284]: 1% 的独立几率
+              - text: 成为闪光（Shiny）变体，拥有独特的外观颜色。
+            - generic [ref=e285]:
+              - heading "稀有度概率分布" [level=4] [ref=e287]
+              - img [ref=e288]:
+                - generic [ref=e293]: ≥ 0.35
+                - generic [ref=e296]: 0.15-0.35
+                - generic [ref=e299]: 0.05-0.15
+                - generic [ref=e302]: 0.01-0.05
+                - generic [ref=e312]: rng() < 0.01
+                - generic [ref=e317]: rng() → [0, 1)
+                - generic [ref=e322]: Common 65%
+                - generic [ref=e327]: Rare 20%
+                - generic [ref=e332]: Epic 10%
+                - generic [ref=e337]: Legendary 4%
+                - generic [ref=e342]: 任意稀有度
+                - generic [ref=e347]: Shiny 1% (独立)
+            - generic [ref=e348]:
+              - generic [ref=e349]:
+                - generic [ref=e351]: 普通 (Common)65%
+                - paragraph [ref=e352]: 最常见的伙伴类型，拥有基础的外观和简单的 ASCII 精灵动画
+                - paragraph [ref=e353]: 小史莱姆、像素猫、代码虫
+              - generic [ref=e354]:
+                - generic [ref=e356]: 稀有 (Rare)20%
+                - paragraph [ref=e357]: 较少见的伙伴，拥有独特的外观设计和更丰富的表情
+                - paragraph [ref=e358]: 水晶狐、数据龙、量子兔
+              - generic [ref=e359]:
+                - generic [ref=e361]: 史诗 (Epic)10%
+                - paragraph [ref=e362]: 稀有的伙伴，拥有特殊动画效果和独特的粒子特效
+                - paragraph [ref=e363]: 虚空凤凰、时间蛇、混沌狼
+              - generic [ref=e364]:
+                - generic [ref=e366]: 传说 (Legendary)4%
+                - paragraph [ref=e367]: 极其稀有的伙伴，拥有华丽的视觉效果和专属的动画序列
+                - paragraph [ref=e368]: 宇宙鲸、永恒树、星辰鹰
+              - generic [ref=e369]:
+                - generic [ref=e371]: 闪光 (Shiny)1%（独立）
+                - paragraph [ref=e372]: 独立于稀有度的特殊变体，拥有独特的闪光色彩和光芒效果
+                - paragraph [ref=e373]: 任何物种都可能拥有闪光形态
+            - generic [ref=e375]:
+              - heading "18 个物种稀有度分类" [level=4] [ref=e377]
+              - img [ref=e378]:
+                - generic [ref=e409]: 小史莱姆
+                - generic [ref=e414]: 像素猫
+                - generic [ref=e419]: 代码虫
+                - generic [ref=e424]: 水晶狐
+                - generic [ref=e429]: 数据龙
+                - generic [ref=e434]: 量子兔
+                - generic [ref=e439]: 虚空凤凰
+                - generic [ref=e444]: 时间蛇
+                - generic [ref=e449]: 混沌狼
+                - generic [ref=e454]: 宇宙鲸
+                - generic [ref=e459]: 永恒树
+                - generic [ref=e464]: 星辰鹰
+                - generic [ref=e469]: ... 共 18 种
+          - generic [ref=e471]:
+            - generic [ref=e473]:
+              - heading "五维属性系统" [level=2] [ref=e474]
+              - paragraph [ref=e475]: 过程化生成的伙伴个性
+            - paragraph [ref=e477]:
+              - text: 每个伙伴拥有
+              - strong [ref=e478]: 5 个过程化生成的属性
+              - text: ，这些属性由同一个 PRNG 序列决定，因此完全确定性且唯一。 属性值范围从 0 到 100，不仅影响伙伴的灵魂描述， 还会微妙地影响 ASCII 精灵的表情和动画节奏。
+            - generic [ref=e479]:
+              - heading "五维属性生成流程" [level=4] [ref=e481]
+              - img [ref=e482]:
+                - generic [ref=e487]: rng()
+                - generic [ref=e490]: rng()
+                - generic [ref=e493]: rng()
+                - generic [ref=e496]: rng()
+                - generic [ref=e499]: rng()
+                - generic [ref=e514]: PRNG 序列
+                - generic [ref=e519]: Debugging
+                - generic [ref=e524]: Patience
+                - generic [ref=e529]: Chaos
+                - generic [ref=e534]: Wisdom
+                - generic [ref=e539]: Snark
+                - generic [ref=e544]: rng() × 100 → [0, 100)
+            - generic [ref=e545]:
+              - generic [ref=e546]:
+                - generic [ref=e547]: 🐛
+                - generic [ref=e548]: DEBUGGING
+                - generic [ref=e549]: 调试能力
+                - paragraph [ref=e550]: 伙伴的调试直觉。高数值意味着它能快速定位代码中的问题，是 Bug 猎手的最佳搭档。
+              - generic [ref=e551]:
+                - generic [ref=e552]: 🧘
+                - generic [ref=e553]: PATIENCE
+                - generic [ref=e554]: 耐心程度
+                - paragraph [ref=e555]: 伙伴的耐心阈值。高耐心的伙伴在长编译过程中保持冷静，低耐心的伙伴会表现得焦躁不安。
+              - generic [ref=e556]:
+                - generic [ref=e557]: 💥
+                - generic [ref=e558]: CHAOS
+                - generic [ref=e559]: 混乱指数
+                - paragraph [ref=e560]: 伙伴的混沌程度。高混乱值的伙伴不可预测，可能产生意想不到的创意建议或古怪行为。
+              - generic [ref=e561]:
+                - generic [ref=e562]: 📚
+                - generic [ref=e563]: WISDOM
+                - generic [ref=e564]: 智慧值
+                - paragraph [ref=e565]: 伙伴的知识深度。高智慧的伙伴理解复杂的架构模式和设计哲学，是资深开发者的精神伙伴。
+              - generic [ref=e566]:
+                - generic [ref=e567]: 😏
+                - generic [ref=e568]: SNARK
+                - generic [ref=e569]: 毒舌程度
+                - paragraph [ref=e570]: 伙伴的讽刺天赋。高毒舌值的伙伴会在你写出 bug 时毫不留情地吐槽，但说的都是实话。
+            - generic [ref=e572]:
+              - heading "属性值 → 性格特征映射" [level=4] [ref=e574]
+              - img [ref=e575]:
+                - generic [ref=e580]: 触发
+                - generic [ref=e583]: 触发
+                - generic [ref=e586]: 触发
+                - generic [ref=e589]: 触发
+                - generic [ref=e592]: 触发
+                - generic [ref=e597]: Debugging > 80
+                - generic [ref=e602]: Patience < 20
+                - generic [ref=e607]: Chaos > 70
+                - generic [ref=e612]: Wisdom > 90
+                - generic [ref=e617]: Snark > 80
+                - generic [ref=e622]: Bug 预判达人
+                - generic [ref=e627]: 对无限循环绝望
+                - generic [ref=e632]: 建议 Brainfuck 重写
+                - generic [ref=e637]: 读懂你自己不懂的代码
+                - generic [ref=e642]: 对 console.log 叹气
+          - generic [ref=e644]:
+            - generic [ref=e646]:
+              - heading "ASCII Art 精灵系统" [level=2] [ref=e647]
+              - paragraph [ref=e648]: 终端中的像素艺术与灵魂描述
+            - paragraph [ref=e650]:
+              - text: 每个伙伴都有独特的
+              - strong [ref=e651]: ASCII art 外观
+              - text: ，这些精灵由预定义的字符画帧组成，在终端中以动画形式展示。 动画帧通过时间间隔切换，让伙伴看起来栩栩如生。 更独特的是，Claude 会根据伙伴的物种、稀有度和五维属性， 生成一段专属的
+              - strong [ref=e652]: 灵魂描述
+              - text: ，赋予每个伙伴独特的性格和故事。
+            - generic [ref=e653]:
+              - generic [ref=e654]:
+                - generic [ref=e655]: 小史莱姆 (Common) - 帧 1
+                - generic [ref=e656]: ╭─────────╮ │ ^ ^ │ │ o │ │ \___/ │ ╰──┬───┬──╯ │ │ ╭──┴───┴──╮ │ ~jiggle~ │ ╰─────────╯
+              - generic [ref=e657]:
+                - generic [ref=e658]: 小史莱姆 (Common) - 帧 2
+                - generic [ref=e659]: ╭─────────╮ │ - - │ │ O │ │ /---\ │ ╰──┬───┬──╯ │ │ ╭──┴───┴──╮ │ ~wobble~ │ ╰─────────╯
+            - generic [ref=e661]:
+              - heading "精灵动画系统" [level=4] [ref=e663]
+              - img [ref=e664]:
+                - generic [ref=e668]: 查找精灵表
+                - generic [ref=e671]: frames[0]
+                - generic [ref=e673]: frames[1]
+                - generic [ref=e676]: frames[2]
+                - generic [ref=e683]: 循环
+                - generic [ref=e688]: 物种 ID
+                - generic [ref=e693]: SpriteAnimation
+                - generic [ref=e698]: "帧 1: 开心 (^ ^)"
+                - generic [ref=e703]: "帧 2: 惊讶 (- O)"
+                - generic [ref=e708]: "帧 3: 困惑 (> <)"
+                - generic [ref=e713]: 2000ms 循环切换
+            - generic [ref=e715]:
+              - heading "灵魂描述生成流程" [level=4] [ref=e717]
+              - img [ref=e718]:
+                - generic [ref=e727]: 格式化
+                - generic [ref=e729]: 填入属性
+                - generic [ref=e732]: 附加信息
+                - generic [ref=e734]: API 调用
+                - generic [ref=e736]: 一段话
+                - generic [ref=e741]: 伙伴数据打包
+                - generic [ref=e746]: 物种 + 稀有度
+                - generic [ref=e751]: 五维属性值
+                - generic [ref=e756]: 闪光状态
+                - generic [ref=e761]: 自然语言提示词
+                - generic [ref=e766]: Claude 生成
+                - generic [ref=e771]: 灵魂描述输出
+          - generic [ref=e773]:
+            - generic [ref=e775]:
+              - heading "设计哲学" [level=2] [ref=e776]
+              - paragraph [ref=e777]: 为什么在一个 CLI 工具里放 Tamagotchi？
+            - paragraph [ref=e779]: 在一个严肃的命令行工具中加入电子宠物系统，乍看之下似乎不合常理。 但这个设计体现了 Claude Code 团队对开发者体验的深层思考—— 工具不仅是生产力的延伸，也可以是情感的寄托。
+            - generic [ref=e780]:
+              - generic [ref=e781]:
+                - generic [ref=e782]: 🥺
+                - heading "情感连接" [level=5] [ref=e783]
+                - paragraph [ref=e784]: 增加趣味性与归属感
+                - paragraph [ref=e785]: 开发者每天在终端中度过大量时间。一个独特的伙伴精灵能为这段时光增添温暖和趣味，让工具从冷冰冰的命令行变成有个性的工作伙伴。每个用户的伙伴都是独一无二的，这种独特性增强了用户与工具之间的情感纽带。
+              - generic [ref=e786]:
+                - generic [ref=e787]: ⚖️
+                - heading "公平保证" [level=5] [ref=e788]
+                - paragraph [ref=e789]: 确定性算法确保公正
+                - paragraph [ref=e790]: 传统的随机抽卡系统依赖服务器端状态，容易引发公平性质疑。Buddy 系统使用确定性 PRNG，每个用户的伙伴完全由其 ID 决定——不需要服务器存储，不存在重复抽取，也不可能出现暗箱操作。代码就是公平的保证。
+              - generic [ref=e791]:
+                - generic [ref=e792]: 🚀
+                - heading "能力展示" [level=5] [ref=e793]
+                - paragraph [ref=e794]: AI 技术的创意窗口
+                - paragraph [ref=e795]: Buddy 系统是一个精心设计的技术展示窗口。它展示了确定性计算、过程化生成和 AI 意图理解的融合——从 PRNG 算法到属性生成，再到 Claude 自身生成的灵魂描述。每一层都体现了 Claude Code 的工程能力和创意思维。
+            - generic [ref=e797]:
+              - heading "Buddy 完整生成流程" [level=4] [ref=e799]
+              - img [ref=e800]:
+                - generic [ref=e805]: 哈希
+                - generic [ref=e807]: 初始化
+                - generic [ref=e810]: rng()
+                - generic [ref=e813]: rng()
+                - generic [ref=e816]: < 0.01
+                - generic [ref=e819]: 5× rng()
+                - generic [ref=e822]: 查表
+                - generic [ref=e825]: 着色
+                - generic [ref=e828]: Claude
+                - generic [ref=e839]: userId
+                - generic [ref=e844]: hashCode → seed
+                - generic [ref=e849]: Mulberry32 RNG
+                - generic [ref=e854]: 物种选择
+                - generic [ref=e859]: 稀有度判定
+                - generic [ref=e864]: 闪光判定
+                - generic [ref=e869]: 五维属性
+                - generic [ref=e874]: ASCII 精灵
+                - generic [ref=e879]: 灵魂描述 (AI)
+                - generic [ref=e884]: Buddy 对象
+        - generic [ref=e886]:
+          - heading "相关模块" [level=3] [ref=e887]
+          - generic [ref=e888]:
+            - link "🏗️ 系统架构 整体架构" [ref=e890] [cursor=pointer]:
+              - /url: /architecture
+              - generic [ref=e891]:
+                - generic [ref=e892]: 🏗️
+                - heading "系统架构" [level=4] [ref=e893]
+                - paragraph [ref=e894]: 整体架构
+            - link "🧩 Hooks系统 React Hooks" [ref=e896] [cursor=pointer]:
+              - /url: /hooks
+              - generic [ref=e897]:
+                - generic [ref=e898]: 🧩
+                - heading "Hooks系统" [level=4] [ref=e899]
+                - paragraph [ref=e900]: React Hooks
+            - link "🎨 UI框架 终端 UI 渲染" [ref=e902] [cursor=pointer]:
+              - /url: /ink
+              - generic [ref=e903]:
+                - generic [ref=e904]: 🎨
+                - heading "UI框架" [level=4] [ref=e905]
+                - paragraph [ref=e906]: 终端 UI 渲染
+      - button "Back to top" [ref=e907]:
+        - img [ref=e908]
+  - contentinfo [ref=e910]:
+    - generic [ref=e911]:
+      - paragraph [ref=e912]: CCStudy.top - Claude Code 源码解读
+      - generic [ref=e913]:
+        - link "GitHub" [ref=e914] [cursor=pointer]:
+          - /url: https://github.com/newtontech/ccstudy-top
+        - text: © 2026

@@ -1,0 +1,347 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "CCStudy" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e5]:
+        - link "首页" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - link "架构" [ref=e7] [cursor=pointer]:
+          - /url: /architecture
+        - link "工具" [ref=e8] [cursor=pointer]:
+          - /url: /tools
+        - link "命令" [ref=e9] [cursor=pointer]:
+          - /url: /commands
+        - link "UI框架" [ref=e10] [cursor=pointer]:
+          - /url: /ink
+        - link "插件" [ref=e11] [cursor=pointer]:
+          - /url: /plugins
+      - generic [ref=e12]:
+        - button "Toggle theme" [ref=e13]:
+          - img [ref=e14]
+        - button "Toggle menu" [ref=e16]:
+          - img [ref=e17]
+  - main [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - navigation [ref=e22]:
+          - list [ref=e23]:
+            - listitem [ref=e24]:
+              - link "首页" [ref=e25] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e26]: /
+            - listitem [ref=e27]: 核心架构
+            - listitem [ref=e28]: /
+            - listitem [ref=e29]: Ink 终端 UI 框架
+        - generic [ref=e30]:
+          - text: 🎨
+          - generic [ref=e31]:
+            - heading "Ink 终端 UI 框架" [level=1] [ref=e32]
+            - paragraph [ref=e33]: 基于 React 的声明式终端 UI 渲染引擎，250KB+ 代码实现从组件树到 ANSI 输出的完整桥梁
+          - generic [ref=e34]: 核心架构
+      - generic [ref=e35]:
+        - generic [ref=e37]:
+          - generic [ref=e39]:
+            - generic [ref=e41]:
+              - heading "Ink 框架概述" [level=2] [ref=e42]
+              - paragraph [ref=e43]: React 声明式模型在终端中的完美落地
+            - generic [ref=e44]:
+              - paragraph [ref=e45]:
+                - text: Claude Code 使用自研的 React 终端 UI 框架（ink），拥有
+                - strong [ref=e46]: 250KB+
+                - text: 的源代码。它基于 React 的声明式 UI 模型，但渲染目标从浏览器 DOM 变为了终端的 ANSI 转义序列输出。 这一创新使得开发者可以用熟悉的 React 组件模式来构建丰富的终端交互界面。
+              - paragraph [ref=e47]: Ink 的核心思想是：开发者编写 React 组件树，ink 通过自定义的 React Reconciler 将组件树转换为终端可理解的 ANSI 输出流。这意味着你可以使用 props、state、hooks、 context 等 React 核心概念来构建终端应用，同时获得组件复用、状态管理和声明式编程的所有好处。
+            - generic [ref=e48]:
+              - heading "Ink 渲染管线" [level=4] [ref=e50]
+              - img [ref=e51]:
+                - generic [ref=e56]: JSX
+                - generic [ref=e69]: 渲染
+                - generic [ref=e71]: 输出
+                - generic [ref=e76]: React Components
+                - generic [ref=e81]: Reconciler
+                - generic [ref=e86]: ANSI Output
+                - generic [ref=e91]: Terminal
+                - generic [ref=e96]: Box
+                - generic [ref=e101]: Text
+                - generic [ref=e106]: Input
+                - generic [ref=e111]: Button
+                - generic [ref=e116]: ScrollView
+          - generic [ref=e118]:
+            - generic [ref=e120]:
+              - heading "React 到终端的桥梁" [level=2] [ref=e121]
+              - paragraph [ref=e122]: 从 JSX 到 ANSI：自定义 Reconciler 的实现原理
+            - generic [ref=e123]:
+              - paragraph [ref=e124]:
+                - text: Ink 的核心是一个自定义的
+                - strong [ref=e125]: React Reconciler
+                - text: 实现。与 react-dom 使用浏览器 DOM API 不同，ink 的 reconciler 将 React 组件树 转换为终端 ANSI 转义序列。这意味着 ink 并不依赖 react-dom，而是直接使用 React 底层的 reconciler API 来定义自己的渲染目标。
+              - paragraph [ref=e126]:
+                - text: 布局计算使用
+                - strong [ref=e127]: Yoga
+                - text: 引擎（Facebook 开源的跨平台布局引擎），它将 CSS Flexbox 布局算法映射到终端的行列坐标系统中。 每个 Box 组件都对应一个 Yoga 节点，通过 flexbox 属性计算出精确的终端坐标位置。
+            - generic [ref=e128]:
+              - heading "JSX 到 ANSI 转义码映射" [level=4] [ref=e130]
+              - img [ref=e131]:
+                - generic [ref=e135]: 定位+空白
+                - generic [ref=e137]: 光标移动
+                - generic [ref=e139]: 颜色码
+                - generic [ref=e141]: 文本内容
+                - generic [ref=e144]: 样式重置
+                - generic [ref=e149]: "<Box padding={1}>"
+                - generic [ref=e154]: <Text color="green">
+                - generic [ref=e159]: Hello World
+                - generic [ref=e164]: \x1b[1;1H
+                - generic [ref=e169]: \x1b[32m
+                - generic [ref=e174]: Hello World
+                - generic [ref=e179]: \x1b[0m
+                - generic [ref=e184]: ANSI 转义码
+                - generic [ref=e189]: JSX 组件
+            - generic [ref=e191]:
+              - heading "Reconciler 渲染流程" [level=4] [ref=e193]
+              - img [ref=e194]:
+                - generic [ref=e198]: 描述 UI
+                - generic [ref=e201]: 拦截渲染
+                - generic [ref=e203]: 节点操作
+                - generic [ref=e206]: 计算坐标
+                - generic [ref=e208]: 布局结果
+                - generic [ref=e210]: 生成序列
+                - generic [ref=e212]: 写入终端
+                - generic [ref=e217]: ① JSX 组件树
+                - generic [ref=e222]: Box/Text 嵌套结构
+                - generic [ref=e227]: ② 自定义 Reconciler
+                - generic [ref=e232]: createInstance / appendChild
+                - generic [ref=e237]: ③ Yoga 布局计算
+                - generic [ref=e242]: left/top/width/height
+                - generic [ref=e247]: ④ ANSI 输出
+                - generic [ref=e252]: process.stdout
+          - generic [ref=e254]:
+            - generic [ref=e256]:
+              - heading "核心组件" [level=2] [ref=e257]
+              - paragraph [ref=e258]: 构建终端 UI 的八大基础组件
+            - paragraph [ref=e260]: Ink 提供了一套完整的终端 UI 组件库，每个组件都针对终端环境做了深度优化。 从基础的布局容器 Box 到复杂的虚拟滚动列表 ScrollView，这些组件覆盖了 终端应用开发的所有常见需求。
+            - generic [ref=e261]:
+              - generic [ref=e262]:
+                - code [ref=e264]: Box
+                - paragraph [ref=e265]: 布局容器，支持 flexbox（对应 CSS flexbox）
+                - generic [ref=e267]: "<Box flexDirection=\"column\" padding={1}> <Text>Hello</Text> </Box>"
+              - generic [ref=e268]:
+                - code [ref=e270]: Text
+                - paragraph [ref=e271]: 文本渲染，支持颜色、粗体、斜体、下划线
+                - generic [ref=e273]: <Text color="green" bold> Success! </Text>
+              - generic [ref=e274]:
+                - code [ref=e276]: Input
+                - paragraph [ref=e277]: 文本输入框，支持 focus/blur 事件
+                - generic [ref=e279]: "<Input value={text} onChange={setText} placeholder=\"输入...\" />"
+              - generic [ref=e280]:
+                - code [ref=e282]: Button
+                - paragraph [ref=e283]: 可点击按钮，支持键盘交互
+                - generic [ref=e285]: "<Button onPress={() => submit()}> 确认提交 </Button>"
+              - generic [ref=e286]:
+                - code [ref=e288]: ScrollView
+                - paragraph [ref=e289]: 虚拟滚动列表，处理大数据量
+                - generic [ref=e291]: "<ScrollView height={20}> {items.map((item) => ( <Row key={item.id} /> ))} </ScrollView>"
+              - generic [ref=e292]:
+                - code [ref=e294]: Spinner
+                - paragraph [ref=e295]: 加载动画（旋转字符动画）
+                - generic [ref=e297]: "<Spinner label=\"Loading...\" /> // 渲染为: ⠋ Loading... // ⠙ Loading... (持续旋转)"
+              - generic [ref=e298]:
+                - code [ref=e300]: ProgressBar
+                - paragraph [ref=e301]: 进度条组件
+                - generic [ref=e303]: "<ProgressBar value={75} max={100} label=\"下载进度\" />"
+              - generic [ref=e304]:
+                - code [ref=e306]: Tabs
+                - paragraph [ref=e307]: 标签页切换
+                - generic [ref=e309]: "<Tabs items={[\"文件\", \"编辑\"]}> <TabPanel>文件列表</TabPanel> <TabPanel>编辑器</TabPanel> </Tabs>"
+          - generic [ref=e311]:
+            - generic [ref=e313]:
+              - heading "样式系统" [level=2] [ref=e314]
+              - paragraph [ref=e315]: ANSI 颜色、Flexbox 布局与主题引擎
+            - generic [ref=e316]:
+              - paragraph [ref=e317]:
+                - text: Ink 的样式系统提供了三层颜色支持：
+                - strong [ref=e318]: 16色标准 ANSI
+                - text: 、
+                - strong [ref=e319]: 256色扩展调色板
+                - text: 和
+                - strong [ref=e320]: True Color (24位)
+                - text: 。 布局方面使用 Yoga 引擎实现了完整的 CSS Flexbox 子集映射， 让开发者可以用 flexDirection、justifyContent、alignItems 等熟悉的属性来布局终端界面。
+              - paragraph [ref=e321]: 主题系统支持亮色和暗色终端适配，通过检测终端的 colorScheme 环境变量自动切换。 所有颜色、字体样式都通过统一的 theme 对象管理，确保整个应用风格一致。
+            - generic [ref=e322]:
+              - heading "主题对象结构" [level=4] [ref=e324]
+              - img [ref=e325]:
+                - generic [ref=e330]: 颜色配置
+                - generic [ref=e333]: 字体样式
+                - generic [ref=e354]: theme
+                - generic [ref=e359]: colors
+                - generic [ref=e364]: font
+                - generic [ref=e369]: "primary #7c3aed"
+                - generic [ref=e374]: "secondary #2563eb"
+                - generic [ref=e379]: "success #10b981"
+                - generic [ref=e384]: "error #ef4444"
+                - generic [ref=e389]: "muted #94a3b8"
+                - generic [ref=e394]: bold \x1b[1m
+                - generic [ref=e399]: italic \x1b[3m
+                - generic [ref=e404]: underline \x1b[4m
+            - generic [ref=e405]:
+              - generic [ref=e406]:
+                - generic [ref=e407]: 🎨
+                - heading "ANSI 颜色" [level=5] [ref=e408]
+                - paragraph [ref=e409]: 支持标准 16 色、256 色扩展和 True Color 24 位全彩，自动检测终端能力降级显示
+              - generic [ref=e410]:
+                - generic [ref=e411]: 📐️
+                - heading "Flexbox 布局" [level=5] [ref=e412]
+                - paragraph [ref=e413]: 基于 Yoga 引擎实现，支持 flexDirection、gap、padding、margin 等完整 Flexbox 属性
+              - generic [ref=e414]:
+                - generic [ref=e415]: 🌙
+                - heading "主题切换" [level=5] [ref=e416]
+                - paragraph [ref=e417]: 亮色/暗色终端自适应，统一管理颜色和样式，通过 ThemeProvider 注入全局主题
+            - generic [ref=e419]:
+              - heading "Flexbox 布局在终端中的映射" [level=4] [ref=e421]
+              - img [ref=e422]:
+                - generic [ref=e427]: 子元素
+                - generic [ref=e430]: 子元素
+                - generic [ref=e433]: primary
+                - generic [ref=e436]: muted
+                - generic [ref=e441]: muted
+                - generic [ref=e446]: Box flexDirection="column"
+                - generic [ref=e451]: Box row justifyContent="space-between"
+                - generic [ref=e456]: "Box paddingX={2}"
+                - generic [ref=e461]: Text "文件名"
+                - generic [ref=e466]: Text "大小"
+                - generic [ref=e471]: Text "src/index.ts"
+                - generic [ref=e476]: Text "2.4 KB"
+          - generic [ref=e478]:
+            - generic [ref=e480]:
+              - heading "虚拟滚动" [level=2] [ref=e481]
+              - paragraph [ref=e482]: 高性能大列表渲染的关键技术
+            - generic [ref=e483]:
+              - paragraph [ref=e484]:
+                - text: 终端环境对性能极其敏感，每次渲染都需要重绘整个可见区域。当面对长文件内容、 大量日志输出或搜索结果时，全量渲染会导致严重的性能问题。 Ink 通过
+                - strong [ref=e485]: useVirtualScroll
+                - text: hook 实现了虚拟滚动机制，只渲染当前可视区域内的列表项， 将渲染开销从 O(n) 降至 O(viewport)。
+              - paragraph [ref=e486]: 该 hook 接受列表总数、单项高度、视口高度和 overscan 参数， 计算出当前需要渲染的起止索引和偏移量，确保滚动流畅性的同时将渲染压力降到最低。
+            - generic [ref=e487]:
+              - heading "useVirtualScroll 参数与返回值" [level=4] [ref=e489]
+              - img [ref=e490]:
+                - generic [ref=e495]: 列表总数
+                - generic [ref=e498]: 单项高度
+                - generic [ref=e501]: 视口高度
+                - generic [ref=e504]: 缓冲行数
+                - generic [ref=e507]: 起始索引
+                - generic [ref=e510]: 结束索引
+                - generic [ref=e513]: Y轴偏移
+                - generic [ref=e518]: useVirtualScroll
+                - generic [ref=e523]: "itemCount: number"
+                - generic [ref=e528]: "itemHeight: number"
+                - generic [ref=e533]: "viewportHeight: number"
+                - generic [ref=e538]: "overscan?: number"
+                - generic [ref=e543]: startIndex
+                - generic [ref=e548]: endIndex
+                - generic [ref=e553]: offsetY
+            - generic [ref=e555]:
+              - heading "虚拟滚动工作原理" [level=4] [ref=e557]
+              - img [ref=e558]:
+                - generic [ref=e563]: 性能优化
+                - generic [ref=e568]: 滚动状态
+                - generic [ref=e573]: ① 计算可视范围
+                - generic [ref=e578]: ② Overscan 缓冲
+                - generic [ref=e583]: ③ 渲染可见项
+                - generic [ref=e588]: scrollTop + viewportHeight
+                - generic [ref=e593]: startIndex ~ endIndex
+                - generic [ref=e598]: overscanStart ~ overscanEnd
+                - generic [ref=e603]: data.slice() + offsetY
+                - generic [ref=e608]: O(viewport) 渲染开销
+          - generic [ref=e610]:
+            - generic [ref=e612]:
+              - heading "与 React DOM 的对比" [level=2] [ref=e613]
+              - paragraph [ref=e614]: 两种渲染目标的架构差异
+            - paragraph [ref=e616]: 虽然 Ink 和 React DOM 都基于相同的 React 核心库，但由于渲染目标的根本差异， 两者在布局引擎、事件处理、样式实现等方面存在显著不同。 下表详细对比了两者的关键差异，帮助理解 Ink 的设计选择。
+            - table [ref=e618]:
+              - rowgroup [ref=e619]:
+                - row "特性 React DOM React Ink" [ref=e620]:
+                  - columnheader "特性" [ref=e621]
+                  - columnheader "React DOM" [ref=e622]
+                  - columnheader "React Ink" [ref=e623]
+              - rowgroup [ref=e624]:
+                - row "🖥️渲染目标 DOM 节点 ANSI 终端输出" [ref=e625]:
+                  - cell "🖥️渲染目标" [ref=e626]:
+                    - generic [ref=e627]: 🖥️渲染目标
+                  - cell "DOM 节点" [ref=e628]
+                  - cell "ANSI 终端输出" [ref=e629]
+                - row "📐️布局系统 CSS Flexbox/Grid Yoga (Flexbox only)" [ref=e630]:
+                  - cell "📐️布局系统" [ref=e631]:
+                    - generic [ref=e632]: 📐️布局系统
+                  - cell "CSS Flexbox/Grid" [ref=e633]
+                  - cell "Yoga (Flexbox only)" [ref=e634]
+                - row "⌨️事件系统 鼠标+键盘+触摸 键盘为主 + 终端鼠标" [ref=e635]:
+                  - cell "⌨️事件系统" [ref=e636]:
+                    - generic [ref=e637]: ⌨️事件系统
+                  - cell "鼠标+键盘+触摸" [ref=e638]
+                  - cell "键盘为主 + 终端鼠标" [ref=e639]
+                - row "🎨样式 CSS/SCSS ANSI 转义码" [ref=e640]:
+                  - cell "🎨样式" [ref=e641]:
+                    - generic [ref=e642]: 🎨样式
+                  - cell "CSS/SCSS" [ref=e643]
+                  - cell "ANSI 转义码" [ref=e644]
+                - row "📖滚动 CSS overflow 虚拟滚动" [ref=e645]:
+                  - cell "📖滚动" [ref=e646]:
+                    - generic [ref=e647]: 📖滚动
+                  - cell "CSS overflow" [ref=e648]
+                  - cell "虚拟滚动" [ref=e649]
+                - row "✏️输入 HTML Input 原始 stdin" [ref=e650]:
+                  - cell "✏️输入" [ref=e651]:
+                    - generic [ref=e652]: ✏️输入
+                  - cell "HTML Input" [ref=e653]
+                  - cell "原始 stdin" [ref=e654]
+                - row "🖼️图片 img 标签 Sixel/iTerm2 协议" [ref=e655]:
+                  - cell "🖼️图片" [ref=e656]:
+                    - generic [ref=e657]: 🖼️图片
+                  - cell "img 标签" [ref=e658]
+                  - cell "Sixel/iTerm2 协议" [ref=e659]
+            - paragraph [ref=e661]: 这些差异体现了终端环境的特点：有限的显示能力（行列式布局）、 丰富的事件限制（以键盘为主）、以及独特的性能挑战（全量重绘）。 Ink 针对每一个差异都做出了精心的设计决策，确保在终端约束下依然能提供优秀的开发体验。
+            - generic [ref=e663]:
+              - heading "Reconciler 对比：react-dom vs ink" [level=4] [ref=e665]
+              - img [ref=e666]:
+                - generic [ref=e674]: 入口
+                - generic [ref=e676]: 入口
+                - generic [ref=e678]: 写入
+                - generic [ref=e680]: 写入
+                - generic [ref=e689]: React Core
+                - generic [ref=e694]: react-dom Reconciler
+                - generic [ref=e699]: ink Reconciler
+                - generic [ref=e704]: createRoot()
+                - generic [ref=e709]: render()
+                - generic [ref=e714]: DOM 节点
+                - generic [ref=e719]: process.stdout
+                - generic [ref=e724]: 浏览器渲染
+                - generic [ref=e729]: 终端渲染
+        - generic [ref=e731]:
+          - heading "相关模块" [level=3] [ref=e732]
+          - generic [ref=e733]:
+            - link "🏗️ 系统架构 整体架构概览" [ref=e735] [cursor=pointer]:
+              - /url: /architecture
+              - generic [ref=e736]:
+                - generic [ref=e737]: 🏗️
+                - heading "系统架构" [level=4] [ref=e738]
+                - paragraph [ref=e739]: 整体架构概览
+            - link "🪝 Hooks系统 80+ React Hooks" [ref=e741] [cursor=pointer]:
+              - /url: /hooks
+              - generic [ref=e742]:
+                - generic [ref=e743]: 🪝
+                - heading "Hooks系统" [level=4] [ref=e744]
+                - paragraph [ref=e745]: 80+ React Hooks
+            - link "⌨️ 命令系统 命令行界面" [ref=e747] [cursor=pointer]:
+              - /url: /commands
+              - generic [ref=e748]:
+                - generic [ref=e749]: ⌨️
+                - heading "命令系统" [level=4] [ref=e750]
+                - paragraph [ref=e751]: 命令行界面
+      - button "Back to top" [ref=e752]:
+        - img [ref=e753]
+  - contentinfo [ref=e755]:
+    - generic [ref=e756]:
+      - paragraph [ref=e757]: CCStudy.top - Claude Code 源码解读
+      - generic [ref=e758]:
+        - link "GitHub" [ref=e759] [cursor=pointer]:
+          - /url: https://github.com/newtontech/ccstudy-top
+        - text: © 2026

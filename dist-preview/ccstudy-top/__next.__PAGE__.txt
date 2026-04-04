@@ -1,0 +1,10 @@
+1:"$Sreact.fragment"
+2:I[7887,["/ccstudy-top/_next/static/chunks/02dkff0q1eaum.js","/ccstudy-top/_next/static/chunks/0d3shmwh5_nmn.js","/ccstudy-top/_next/static/chunks/169brr__n.76c.js","/ccstudy-top/_next/static/chunks/0lap3q20e.20k.js"],"HeroSection"]
+3:I[32563,["/ccstudy-top/_next/static/chunks/02dkff0q1eaum.js","/ccstudy-top/_next/static/chunks/0d3shmwh5_nmn.js","/ccstudy-top/_next/static/chunks/169brr__n.76c.js","/ccstudy-top/_next/static/chunks/0lap3q20e.20k.js"],"ScrollReveal"]
+4:I[47504,["/ccstudy-top/_next/static/chunks/02dkff0q1eaum.js","/ccstudy-top/_next/static/chunks/0d3shmwh5_nmn.js","/ccstudy-top/_next/static/chunks/169brr__n.76c.js","/ccstudy-top/_next/static/chunks/0lap3q20e.20k.js"],"SectionTitle"]
+5:I[13530,["/ccstudy-top/_next/static/chunks/02dkff0q1eaum.js","/ccstudy-top/_next/static/chunks/0d3shmwh5_nmn.js","/ccstudy-top/_next/static/chunks/169brr__n.76c.js","/ccstudy-top/_next/static/chunks/0lap3q20e.20k.js"],"ArchitectureMap"]
+6:I[37950,["/ccstudy-top/_next/static/chunks/02dkff0q1eaum.js","/ccstudy-top/_next/static/chunks/0d3shmwh5_nmn.js","/ccstudy-top/_next/static/chunks/169brr__n.76c.js","/ccstudy-top/_next/static/chunks/0lap3q20e.20k.js"],"FeatureGrid"]
+7:I[97367,["/ccstudy-top/_next/static/chunks/02dkff0q1eaum.js","/ccstudy-top/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+0:{"rsc":["$","$1","c",{"children":[[["$","$L2",null,{}],["$","section",null,{"className":"max-w-7xl mx-auto px-4 py-20","children":[["$","$L3",null,{"children":["$","$L4",null,{"title":"架构全景","subtitle":"点击节点探索 Claude Code 的核心模块"}]}],["$","$L3",null,{"delay":0.2,"children":["$","$L5",null,{}]}]]}],["$","section",null,{"className":"max-w-7xl mx-auto px-4 py-20","children":["$","$L6",null,{}]}]],[["$","script","script-0",{"src":"/ccstudy-top/_next/static/chunks/169brr__n.76c.js","async":true}],["$","script","script-1",{"src":"/ccstudy-top/_next/static/chunks/0lap3q20e.20k.js","async":true}]],["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"vGS5u1E7gx4PHupHF1rt9"}
+9:null

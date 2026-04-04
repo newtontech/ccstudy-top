@@ -1,0 +1,38 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "CCStudy" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e5]:
+        - link "首页" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - link "架构" [ref=e7] [cursor=pointer]:
+          - /url: /architecture
+        - link "工具" [ref=e8] [cursor=pointer]:
+          - /url: /tools
+        - link "命令" [ref=e9] [cursor=pointer]:
+          - /url: /commands
+        - link "UI框架" [ref=e10] [cursor=pointer]:
+          - /url: /ink
+        - link "插件" [ref=e11] [cursor=pointer]:
+          - /url: /plugins
+      - generic [ref=e12]:
+        - button "Toggle theme" [ref=e13]:
+          - img [ref=e14]
+        - button "Toggle menu" [ref=e16]:
+          - img [ref=e17]
+  - main [ref=e18]:
+    - generic [ref=e20]:
+      - heading "404" [level=1] [ref=e22]
+      - heading "页面未找到" [level=2] [ref=e23]
+      - paragraph [ref=e24]: 你访问的页面不存在。可能是路由变更或链接错误。
+      - link "←返回首页" [ref=e25] [cursor=pointer]:
+        - /url: /
+  - contentinfo [ref=e26]:
+    - generic [ref=e27]:
+      - paragraph [ref=e28]: CCStudy.top - Claude Code 源码解读
+      - generic [ref=e29]:
+        - link "GitHub" [ref=e30] [cursor=pointer]:
+          - /url: https://github.com/newtontech/ccstudy-top
+        - text: © 2026
+  - alert [ref=e31]

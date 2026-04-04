@@ -1,0 +1,179 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "CCStudy" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e5]:
+        - link "首页" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - link "架构" [ref=e7] [cursor=pointer]:
+          - /url: /architecture
+        - link "工具" [ref=e8] [cursor=pointer]:
+          - /url: /tools
+        - link "命令" [ref=e9] [cursor=pointer]:
+          - /url: /commands
+        - link "UI框架" [ref=e10] [cursor=pointer]:
+          - /url: /ink
+        - link "插件" [ref=e11] [cursor=pointer]:
+          - /url: /plugins
+      - button "Toggle theme" [ref=e13]:
+        - img [ref=e14]
+  - main [ref=e16]:
+    - generic [ref=e17]:
+      - generic [ref=e22]:
+        - heading "Claude Code 源码解读" [level=1] [ref=e23]
+        - generic [ref=e26]: "|"
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - generic [ref=e29]: 40+
+            - generic [ref=e30]: 工具
+          - generic [ref=e31]:
+            - generic [ref=e32]: 40+
+            - generic [ref=e33]: 命令
+          - generic [ref=e34]:
+            - generic [ref=e35]: 15+
+            - generic [ref=e36]: 核心模块
+      - generic [ref=e38]: ↓
+    - generic [ref=e39]:
+      - generic [ref=e42]:
+        - heading "架构全景" [level=2] [ref=e43]
+        - paragraph [ref=e44]: 点击节点探索 Claude Code 的核心模块
+      - generic [ref=e46]:
+        - generic [ref=e48]:
+          - heading "Architecture Map" [level=3] [ref=e49]
+          - paragraph [ref=e50]: Click any module to explore its source code
+        - img [ref=e51]:
+          - generic [ref=e151] [cursor=pointer]:
+            - generic [ref=e156]: 🚀
+            - generic [ref=e157]: main.tsx
+          - generic [ref=e158] [cursor=pointer]:
+            - generic [ref=e163]: 🔧
+            - generic [ref=e164]: Bootstrap
+          - generic [ref=e165] [cursor=pointer]:
+            - generic [ref=e170]: ⌨️
+            - generic [ref=e171]: CLI
+          - generic [ref=e172] [cursor=pointer]:
+            - generic [ref=e177]: 🔍
+            - generic [ref=e178]: Query Engine
+          - generic [ref=e179] [cursor=pointer]:
+            - generic [ref=e184]: 🧠
+            - generic [ref=e185]: Context
+          - generic [ref=e186] [cursor=pointer]:
+            - generic [ref=e191]: 🛠️
+            - generic [ref=e192]: Tools
+          - generic [ref=e193] [cursor=pointer]:
+            - generic [ref=e198]: 📋
+            - generic [ref=e199]: Commands
+          - generic [ref=e200] [cursor=pointer]:
+            - generic [ref=e205]: 🎨
+            - generic [ref=e206]: Ink Renderer
+          - generic [ref=e207] [cursor=pointer]:
+            - generic [ref=e212]: 🧩
+            - generic [ref=e213]: Components
+          - generic [ref=e214] [cursor=pointer]:
+            - generic [ref=e219]: 🪝
+            - generic [ref=e220]: Hooks
+          - generic [ref=e221] [cursor=pointer]:
+            - generic [ref=e226]: 💾
+            - generic [ref=e227]: State Manager
+          - generic [ref=e228] [cursor=pointer]:
+            - generic [ref=e233]: 🔌
+            - generic [ref=e234]: Plugins
+          - generic [ref=e235] [cursor=pointer]:
+            - generic [ref=e240]: ✨
+            - generic [ref=e241]: Skills
+          - generic [ref=e242] [cursor=pointer]:
+            - generic [ref=e247]: 🤖
+            - generic [ref=e248]: Assistant
+          - generic [ref=e249] [cursor=pointer]:
+            - generic [ref=e254]: 🌐
+            - generic [ref=e255]: Coordinator
+          - generic [ref=e256] [cursor=pointer]:
+            - generic [ref=e261]: 📁
+            - generic [ref=e262]: Memory Dir
+          - generic [ref=e263] [cursor=pointer]:
+            - generic [ref=e268]: 🌍
+            - generic [ref=e269]: Bridge
+          - generic [ref=e270] [cursor=pointer]:
+            - generic [ref=e275]: 🤝
+            - generic [ref=e276]: Buddy
+        - generic [ref=e277]:
+          - generic [ref=e280]: Entry Point
+          - generic [ref=e283]: Core Engine
+          - generic [ref=e286]: Tools
+          - generic [ref=e289]: Commands
+          - generic [ref=e292]: UI Layer
+          - generic [ref=e295]: Extensions
+          - generic [ref=e298]: Infrastructure
+    - generic [ref=e300]:
+      - generic [ref=e302]:
+        - heading "探索模块" [level=2] [ref=e303]
+        - paragraph [ref=e304]: 点击卡片深入了解每个模块
+      - generic [ref=e305]:
+        - link "🏗️ 系统架构 Claude Code 的整体架构与核心设计模式" [ref=e308] [cursor=pointer]:
+          - /url: /architecture
+          - generic [ref=e310]:
+            - generic [ref=e311]: 🏗️
+            - heading "系统架构" [level=3] [ref=e312]
+            - paragraph [ref=e313]: Claude Code 的整体架构与核心设计模式
+        - link "🚀 入口与启动 从 main.tsx 到应用就绪的完整启动流程" [ref=e316] [cursor=pointer]:
+          - /url: /entry
+          - generic [ref=e318]:
+            - generic [ref=e319]: 🚀
+            - heading "入口与启动" [level=3] [ref=e320]
+            - paragraph [ref=e321]: 从 main.tsx 到应用就绪的完整启动流程
+        - link "🔧 工具系统 40+ 内置工具的实现与扩展机制" [ref=e324] [cursor=pointer]:
+          - /url: /tools
+          - generic [ref=e326]:
+            - generic [ref=e327]: 🔧
+            - heading "工具系统" [level=3] [ref=e328]
+            - paragraph [ref=e329]: 40+ 内置工具的实现与扩展机制
+        - link "⌨️ 命令系统 命令行界面的完整命令参考与实现" [ref=e332] [cursor=pointer]:
+          - /url: /commands
+          - generic [ref=e334]:
+            - generic [ref=e335]: ⌨️
+            - heading "命令系统" [level=3] [ref=e336]
+            - paragraph [ref=e337]: 命令行界面的完整命令参考与实现
+        - link "🎨 Ink UI框架 基于 React 的终端 UI 渲染框架" [ref=e340] [cursor=pointer]:
+          - /url: /ink
+          - generic [ref=e342]:
+            - generic [ref=e343]: 🎨
+            - heading "Ink UI框架" [level=3] [ref=e344]
+            - paragraph [ref=e345]: 基于 React 的终端 UI 渲染框架
+        - link "🔌 插件与MCP 插件系统、技能系统与 Model Context Protocol" [ref=e348] [cursor=pointer]:
+          - /url: /plugins
+          - generic [ref=e350]:
+            - generic [ref=e351]: 🔌
+            - heading "插件与MCP" [level=3] [ref=e352]
+            - paragraph [ref=e353]: 插件系统、技能系统与 Model Context Protocol
+        - link "🤖 KAIROS 助手 持久化运行的 AI 助手模式" [ref=e356] [cursor=pointer]:
+          - /url: /assistant
+          - generic [ref=e358]:
+            - generic [ref=e359]: 🤖
+            - heading "KAIROS 助手" [level=3] [ref=e360]
+            - paragraph [ref=e361]: 持久化运行的 AI 助手模式
+        - link "🕸️ 多智能体协调 Coordinator 模式的多 Agent 编排系统" [ref=e364] [cursor=pointer]:
+          - /url: /coordinator
+          - generic [ref=e366]:
+            - generic [ref=e367]: 🕸️
+            - heading "多智能体协调" [level=3] [ref=e368]
+            - paragraph [ref=e369]: Coordinator 模式的多 Agent 编排系统
+        - link "🪝 Hooks 系统 80+ 自定义 React Hooks 详解" [ref=e372] [cursor=pointer]:
+          - /url: /hooks
+          - generic [ref=e374]:
+            - generic [ref=e375]: 🪝
+            - heading "Hooks 系统" [level=3] [ref=e376]
+            - paragraph [ref=e377]: 80+ 自定义 React Hooks 详解
+        - link "🐣 Buddy 伴侣 Tamagotchi 风格的确定性行囊系统" [ref=e380] [cursor=pointer]:
+          - /url: /buddy
+          - generic [ref=e382]:
+            - generic [ref=e383]: 🐣
+            - heading "Buddy 伴侣" [level=3] [ref=e384]
+            - paragraph [ref=e385]: Tamagotchi 风格的确定性行囊系统
+  - contentinfo [ref=e386]:
+    - generic [ref=e387]:
+      - paragraph [ref=e388]: CCStudy.top - Claude Code 源码解读
+      - generic [ref=e389]:
+        - link "GitHub" [ref=e390] [cursor=pointer]:
+          - /url: https://github.com/newtontech/ccstudy-top
+        - generic [ref=e391]: © 2026

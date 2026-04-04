@@ -1,0 +1,352 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "CCStudy" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e5]:
+        - link "首页" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - link "架构" [ref=e7] [cursor=pointer]:
+          - /url: /architecture
+        - link "工具" [ref=e8] [cursor=pointer]:
+          - /url: /tools
+        - link "命令" [ref=e9] [cursor=pointer]:
+          - /url: /commands
+        - link "UI框架" [ref=e10] [cursor=pointer]:
+          - /url: /ink
+        - link "插件" [ref=e11] [cursor=pointer]:
+          - /url: /plugins
+      - generic [ref=e12]:
+        - button "Toggle theme" [ref=e13]:
+          - img [ref=e14]
+        - button "Toggle menu" [ref=e16]:
+          - img [ref=e17]
+  - main [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - navigation [ref=e22]:
+          - list [ref=e23]:
+            - listitem [ref=e24]:
+              - link "首页" [ref=e25] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e26]: /
+            - listitem [ref=e27]: 核心架构
+            - listitem [ref=e28]: /
+            - listitem [ref=e29]: 插件与扩展
+        - generic [ref=e30]:
+          - text: \uD83D\uDD0C
+          - generic [ref=e31]:
+            - heading "插件与扩展" [level=1] [ref=e32]
+            - paragraph [ref=e33]: Claude Code 的三大扩展机制 —— Plugins、Skills、MCP，打造无限可能的 AI 编程生态
+          - generic [ref=e34]: 核心架构
+      - generic [ref=e35]:
+        - generic [ref=e37]:
+          - generic [ref=e39]:
+            - generic [ref=e41]:
+              - heading "扩展系统概述" [level=2] [ref=e42]
+              - paragraph [ref=e43]: 三大机制构建可扩展的 AI 编程平台
+            - generic [ref=e44]:
+              - paragraph [ref=e45]:
+                - text: Claude Code 的扩展性建立在三大核心机制之上：
+                - strong [ref=e46]: Plugins
+                - text: （插件系统）提供结构化的扩展能力，
+                - strong [ref=e47]: Skills
+                - text: （技能系统）支持可复用的提示词模板，
+                - strong [ref=e48]: MCP
+                - text: （Model Context Protocol）实现标准化的外部工具连接。 三者协同工作，让 Claude Code 从一个封闭的 AI 工具变成一个开放的编程平台。
+              - paragraph [ref=e49]: 这三种机制各司其职：插件系统负责注册新的工具和命令，技能系统让用户共享最佳实践， MCP 协议则打通了 AI 与外部世界的数据通道。通过组合使用这些机制， 开发者可以打造完全定制化的 AI 编程体验。
+            - generic [ref=e50]:
+              - heading "扩展系统架构" [level=4] [ref=e52]
+              - img [ref=e53]:
+                - generic [ref=e62]: Plugins
+                - generic [ref=e67]: Skills
+                - generic [ref=e72]: Plugin Registry
+                - generic [ref=e77]: Skill Registry
+                - generic [ref=e82]: Hooks System
+                - generic [ref=e87]: Execution Engine
+                - generic [ref=e92]: MCP Protocol
+                - generic [ref=e97]: MCP Server Registry
+          - generic [ref=e99]:
+            - generic [ref=e101]:
+              - heading "插件系统" [level=2] [ref=e102]
+              - paragraph [ref=e103]: 结构化的扩展能力与沙箱执行
+            - paragraph [ref=e105]: 插件是 Claude Code 最强大的扩展机制。每个插件都可以注册自定义工具、命令、钩子和技能， 拥有完整的生命周期管理。插件在沙箱环境中执行，配合细粒度的权限控制， 确保扩展代码不会影响系统的稳定性和安全性。
+            - generic [ref=e106]:
+              - generic [ref=e107]:
+                - text: "1"
+                - generic [ref=e108]:
+                  - generic [ref=e109]:
+                    - code [ref=e110]: load
+                    - text: 加载阶段
+                  - paragraph [ref=e111]: 从文件系统或注册表加载插件代码，解析元数据和依赖声明
+              - generic [ref=e112]:
+                - text: "2"
+                - generic [ref=e113]:
+                  - generic [ref=e114]:
+                    - code [ref=e115]: initialize
+                    - text: 初始化阶段
+                  - paragraph [ref=e116]: 执行插件的初始化逻辑，注册工具、命令、钩子等扩展点，建立运行时上下文
+              - generic [ref=e117]:
+                - text: "3"
+                - generic [ref=e118]:
+                  - generic [ref=e119]:
+                    - code [ref=e120]: execute
+                    - text: 执行阶段
+                  - paragraph [ref=e121]: 在沙箱环境中运行插件注册的工具和命令，受权限系统约束，支持并发安全调度
+              - generic [ref=e122]:
+                - text: "4"
+                - generic [ref=e123]:
+                  - generic [ref=e124]:
+                    - code [ref=e125]: cleanup
+                    - text: 清理阶段
+                  - paragraph [ref=e126]: 卸载插件时执行清理逻辑，释放资源、移除注册的扩展点、恢复系统状态
+            - generic [ref=e127]:
+              - heading "Plugin 生命周期与扩展点" [level=4] [ref=e129]
+              - img [ref=e130]:
+                - generic [ref=e145]: register
+                - generic [ref=e148]: register
+                - generic [ref=e159]: name / version
+                - generic [ref=e164]: Lifecycle Hooks
+                - generic [ref=e169]: Extension Points
+                - generic [ref=e174]: onLoad()
+                - generic [ref=e179]: onInit()
+                - generic [ref=e184]: onCleanup()
+                - generic [ref=e189]: tools[]
+                - generic [ref=e194]: commands[]
+                - generic [ref=e199]: hooks[]
+                - generic [ref=e204]: skills[]
+                - generic [ref=e209]: Sandbox
+                - generic [ref=e214]: Permissions
+            - generic [ref=e215]:
+              - generic [ref=e216]:
+                - heading "沙箱执行" [level=5] [ref=e218]
+                - paragraph [ref=e219]: 插件代码在受限的沙箱环境中运行，隔离文件系统和网络访问，防止恶意操作
+              - generic [ref=e220]:
+                - heading "权限控制" [level=5] [ref=e222]
+                - paragraph [ref=e223]: 每个插件操作都经过权限检查，用户可以细粒度控制插件的能力范围
+              - generic [ref=e224]:
+                - heading "内置插件" [level=5] [ref=e226]
+                - paragraph [ref=e227]: Claude Code 捆绑了多个官方插件，开箱即用，涵盖常见开发场景
+          - generic [ref=e229]:
+            - generic [ref=e231]:
+              - heading "技能系统" [level=2] [ref=e232]
+              - paragraph [ref=e233]: 可复用的提示词模板与工作流
+            - generic [ref=e234]:
+              - paragraph [ref=e235]:
+                - text: 技能（Skills）是 Markdown 格式的提示词模板，包含元数据头部和提示词正文。 用户可以通过斜杠命令（如
+                - code [ref=e236]: /commit
+                - text: ）快速触发技能执行。 技能系统支持变量替换和模板语法，让提示词可以根据上下文动态调整。
+              - paragraph [ref=e237]: 技能的核心价值在于将最佳实践封装为可复用的单元。开发者可以创建自己的技能， 也可以与团队和社区共享。一个精心设计的技能可以将复杂的操作流程简化为一条命令。
+            - generic [ref=e238]:
+              - heading "Skill 结构：Frontmatter → Prompt → 变量替换" [level=4] [ref=e240]
+              - img [ref=e241]:
+                - generic [ref=e260]: skill.md
+                - generic [ref=e265]: YAML Frontmatter
+                - generic [ref=e270]: "name: commit"
+                - generic [ref=e275]: "trigger: /commit"
+                - generic [ref=e280]: Prompt Body
+                - generic [ref=e285]: git status
+                - generic [ref=e290]: git diff --staged
+                - generic [ref=e295]: 分析变更
+                - generic [ref=e300]: 生成 commit msg
+                - generic [ref=e305]: $FILE_PATH
+                - generic [ref=e310]: Variable Substitution
+                - generic [ref=e315]: Execution Engine
+            - generic [ref=e316]:
+              - generic [ref=e317]:
+                - heading "Markdown 格式" [level=5] [ref=e319]
+                - paragraph [ref=e320]: 技能使用 Markdown 编写，元数据通过 YAML front matter 定义。开发者无需学习新语法，上手成本极低。提示词正文支持所有 Markdown 格式，包括代码块、列表和标题。
+              - generic [ref=e321]:
+                - heading "变量替换" [level=5] [ref=e323]
+                - paragraph [ref=e324]: 技能模板支持变量占位符，在执行时动态替换为实际值。例如 $FILE_PATH、$SELECTION 等内置变量，让同一个技能可以在不同上下文中复用。
+              - generic [ref=e325]:
+                - heading "用户创建与共享" [level=5] [ref=e327]
+                - paragraph [ref=e328]: 任何用户都可以创建自定义技能，放入 .claude/skills/ 目录即可生效。技能可以通过 Git 仓库分享，团队可以维护共享的技能库以确保一致性。
+              - generic [ref=e329]:
+                - heading "斜杠命令触发" [level=5] [ref=e331]
+                - paragraph [ref=e332]: 技能通过斜杠命令触发，Claude 会自动匹配技能名称并执行对应的提示词。用户也可以通过 Tab 键自动补全可用的技能列表。
+          - generic [ref=e334]:
+            - generic [ref=e336]:
+              - heading "MCP 协议" [level=2] [ref=e337]
+              - paragraph [ref=e338]: Model Context Protocol —— 连接 AI 与外部世界的标准化协议
+            - generic [ref=e339]:
+              - paragraph [ref=e340]:
+                - strong [ref=e341]: MCP（Model Context Protocol）
+                - text: 是 Claude Code 连接外部工具和数据源的标准化协议。 它定义了一套统一的通信规范，让 Claude 能够通过一致的接口访问数据库、API、文件系统等外部资源， 而无需为每种外部服务编写专门的集成代码。
+              - paragraph [ref=e342]: MCP 的核心思想是将 AI 与外部世界的连接标准化。任何实现了 MCP 协议的服务端都可以被 Claude Code 直接发现和使用，就像 USB 协议让任何设备都能连接到计算机一样。 这极大地降低了扩展 Claude Code 能力边界的技术门槛。
+            - generic [ref=e343]:
+              - heading "MCP 通信架构" [level=4] [ref=e345]
+              - img [ref=e346]:
+                - generic [ref=e350]: stdio/SSE
+                - generic [ref=e359]: Claude Code
+                - generic [ref=e364]: MCP Client
+                - generic [ref=e369]: MCP Server
+                - generic [ref=e374]: External APIs
+                - generic [ref=e379]: Databases
+                - generic [ref=e384]: File Systems
+            - generic [ref=e385]:
+              - heading "MCP 配置与服务器管理" [level=4] [ref=e386]
+              - paragraph [ref=e387]: MCP 服务器通过配置文件声明式注册。每个服务器指定启动命令、参数和环境变量， Claude Code 会在需要时动态加载并管理这些服务器的生命周期。 新增的 MCP 服务器需要经过用户审批才能启用，确保安全性。
+            - generic [ref=e388]:
+              - heading "MCP 服务器配置" [level=4] [ref=e390]
+              - img [ref=e391]:
+                - generic [ref=e399]: command
+                - generic [ref=e401]: command
+                - generic [ref=e403]: command
+                - generic [ref=e408]: settings.json
+                - generic [ref=e413]: mcpServers
+                - generic [ref=e418]: filesystem
+                - generic [ref=e423]: github
+                - generic [ref=e428]: postgres
+                - generic [ref=e433]: npx server-filesystem
+                - generic [ref=e438]: npx server-github
+                - generic [ref=e443]: npx server-postgres
+                - generic [ref=e448]: env / args
+            - generic [ref=e449]:
+              - generic [ref=e450]:
+                - heading "动态加载" [level=5] [ref=e452]
+                - paragraph [ref=e453]: MCP 服务器按需启动，不需要时自动关闭。Claude Code 负责管理服务器的完整生命周期，包括启动、健康检查、重连和关闭。
+              - generic [ref=e454]:
+                - heading "审批流程" [level=5] [ref=e456]
+                - paragraph [ref=e457]: 新增的 MCP 服务器需要用户明确批准才能启用。审批信息包括服务器的来源、请求的权限和提供的工具列表，确保用户知情并同意。
+              - generic [ref=e458]:
+                - heading "OAuth 与 API Key" [level=5] [ref=e460]
+                - paragraph [ref=e461]: MCP 支持 OAuth 2.0 和 API Key 两种认证方式。敏感凭据通过环境变量注入，不会出现在对话历史中，保障安全性。
+              - generic [ref=e462]:
+                - heading "官方注册表" [level=5] [ref=e464]
+                - paragraph [ref=e465]: Anthropic 维护了官方 MCP 服务器注册表，用户可以一键发现和安装经过验证的 MCP 服务器，无需手动编写配置。
+            - generic [ref=e466]:
+              - heading "MCP Resources 与 MCP Tools" [level=4] [ref=e467]
+              - paragraph [ref=e468]:
+                - text: MCP 定义了两种核心能力：
+                - strong [ref=e469]: Resources
+                - text: （资源） 和
+                - strong [ref=e470]: Tools
+                - text: （工具）。 Resources 让 Claude 能够读取外部数据源的内容（如数据库记录、API 响应）， Tools 则让 Claude 能够调用外部函数执行操作（如写入数据库、发送通知）。
+            - generic [ref=e471]:
+              - generic [ref=e472]:
+                - heading "MCP Resources" [level=5] [ref=e474]
+                - paragraph [ref=e475]: 只读的数据访问接口。Claude 可以通过 Resources 读取外部系统的数据，如数据库表结构、API 文档、文件内容等。Resources 的内容会作为上下文注入到对话中。
+                - generic [ref=e476]: "示例: 数据库 Schema、API 响应、配置文件、日志文件"
+              - generic [ref=e477]:
+                - heading "MCP Tools" [level=5] [ref=e479]
+                - paragraph [ref=e480]: 可执行的函数调用接口。Claude 可以通过 Tools 调用外部系统的功能，如创建 GitHub Issue、发送 Slack 消息、执行 SQL 查询等。每个 Tool 都有明确的输入 Schema。
+                - generic [ref=e481]: "示例: 创建 Issue、发送消息、执行查询、触发部署"
+          - generic [ref=e483]:
+            - generic [ref=e485]:
+              - heading "钩子系统" [level=2] [ref=e486]
+              - paragraph [ref=e487]: 工具调用的前置/后置拦截器
+            - paragraph [ref=e489]: 钩子（Hooks）是 Claude Code 的拦截器机制，允许在工具调用前后执行自定义逻辑。 每个钩子可以匹配特定的工具，在工具执行前进行安全检查或参数验证（PreToolUse）， 在工具执行后进行格式化或触发后续操作（PostToolUse）。 钩子通过外部命令实现，与 Claude Code 的核心逻辑完全解耦。
+            - generic [ref=e490]:
+              - heading "Hook 类型与匹配规则" [level=4] [ref=e492]
+              - img [ref=e493]:
+                - generic [ref=e505]: command
+                - generic [ref=e507]: command
+                - generic [ref=e513]: command
+                - generic [ref=e515]: command
+                - generic [ref=e520]: hooks config
+                - generic [ref=e525]: PreToolUse
+                - generic [ref=e530]: PostToolUse
+                - generic [ref=e535]: "matcher: BashTool"
+                - generic [ref=e540]: "matcher: FileWrite"
+                - generic [ref=e545]: security-check
+                - generic [ref=e550]: validate-path
+                - generic [ref=e555]: "matcher: FileWrite"
+                - generic [ref=e560]: "matcher: FileEdit"
+                - generic [ref=e565]: eslint --fix
+                - generic [ref=e570]: prettier --write
+            - generic [ref=e571]:
+              - heading "钩子执行流程" [level=4] [ref=e573]
+              - img [ref=e574]:
+                - generic [ref=e591]: 工具调用触发
+                - generic [ref=e596]: 1. 匹配钩子
+                - generic [ref=e601]: 按事件类型 + 工具名
+                - generic [ref=e606]: 2. 执行钩子命令
+                - generic [ref=e611]: 子进程 + 环境变量注入
+                - generic [ref=e616]: 3. 处理结果
+                - generic [ref=e621]: exitCode != 0 → deny
+                - generic [ref=e626]: exitCode == 0 → allow
+                - generic [ref=e631]: 4. 超时保护 (30s)
+          - generic [ref=e633]:
+            - generic [ref=e635]:
+              - heading "创建自定义扩展" [level=2] [ref=e636]
+              - paragraph [ref=e637]: 从零开始构建你的第一个插件
+            - paragraph [ref=e639]: 创建一个 Claude Code 插件只需要实现 Plugin 接口并导出。 以下流程展示了从定义到注册的完整过程，涵盖元数据声明、生命周期钩子、 工具注册和命令注册四个核心环节。
+            - generic [ref=e640]:
+              - heading "插件创建流程" [level=4] [ref=e642]
+              - img [ref=e643]:
+                - generic [ref=e658]: 创建项目结构
+                - generic [ref=e663]: .claude/plugins/my-plugin/
+                - generic [ref=e668]: 实现 Plugin 接口
+                - generic [ref=e673]: name + version
+                - generic [ref=e678]: onLoad / onInit / onCleanup
+                - generic [ref=e683]: 注册工具与命令
+                - generic [ref=e688]: Tool + Zod Schema
+                - generic [ref=e693]: Command + handler
+                - generic [ref=e698]: 配置与测试
+                - generic [ref=e703]: settings.json 注册
+                - generic [ref=e708]: 验证插件功能
+            - generic [ref=e709]:
+              - heading "开发步骤" [level=4] [ref=e710]
+              - generic [ref=e711]:
+                - generic [ref=e712]:
+                  - text: "1"
+                  - generic [ref=e713]:
+                    - text: 创建项目结构
+                    - paragraph [ref=e714]: 在 .claude/plugins/ 目录下创建插件文件夹，包含 index.ts 入口文件和 package.json 配置
+                - generic [ref=e715]:
+                  - text: "2"
+                  - generic [ref=e716]:
+                    - text: 实现 Plugin 接口
+                    - paragraph [ref=e717]: 导出一个满足 Plugin 接口的对象，声明插件名称、版本，并实现需要的生命周期方法和扩展点
+                - generic [ref=e718]:
+                  - text: "3"
+                  - generic [ref=e719]:
+                    - text: 注册工具与命令
+                    - paragraph [ref=e720]: 在 tools 和 commands 数组中定义插件提供的工具和命令，每个工具需要提供 Zod 输入 Schema 和执行函数
+                - generic [ref=e721]:
+                  - text: "4"
+                  - generic [ref=e722]:
+                    - text: 配置与测试
+                    - paragraph [ref=e723]: 在 settings.json 中注册插件路径，重启 Claude Code 加载插件，通过调用工具验证功能是否正常
+            - generic [ref=e724]:
+              - heading "插件配置结构" [level=4] [ref=e726]
+              - img [ref=e727]:
+                - generic [ref=e742]: settings.json
+                - generic [ref=e747]: plugins
+                - generic [ref=e752]: my-plugin
+                - generic [ref=e757]: "path: ./plugins/..."
+                - generic [ref=e762]: "enabled: true"
+                - generic [ref=e767]: permissions
+                - generic [ref=e772]: "allowTools: [my_tool]"
+                - generic [ref=e777]: "allowCommands: [my-cmd]"
+        - generic [ref=e779]:
+          - heading "相关模块" [level=3] [ref=e780]
+          - generic [ref=e781]:
+            - link "🔧 工具系统 40+ 工具实现" [ref=e783] [cursor=pointer]:
+              - /url: /tools
+              - generic [ref=e784]:
+                - generic [ref=e785]: 🔧
+                - heading "工具系统" [level=4] [ref=e786]
+                - paragraph [ref=e787]: 40+ 工具实现
+            - link "⌨️ 命令系统 命令行界面" [ref=e789] [cursor=pointer]:
+              - /url: /commands
+              - generic [ref=e790]:
+                - generic [ref=e791]: ⌨️
+                - heading "命令系统" [level=4] [ref=e792]
+                - paragraph [ref=e793]: 命令行界面
+            - link "🏗️ 系统架构 整体架构" [ref=e795] [cursor=pointer]:
+              - /url: /architecture
+              - generic [ref=e796]:
+                - generic [ref=e797]: 🏗️
+                - heading "系统架构" [level=4] [ref=e798]
+                - paragraph [ref=e799]: 整体架构
+      - button "Back to top" [ref=e800]:
+        - img [ref=e801]
+  - contentinfo [ref=e803]:
+    - generic [ref=e804]:
+      - paragraph [ref=e805]: CCStudy.top - Claude Code 源码解读
+      - generic [ref=e806]:
+        - link "GitHub" [ref=e807] [cursor=pointer]:
+          - /url: https://github.com/newtontech/ccstudy-top
+        - text: © 2026

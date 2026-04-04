@@ -1,0 +1,494 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "CCStudy" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e5]:
+        - link "首页" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - link "架构" [ref=e7] [cursor=pointer]:
+          - /url: /architecture
+        - link "工具" [ref=e8] [cursor=pointer]:
+          - /url: /tools
+        - link "命令" [ref=e9] [cursor=pointer]:
+          - /url: /commands
+        - link "UI框架" [ref=e10] [cursor=pointer]:
+          - /url: /ink
+        - link "插件" [ref=e11] [cursor=pointer]:
+          - /url: /plugins
+      - generic [ref=e12]:
+        - button "Toggle theme" [ref=e13]:
+          - img [ref=e14]
+        - button "Toggle menu" [ref=e16]:
+          - img [ref=e17]
+  - main [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - navigation [ref=e22]:
+          - list [ref=e23]:
+            - listitem [ref=e24]:
+              - link "首页" [ref=e25] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e26]: /
+            - listitem [ref=e27]: 核心架构
+            - listitem [ref=e28]: /
+            - listitem [ref=e29]: 工具系统
+        - generic [ref=e30]:
+          - text: 🔧
+          - generic [ref=e31]:
+            - heading "工具系统" [level=1] [ref=e32]
+            - paragraph [ref=e33]: Claude Code 40+ 内置工具的深度剖析 —— 接口设计、注册机制、执行流程与并发控制
+          - generic [ref=e34]: 核心架构
+      - generic [ref=e35]:
+        - generic [ref=e37]:
+          - generic [ref=e39]:
+            - generic [ref=e41]:
+              - heading "工具系统概述" [level=2] [ref=e42]
+              - paragraph [ref=e43]: AI 与真实环境交互的桥梁
+            - generic [ref=e44]:
+              - paragraph [ref=e45]:
+                - text: Claude Code 的核心是工具系统。它提供了
+                - strong [ref=e46]: 40+ 内置工具
+                - text: ，让 AI 能够与真实环境进行交互——读写文件、执行命令、搜索代码、访问网络、管理任务。 每一个工具都实现了统一的接口契约，确保无论是内置工具还是外部 MCP 工具，都能以相同的方式被注册、发现和调用。
+              - paragraph [ref=e47]: 工具系统是 Claude Code 与传统 AI 聊天机器人的本质区别。通过工具系统， Claude 不再只能生成文本建议，而是能够直接操作文件系统、运行命令、搜索网络， 真正成为开发者的编程助手。
+            - generic [ref=e48]:
+              - heading "工具分类架构" [level=4] [ref=e50]
+              - img [ref=e51]:
+                - generic [ref=e74]: Tool Registry
+                - generic [ref=e79]: BashTool
+                - generic [ref=e84]: FileReadTool
+                - generic [ref=e89]: FileEditTool
+                - generic [ref=e94]: FileWriteTool
+                - generic [ref=e99]: GlobTool
+                - generic [ref=e104]: GrepTool
+                - generic [ref=e109]: WebSearchTool
+                - generic [ref=e114]: WebFetchTool
+          - generic [ref=e116]:
+            - generic [ref=e118]:
+              - heading "Tool 接口定义" [level=2] [ref=e119]
+              - paragraph [ref=e120]: 所有工具的统一契约
+            - paragraph [ref=e122]:
+              - text: 每一个工具都遵循统一的
+              - code [ref=e123]: Tool<Input, Output, P>
+              - text: 类型接口。这个泛型接口定义了工具的名称、描述、输入校验、核心执行函数、 权限检查和并发安全性声明，是整个工具系统的基石。
+            - generic [ref=e124]:
+              - heading "Tool<Input, Output, P> 接口结构" [level=4] [ref=e126]
+              - img [ref=e127]:
+                - generic [ref=e132]: 标识
+                - generic [ref=e135]: 描述
+                - generic [ref=e138]: 校验
+                - generic [ref=e140]: 执行
+                - generic [ref=e143]: 只读
+                - generic [ref=e146]: 并发
+                - generic [ref=e149]: 权限
+                - generic [ref=e152]: 开关
+                - generic [ref=e157]: Tool<I, O, P>
+                - generic [ref=e162]: "name: string"
+                - generic [ref=e167]: description()
+                - generic [ref=e172]: "inputSchema: Zod"
+                - generic [ref=e177]: call(args, ctx)
+                - generic [ref=e182]: isReadOnly()
+                - generic [ref=e187]: isConcurrencySafe()
+                - generic [ref=e192]: checkPermissions()
+                - generic [ref=e197]: isEnabled()
+            - generic [ref=e198]:
+              - heading "字段详解" [level=4] [ref=e199]
+              - generic [ref=e200]:
+                - generic [ref=e201]:
+                  - code [ref=e202]: name
+                  - paragraph [ref=e203]: 工具的全局唯一标识符，Claude 通过名称匹配调用对应的工具
+                - generic [ref=e204]:
+                  - code [ref=e205]: description
+                  - paragraph [ref=e206]: 动态描述函数，根据输入参数生成上下文相关的描述，帮助 Claude 理解工具能力
+                - generic [ref=e207]:
+                  - code [ref=e208]: inputSchema
+                  - paragraph [ref=e209]: 基于 Zod 的输入 Schema，定义参数类型和约束，在执行前自动校验输入合法性
+                - generic [ref=e210]:
+                  - code [ref=e211]: call
+                  - paragraph [ref=e212]: 核心执行函数，接收校验后的参数和运行时上下文，返回工具执行结果
+                - generic [ref=e213]:
+                  - code [ref=e214]: isReadOnly
+                  - paragraph [ref=e215]: 声明工具是否为只读操作。只读工具可并发执行，写操作工具必须串行执行
+                - generic [ref=e216]:
+                  - code [ref=e217]: isConcurrencySafe
+                  - paragraph [ref=e218]: 声明工具是否并发安全。影响工具在 agentic 循环中的调度策略
+                - generic [ref=e219]:
+                  - code [ref=e220]: checkPermissions
+                  - paragraph [ref=e221]: 权限检查函数，在执行前验证用户是否有权调用此工具并传入给定参数
+                - generic [ref=e222]:
+                  - code [ref=e223]: isEnabled
+                  - paragraph [ref=e224]: 检查当前环境是否启用此工具。受 feature flag、配置和运行模式影响
+          - generic [ref=e226]:
+            - generic [ref=e228]:
+              - heading "工具注册机制" [level=2] [ref=e229]
+              - paragraph [ref=e230]: 从声明到可用的完整链路
+            - paragraph [ref=e232]:
+              - text: 工具注册分为两个阶段：
+              - code [ref=e233]: getAllBaseTools()
+              - text: 负责组装所有内置工具的基础列表，
+              - code [ref=e234]: getTools()
+              - text: 则根据当前权限上下文过滤并返回最终可用的工具集合。 这种分层设计让权限控制与工具定义解耦，保持代码的清晰和可维护性。
+            - generic [ref=e235]:
+              - heading "两阶段注册管线" [level=4] [ref=e237]
+              - img [ref=e238]:
+                - generic [ref=e259]: 过滤
+                - generic [ref=e262]: 过滤
+                - generic [ref=e267]: AgentTool
+                - generic [ref=e272]: BashTool
+                - generic [ref=e277]: File*Tools
+                - generic [ref=e282]: SearchTools
+                - generic [ref=e287]: TaskTools
+                - generic [ref=e292]: CronTools
+                - generic [ref=e297]: MCPTool
+                - generic [ref=e302]: ...更多
+                - generic [ref=e307]: getAllBaseTools()
+                - generic [ref=e312]: isEnabled?
+                - generic [ref=e317]: Permission?
+                - generic [ref=e322]: getTools(ctx)
+            - generic [ref=e323]:
+              - paragraph [ref=e324]: 这种注册机制的关键设计理念是：
+              - generic [ref=e325]:
+                - generic [ref=e326]:
+                  - text: "1"
+                  - generic [ref=e327]:
+                    - text: 统一入口
+                    - paragraph [ref=e328]: 所有工具通过同一个函数注册，MCP 外部工具在注册后享有与内置工具完全相同的调用接口
+                - generic [ref=e329]:
+                  - text: "2"
+                  - generic [ref=e330]:
+                    - text: 动态过滤
+                    - paragraph [ref=e331]: 根据运行环境、用户配置和权限模式动态决定哪些工具可用，确保不同场景下只暴露必要的工具
+                - generic [ref=e332]:
+                  - text: "3"
+                  - generic [ref=e333]:
+                    - text: 延迟绑定
+                    - paragraph [ref=e334]: 工具的具体实现在调用时才绑定执行上下文，允许同一个工具定义在不同会话中复用
+          - generic [ref=e336]:
+            - generic [ref=e338]:
+              - heading "核心工具详解" [level=2] [ref=e339]
+              - paragraph [ref=e340]: 按类别一览所有内置工具
+            - paragraph [ref=e342]: Claude Code 的 40+ 内置工具覆盖了文件操作、系统交互、搜索、智能体管理、任务调度等多个领域。 以下按类别展示每个工具的核心信息和并发特性。
+            - generic [ref=e343]:
+              - generic [ref=e344]:
+                - generic [ref=e345]:
+                  - heading "文件操作" [level=4] [ref=e346]
+                  - generic [ref=e347]: 5 tools
+                - generic [ref=e348]:
+                  - generic [ref=e349]:
+                    - generic [ref=e350]:
+                      - code [ref=e351]: FileReadTool
+                      - generic [ref=e352]: READCONCURRENT
+                    - paragraph [ref=e353]: 读取文件内容，支持行号范围和 PDF 页码
+                  - generic [ref=e354]:
+                    - generic [ref=e355]:
+                      - code [ref=e356]: FileWriteTool
+                      - generic [ref=e357]: WRITESERIAL
+                    - paragraph [ref=e358]: 创建或完全覆盖文件
+                  - generic [ref=e359]:
+                    - generic [ref=e360]:
+                      - code [ref=e361]: FileEditTool
+                      - generic [ref=e362]: WRITESERIAL
+                    - paragraph [ref=e363]: 精确字符串替换编辑文件
+                  - generic [ref=e364]:
+                    - generic [ref=e365]:
+                      - code [ref=e366]: GlobTool
+                      - generic [ref=e367]: READCONCURRENT
+                    - paragraph [ref=e368]: 基于 glob 模式搜索文件路径
+                  - generic [ref=e369]:
+                    - generic [ref=e370]:
+                      - code [ref=e371]: NotebookEditTool
+                      - generic [ref=e372]: WRITESERIAL
+                    - paragraph [ref=e373]: 编辑 Jupyter Notebook 单元格
+              - generic [ref=e374]:
+                - generic [ref=e375]:
+                  - heading "系统交互" [level=4] [ref=e376]
+                  - generic [ref=e377]: 2 tools
+                - generic [ref=e378]:
+                  - generic [ref=e379]:
+                    - generic [ref=e380]:
+                      - code [ref=e381]: BashTool
+                      - generic [ref=e382]: WRITESERIAL
+                    - paragraph [ref=e383]: 执行 shell 命令并捕获输出
+                  - generic [ref=e384]:
+                    - generic [ref=e385]:
+                      - code [ref=e386]: LSPTool
+                      - generic [ref=e387]: READCONCURRENT
+                    - paragraph [ref=e388]: 与语言服务协议交互，获取类型信息
+              - generic [ref=e389]:
+                - generic [ref=e390]:
+                  - heading "搜索" [level=4] [ref=e391]
+                  - generic [ref=e392]: 3 tools
+                - generic [ref=e393]:
+                  - generic [ref=e394]:
+                    - generic [ref=e395]:
+                      - code [ref=e396]: GrepTool
+                      - generic [ref=e397]: READCONCURRENT
+                    - paragraph [ref=e398]: 基于正则表达式搜索文件内容
+                  - generic [ref=e399]:
+                    - generic [ref=e400]:
+                      - code [ref=e401]: WebSearchTool
+                      - generic [ref=e402]: READCONCURRENT
+                    - paragraph [ref=e403]: 搜索互联网获取最新信息
+                  - generic [ref=e404]:
+                    - generic [ref=e405]:
+                      - code [ref=e406]: WebFetchTool
+                      - generic [ref=e407]: READCONCURRENT
+                    - paragraph [ref=e408]: 抓取并解析网页内容
+              - generic [ref=e409]:
+                - generic [ref=e410]:
+                  - heading "智能体管理" [level=4] [ref=e411]
+                  - generic [ref=e412]: 2 tools
+                - generic [ref=e413]:
+                  - generic [ref=e414]:
+                    - generic [ref=e415]:
+                      - code [ref=e416]: AgentTool
+                      - generic [ref=e417]: WRITESERIAL
+                    - paragraph [ref=e418]: 生成子代理执行子任务
+                  - generic [ref=e419]:
+                    - generic [ref=e420]:
+                      - code [ref=e421]: SendMessageTool
+                      - generic [ref=e422]: WRITESERIAL
+                    - paragraph [ref=e423]: 代理间消息传递与通信
+              - generic [ref=e424]:
+                - generic [ref=e425]:
+                  - heading "任务管理" [level=4] [ref=e426]
+                  - generic [ref=e427]: 5 tools
+                - generic [ref=e428]:
+                  - generic [ref=e429]:
+                    - generic [ref=e430]:
+                      - code [ref=e431]: TaskCreateTool
+                      - generic [ref=e432]: WRITESERIAL
+                    - paragraph [ref=e433]: 创建新任务到任务列表
+                  - generic [ref=e434]:
+                    - generic [ref=e435]:
+                      - code [ref=e436]: TaskUpdateTool
+                      - generic [ref=e437]: WRITESERIAL
+                    - paragraph [ref=e438]: 更新任务状态和属性
+                  - generic [ref=e439]:
+                    - generic [ref=e440]:
+                      - code [ref=e441]: TaskListTool
+                      - generic [ref=e442]: READCONCURRENT
+                    - paragraph [ref=e443]: 列出所有任务概览
+                  - generic [ref=e444]:
+                    - generic [ref=e445]:
+                      - code [ref=e446]: TaskGetTool
+                      - generic [ref=e447]: READCONCURRENT
+                    - paragraph [ref=e448]: 获取单个任务完整详情
+                  - generic [ref=e449]:
+                    - generic [ref=e450]:
+                      - code [ref=e451]: TaskStopTool
+                      - generic [ref=e452]: WRITESERIAL
+                    - paragraph [ref=e453]: 停止正在执行的任务
+              - generic [ref=e454]:
+                - generic [ref=e455]:
+                  - heading "团队协调" [level=4] [ref=e456]
+                  - generic [ref=e457]: 2 tools
+                - generic [ref=e458]:
+                  - generic [ref=e459]:
+                    - generic [ref=e460]:
+                      - code [ref=e461]: TeamCreateTool
+                      - generic [ref=e462]: WRITESERIAL
+                    - paragraph [ref=e463]: 创建团队并初始化任务列表
+                  - generic [ref=e464]:
+                    - generic [ref=e465]:
+                      - code [ref=e466]: TeamDeleteTool
+                      - generic [ref=e467]: WRITESERIAL
+                    - paragraph [ref=e468]: 删除团队并清理资源
+              - generic [ref=e469]:
+                - generic [ref=e470]:
+                  - heading "计划模式" [level=4] [ref=e471]
+                  - generic [ref=e472]: 2 tools
+                - generic [ref=e473]:
+                  - generic [ref=e474]:
+                    - generic [ref=e475]:
+                      - code [ref=e476]: EnterPlanModeTool
+                      - generic [ref=e477]: READCONCURRENT
+                    - paragraph [ref=e478]: 进入计划模式，仅做分析不修改文件
+                  - generic [ref=e479]:
+                    - generic [ref=e480]:
+                      - code [ref=e481]: ExitPlanModeTool
+                      - generic [ref=e482]: WRITESERIAL
+                    - paragraph [ref=e483]: 退出计划模式，开始执行
+              - generic [ref=e484]:
+                - generic [ref=e485]:
+                  - heading "调度" [level=4] [ref=e486]
+                  - generic [ref=e487]: 3 tools
+                - generic [ref=e488]:
+                  - generic [ref=e489]:
+                    - generic [ref=e490]:
+                      - code [ref=e491]: CronCreateTool
+                      - generic [ref=e492]: WRITESERIAL
+                    - paragraph [ref=e493]: 创建定时任务（一次性或循环）
+                  - generic [ref=e494]:
+                    - generic [ref=e495]:
+                      - code [ref=e496]: CronDeleteTool
+                      - generic [ref=e497]: WRITESERIAL
+                    - paragraph [ref=e498]: 取消已创建的定时任务
+                  - generic [ref=e499]:
+                    - generic [ref=e500]:
+                      - code [ref=e501]: CronListTool
+                      - generic [ref=e502]: READCONCURRENT
+                    - paragraph [ref=e503]: 列出所有已创建的定时任务
+              - generic [ref=e504]:
+                - generic [ref=e505]:
+                  - heading "配置" [level=4] [ref=e506]
+                  - generic [ref=e507]: 1 tools
+                - generic [ref=e509]:
+                  - generic [ref=e510]:
+                    - code [ref=e511]: ConfigTool
+                    - generic [ref=e512]: WRITESERIAL
+                  - paragraph [ref=e513]: 读取和修改应用配置项
+          - generic [ref=e515]:
+            - generic [ref=e517]:
+              - heading "工具执行流程" [level=2] [ref=e518]
+              - paragraph [ref=e519]: 从 Claude 决策到工具执行的完整管道
+            - paragraph [ref=e521]: 当 Claude 在 agentic 循环中决定调用一个工具时，请求会经历查找、验证、权限检查、 执行四个核心阶段。每个阶段都有明确的职责和错误处理策略，确保工具调用安全可靠。
+            - generic [ref=e522]:
+              - heading "工具调用执行流程" [level=4] [ref=e524]
+              - img [ref=e525]:
+                - generic [ref=e536]: 校验失败
+                - generic [ref=e539]: 拒绝
+                - generic [ref=e544]: 1. Claude API
+                - generic [ref=e549]: toolCalls[].name
+                - generic [ref=e554]: 2. 查找工具
+                - generic [ref=e559]: Zod Schema 校验
+                - generic [ref=e564]: 3. 权限检查
+                - generic [ref=e569]: deny/allow/consent
+                - generic [ref=e574]: 4. 执行工具
+                - generic [ref=e579]: tool_result
+                - generic [ref=e584]: 错误处理
+            - generic [ref=e585]:
+              - generic [ref=e586]:
+                - 'heading "Step 1: Claude API 响应" [level=5] [ref=e588]'
+                - paragraph [ref=e589]: Claude API 响应中包含工具调用请求，指定工具名称和输入参数。Claude 根据对话上下文自主决定是否需要调用工具以及调用哪个工具。
+              - generic [ref=e590]:
+                - 'heading "Step 2: 查找与校验" [level=5] [ref=e592]'
+                - paragraph [ref=e593]: 从工具注册表中查找目标工具。找到后使用 Zod Schema 验证输入参数的合法性，包括类型检查、必填字段校验和值约束验证。
+              - generic [ref=e594]:
+                - 'heading "Step 3: 权限检查" [level=5] [ref=e596]'
+                - paragraph [ref=e597]: 检查工具权限：先检查 deny 规则（黑名单），再检查 allow 规则（白名单），最后根据权限模式决定是否弹出用户授权对话框。
+              - generic [ref=e598]:
+                - 'heading "Step 4: 执行与反馈" [level=5] [ref=e600]'
+                - paragraph [ref=e601]: 工具执行核心逻辑并返回结果。只读工具可并发执行以提升效率，写操作串行执行以保证数据一致性。结果反馈给 Claude 继续推理。
+          - generic [ref=e603]:
+            - generic [ref=e605]:
+              - heading "并发控制" [level=2] [ref=e606]
+              - paragraph [ref=e607]: 只读并发、写入串行的智能调度
+            - generic [ref=e608]:
+              - paragraph [ref=e609]:
+                - text: Claude Code 的工具调度器根据每个工具声明的
+                - code [ref=e610]: isConcurrencySafe
+                - text: 属性进行智能调度。只读工具（如文件读取、搜索）可以并发执行以最大化吞吐量， 写操作工具（如文件编辑、命令执行）则必须串行执行以保证数据一致性。
+              - paragraph [ref=e611]: 当 Claude 在一次响应中请求调用多个工具时，调度器会自动将它们分组： 所有并发安全的工具作为一批同时执行，非并发安全的工具按顺序逐一执行。
+            - generic [ref=e612]:
+              - heading "并发调度策略：分区并行/串行" [level=4] [ref=e614]
+              - img [ref=e615]:
+                - generic [ref=e620]: safe=true
+                - generic [ref=e627]: safe=false
+                - generic [ref=e629]: next
+                - generic [ref=e631]: next
+                - generic [ref=e638]: Tool Calls[]
+                - generic [ref=e643]: partitionToolCalls()
+                - generic [ref=e648]: 并发通道
+                - generic [ref=e653]: FileReadTool
+                - generic [ref=e658]: GlobTool
+                - generic [ref=e663]: GrepTool
+                - generic [ref=e668]: runConcurrently()
+                - generic [ref=e673]: 串行通道
+                - generic [ref=e678]: FileWriteTool
+                - generic [ref=e683]: FileEditTool
+                - generic [ref=e688]: BashTool
+                - generic [ref=e693]: runSerially()
+            - generic [ref=e694]:
+              - generic [ref=e695]:
+                - generic [ref=e696]:
+                  - heading "并发执行" [level=5] [ref=e697]
+                  - text: READ-ONLY 工具
+                - paragraph [ref=e698]: FileReadTool, GlobTool, GrepTool, WebSearchTool, WebFetchTool, TaskListTool
+                - paragraph [ref=e699]: 多个只读工具调用可以同时发起，充分利用 I/O 等待时间。例如 Claude 可以同时读取多个文件、搜索多个模式，大幅减少整体响应时间。
+              - generic [ref=e700]:
+                - generic [ref=e701]:
+                  - heading "串行执行" [level=5] [ref=e702]
+                  - text: WRITE 工具
+                - paragraph [ref=e703]: FileWriteTool, FileEditTool, BashTool, AgentTool, TaskCreateTool
+                - paragraph [ref=e704]: 写操作工具必须按顺序逐一执行，避免竞态条件和数据冲突。每个写操作完成后，后续操作可以看到前序操作的结果。
+          - generic [ref=e706]:
+            - generic [ref=e708]:
+              - heading "权限系统" [level=2] [ref=e709]
+              - paragraph [ref=e710]: 四层防护的安全模型
+            - paragraph [ref=e712]: 工具系统的安全性由四层权限检查机制保障。每一层都有不同的职责和粒度， 从全局的功能开关到细粒度的用户确认，构建了纵深防御的安全体系。 这确保了在各种使用场景下——从个人开发到企业 CI/CD——都能提供适当的安全级别。
+            - generic [ref=e713]:
+              - heading "四层权限检查纵深防御" [level=4] [ref=e715]
+              - img [ref=e716]:
+                - generic [ref=e720]: enabled
+                - generic [ref=e725]: no rule
+                - generic [ref=e728]: approved
+                - generic [ref=e731]: rejected
+                - generic [ref=e734]: matched
+                - generic [ref=e737]: disabled
+                - generic [ref=e742]: 工具调用请求
+                - generic [ref=e747]: "L1: Feature Flags"
+                - generic [ref=e752]: "L2: Permission Modes"
+                - generic [ref=e757]: "L3: Tool Rules"
+                - generic [ref=e762]: deny 规则
+                - generic [ref=e767]: allow 规则
+                - generic [ref=e772]: "L4: User Consent"
+                - generic [ref=e777]: ALLOW
+                - generic [ref=e782]: DENY
+            - generic [ref=e783]:
+              - generic [ref=e784]:
+                - text: "1"
+                - generic [ref=e785]:
+                  - generic [ref=e786]: Feature Flags功能开关层
+                  - paragraph [ref=e787]: 通过 feature flag 系统控制工具的全局启用状态。新工具首先通过 flag 控制，经过充分测试后才默认启用。适用于灰度发布和 A/B 测试场景。
+              - generic [ref=e788]:
+                - text: "2"
+                - generic [ref=e789]:
+                  - generic [ref=e790]: Permission Modes权限模式层
+                  - paragraph [ref=e791]: 三种权限模式满足不同安全需求：auto 模式自动批准安全操作；manual 模式对所有敏感操作弹出确认；bypass 模式用于 CI/CD 等自动化场景。
+              - generic [ref=e792]:
+                - text: "3"
+                - generic [ref=e793]:
+                  - generic [ref=e794]: Tool-Specific Rules工具级规则层
+                  - paragraph [ref=e795]: 基于 deny/allow 规则列表进行细粒度控制。例如可以配置允许读取特定目录的文件，或拒绝执行包含危险关键词的命令。规则支持通配符匹配。
+              - generic [ref=e796]:
+                - text: "4"
+                - generic [ref=e797]:
+                  - generic [ref=e798]: User Consent用户确认层
+                  - paragraph [ref=e799]: 在 manual 模式下，敏感操作弹出交互式确认对话框。用户可一次性批准，也可选择"本次会话始终允许"。在安全性和便利性之间取得平衡。
+        - generic [ref=e801]:
+          - heading "相关模块" [level=3] [ref=e802]
+          - generic [ref=e803]:
+            - link "🏗️ 系统架构 整体架构概览" [ref=e805] [cursor=pointer]:
+              - /url: /architecture
+              - generic [ref=e806]:
+                - generic [ref=e807]: 🏗️
+                - heading "系统架构" [level=4] [ref=e808]
+                - paragraph [ref=e809]: 整体架构概览
+            - link "⌨️ 命令系统 CLI 命令详解" [ref=e811] [cursor=pointer]:
+              - /url: /commands
+              - generic [ref=e812]:
+                - generic [ref=e813]: ⌨️
+                - heading "命令系统" [level=4] [ref=e814]
+                - paragraph [ref=e815]: CLI 命令详解
+            - link "🔌 插件系统 MCP 与扩展" [ref=e817] [cursor=pointer]:
+              - /url: /plugins
+              - generic [ref=e818]:
+                - generic [ref=e819]: 🔌
+                - heading "插件系统" [level=4] [ref=e820]
+                - paragraph [ref=e821]: MCP 与扩展
+            - link "🕸️ 多智能体 Agent 工具详解" [ref=e823] [cursor=pointer]:
+              - /url: /coordinator
+              - generic [ref=e824]:
+                - generic [ref=e825]: 🕸️
+                - heading "多智能体" [level=4] [ref=e826]
+                - paragraph [ref=e827]: Agent 工具详解
+      - button "Back to top" [ref=e828]:
+        - img [ref=e829]
+  - contentinfo [ref=e831]:
+    - generic [ref=e832]:
+      - paragraph [ref=e833]: CCStudy.top - Claude Code 源码解读
+      - generic [ref=e834]:
+        - link "GitHub" [ref=e835] [cursor=pointer]:
+          - /url: https://github.com/newtontech/ccstudy-top
+        - text: © 2026
