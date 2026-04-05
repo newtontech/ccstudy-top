@@ -31,7 +31,7 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-[#0a0a1a]/80 border-b border-[var(--card-border)] dark:border-b dark:border-purple-900/30 dark:shadow-[0_1px_12px_rgba(124,58,237,0.15)]">
+    <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-[#0a0a1a]/90 border-b border-transparent dark:border-transparent dark:shadow-[0_1px_12px_rgba(124,58,237,0.15)]">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link
