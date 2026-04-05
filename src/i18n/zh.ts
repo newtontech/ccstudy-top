@@ -36,6 +36,29 @@ const zh = {
       title: "探索模块",
       subtitle: "点击卡片深入了解每个模块",
     },
+    learningPath: {
+      title: "学习路线",
+      subtitle: "选择你的探索路径 — 从快速上手到深度架构",
+      paths: {
+        "quick-start": {
+          title: "快速上手",
+          description: "几分钟内掌握 Claude Code 的核心概念",
+        },
+        "deep-source": {
+          title: "深度源码",
+          description: "深入关键子系统的实现细节",
+        },
+        architecture: {
+          title: "架构设计",
+          description: "理解高层设计模式和系统边界",
+        },
+      },
+    },
+    glossary: {
+      title: "术语表",
+      subtitle: "Claude Code 架构中的关键术语和概念",
+      learnMore: "了解更多",
+    },
   },
 
   // Feature Grid - module cards
