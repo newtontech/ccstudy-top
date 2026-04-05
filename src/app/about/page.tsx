@@ -13,19 +13,19 @@ export default function AboutPage() {
       title: t.about.related.home.title,
       href: "/",
       description: t.about.related.home.description,
-      icon: "\uD83C\uDFE0",
+      icon: "🏠",
     },
     {
       title: t.about.related.architecture.title,
       href: "/architecture",
       description: t.about.related.architecture.description,
-      icon: "\uD83C\uDFD7\uFE0F",
+      icon: "🏗️",
     },
     {
       title: t.about.related.tools.title,
       href: "/tools",
       description: t.about.related.tools.description,
-      icon: "\uD83D\uDD27",
+      icon: "🔧",
     },
   ];
 
