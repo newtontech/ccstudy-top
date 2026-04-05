@@ -2,6 +2,7 @@ import { ModuleLayout } from "@/components/ModuleLayout";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
+import { CodeBlock } from "@/components/CodeBlock";
 
 export default function HooksPage() {
   const relatedModules = [
@@ -22,6 +23,30 @@ export default function HooksPage() {
       href: "/architecture",
       description: "整体架构",
       icon: "🏗️",
+    },
+    {
+      title: "状态系统",
+      href: "/state",
+      description: "全局状态管理",
+      icon: "📦",
+    },
+    {
+      title: "上下文系统",
+      href: "/context",
+      description: "上下文管理",
+      icon: "📋",
+    },
+    {
+      title: "记忆系统",
+      href: "/memory",
+      description: "会话记忆",
+      icon: "🧠",
+    },
+    {
+      title: "查询引擎",
+      href: "/query-engine",
+      description: "Prompt 构建",
+      icon: "🔍",
     },
   ];
 
@@ -55,7 +80,7 @@ export default function HooksPage() {
               <strong className="text-[var(--text-primary)]">业务逻辑 Hooks</strong> 处理核心业务，
               <strong className="text-[var(--text-primary)]">集成 Hooks</strong> 对接外部系统，
               <strong className="text-[var(--text-primary)]">性能 Hooks</strong> 保障运行效率。
-              每个类别都提供了清晰的抽象层，让上层组件只关注"做什么"而非"怎么做"。
+              每个类别都提供了清晰的抽象层，让上层组件只关注&ldquo;做什么&rdquo;而非&ldquo;怎么做&rdquo;。
             </p>
           </div>
 
@@ -676,6 +701,220 @@ export default function HooksPage() {
               ]}
               width={750}
               height={300}
+            />
+          </div>
+        </section>
+      </ScrollReveal>
+      {/* Section 7: Hooks 分类脑图 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="Hooks 分类脑图"
+            subtitle="claude-code-main/hooks/ 下 85 个文件的完整分类体系"
+          />
+          <ArchitectureDiagram
+            title="Hooks 完整分类"
+            nodes={[
+              // Root
+              { id: "root", label: "Hooks (85 files)", x: 310, y: 10, color: "var(--accent-purple)" },
+              // Categories
+              { id: "state", label: "状态管理", x: 10, y: 90, color: "var(--accent-purple)" },
+              { id: "sideEffect", label: "副作用", x: 140, y: 90, color: "var(--accent-cyan)" },
+              { id: "tool", label: "工具类", x: 270, y: 90, color: "var(--accent-blue)" },
+              { id: "ctx", label: "上下文", x: 400, y: 90, color: "#10b981" },
+              { id: "ui", label: "UI", x: 530, y: 90, color: "#f59e0b" },
+              { id: "file", label: "文件建议", x: 660, y: 90, color: "#ec4899" },
+              { id: "notif", label: "通知", x: 10, y: 210, color: "#f43f5e" },
+              { id: "bg", label: "后台", x: 140, y: 210, color: "#8b5cf6" },
+              { id: "misc", label: "杂项", x: 270, y: 210, color: "#64748b" },
+              // Sub-items (state)
+              { id: "s1", label: "useState", x: 0, y: 170, color: "var(--accent-purple)" },
+              { id: "s2", label: "useReducer", x: 0, y: 195, color: "var(--accent-purple)" },
+              { id: "s3", label: "useContext", x: 0, y: 220, color: "var(--accent-purple)" },
+              // Sub-items (sideEffect)
+              { id: "e1", label: "useEffect", x: 130, y: 170, color: "var(--accent-cyan)" },
+              { id: "e2", label: "useLayoutEffect", x: 130, y: 195, color: "var(--accent-cyan)" },
+              { id: "e3", label: "useRef", x: 130, y: 220, color: "var(--accent-cyan)" },
+              // Sub-items (tool)
+              { id: "t1", label: "useCanUseTool", x: 260, y: 170, color: "var(--accent-blue)" },
+              { id: "t2", label: "useToolPermission", x: 260, y: 195, color: "var(--accent-blue)" },
+              { id: "t3", label: "useApiKeyVerification", x: 260, y: 220, color: "var(--accent-blue)" },
+              // Sub-items (ctx)
+              { id: "c1", label: "useAssistantHistory", x: 390, y: 170, color: "#10b981" },
+              { id: "c2", label: "useCommandQueue", x: 390, y: 195, color: "#10b981" },
+              { id: "c3", label: "useCancelRequest", x: 390, y: 220, color: "#10b981" },
+              // Sub-items (ui)
+              { id: "u1", label: "useTextInput", x: 520, y: 145, color: "#f59e0b" },
+              { id: "u2", label: "useVirtualScroll", x: 520, y: 170, color: "#f59e0b" },
+              { id: "u3", label: "useTypeahead", x: 520, y: 195, color: "#f59e0b" },
+              { id: "u4", label: "useDebouncedInput", x: 620, y: 145, color: "#f59e0b" },
+              { id: "u5", label: "useBlink", x: 620, y: 170, color: "#f59e0b" },
+              { id: "u6", label: "useArrowKeyHistory", x: 620, y: 195, color: "#f59e0b" },
+              // Sub-items (file)
+              { id: "f1", label: "useFileSuggestions", x: 650, y: 170, color: "#ec4899" },
+              { id: "f2", label: "useUnifiedSuggestions", x: 650, y: 195, color: "#ec4899" },
+              // Sub-items (notif)
+              { id: "n1", label: "useBuddyNotification", x: 0, y: 275, color: "#f43f5e" },
+              { id: "n2", label: "useChromeExtNotif", x: 0, y: 300, color: "#f43f5e" },
+              // Sub-items (bg)
+              { id: "b1", label: "useBackgroundTaskNav", x: 130, y: 275, color: "#8b5cf6" },
+              { id: "b2", label: "useAwaySummary", x: 130, y: 300, color: "#8b5cf6" },
+              // Sub-items (misc)
+              { id: "m1", label: "useAfterFirstRender", x: 260, y: 275, color: "#64748b" },
+              { id: "m2", label: "useMemoizedCallbacks", x: 260, y: 300, color: "#64748b" },
+              { id: "m3", label: "useLazyRef", x: 260, y: 325, color: "#64748b" },
+            ]}
+            edges={[
+              { from: "root", to: "state" }, { from: "root", to: "sideEffect" }, { from: "root", to: "tool" },
+              { from: "root", to: "ctx" }, { from: "root", to: "ui" }, { from: "root", to: "file" },
+              { from: "root", to: "notif" }, { from: "root", to: "bg" }, { from: "root", to: "misc" },
+              { from: "state", to: "s1" }, { from: "state", to: "s2" }, { from: "state", to: "s3" },
+              { from: "sideEffect", to: "e1" }, { from: "sideEffect", to: "e2" }, { from: "sideEffect", to: "e3" },
+              { from: "tool", to: "t1" }, { from: "tool", to: "t2" }, { from: "tool", to: "t3" },
+              { from: "ctx", to: "c1" }, { from: "ctx", to: "c2" }, { from: "ctx", to: "c3" },
+              { from: "ui", to: "u1" }, { from: "ui", to: "u2" }, { from: "ui", to: "u3" },
+              { from: "ui", to: "u4" }, { from: "ui", to: "u5" }, { from: "ui", to: "u6" },
+              { from: "file", to: "f1" }, { from: "file", to: "f2" },
+              { from: "notif", to: "n1" }, { from: "notif", to: "n2" },
+              { from: "bg", to: "b1" }, { from: "bg", to: "b2" },
+              { from: "misc", to: "m1" }, { from: "misc", to: "m2" }, { from: "misc", to: "m3" },
+            ]}
+            width={750}
+            height={360}
+          />
+        </section>
+      </ScrollReveal>
+
+      {/* Section 8: 与 State 系统的关联 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="与 State 系统的关联"
+            subtitle="Hooks 如何与 bootstrap/state.ts 的全局状态交互"
+          />
+          <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed mb-8">
+            <p>
+              Claude Code 的 Hooks 并非独立工作，它们与 <code className="text-[var(--accent-cyan)]">bootstrap/state.ts</code> 中定义的
+              全局状态紧密耦合。多个 Hooks 通过 Zustand store 进行状态的读取和写入，
+              构成了一个完整的响应式数据流。
+            </p>
+          </div>
+          <ArchitectureDiagram
+            title="Hooks ↔ State 交互"
+            nodes={[
+              // State store
+              { id: "store", label: "bootstrap/state.ts\n(Zustand Store)", x: 300, y: 10, color: "var(--accent-purple)" },
+              // State slices
+              { id: "perms", label: "permissions\nstate", x: 30, y: 120, color: "var(--accent-cyan)" },
+              { id: "conv", label: "conversation\nhistory", x: 230, y: 120, color: "var(--accent-blue)" },
+              { id: "cost", label: "cost\ntracking", x: 430, y: 120, color: "#f59e0b" },
+              // Hooks
+              { id: "canUse", label: "useCanUseTool", x: 30, y: 240, color: "var(--accent-cyan)" },
+              { id: "toolPerm", label: "useToolPermission", x: 230, y: 240, color: "var(--accent-blue)" },
+              { id: "asstHist", label: "useAssistantHistory", x: 430, y: 240, color: "#10b981" },
+              { id: "costTrack", label: "useCostTracker", x: 620, y: 180, color: "#f59e0b" },
+            ]}
+            edges={[
+              { from: "store", to: "perms", label: "slice" },
+              { from: "store", to: "conv", label: "slice" },
+              { from: "store", to: "cost", label: "slice" },
+              { from: "perms", to: "canUse", label: "读取" },
+              { from: "perms", to: "toolPerm", label: "写入" },
+              { from: "conv", to: "asstHist", label: "读取" },
+              { from: "cost", to: "costTrack", label: "读/写" },
+            ]}
+            width={750}
+            height={300}
+          />
+        </section>
+      </ScrollReveal>
+
+      {/* Section 9: 源码片段 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="源码片段"
+            subtitle="核心 Hook 的实现模式与关键算法"
+          />
+
+          <div className="space-y-8">
+            <CodeBlock
+              language="typescript"
+              filename="hooks/useCanUseTool.ts"
+              code={`// useCanUseTool: 权限校验 Hook
+// 从全局 state 读取 permissions，检查当前工具是否可用
+export function useCanUseTool(toolName: string, input?: ToolInput) {
+  const permissions = useStore((s) => s.permissions);
+  const enabledTools = useStore((s) => s.enabledTools);
+
+  const canUse = useMemo(() => {
+    // 1. 检查工具是否在启用列表中
+    if (!enabledTools.includes(toolName)) return false;
+
+    // 2. 检查权限策略
+    const policy = permissions[toolName];
+    if (policy === 'allow') return true;
+    if (policy === 'deny') return false;
+
+    // 3. ask 模式下检查用户是否已授权
+    return isPreApproved(toolName, input);
+  }, [toolName, input, permissions, enabledTools]);
+
+  return { canUse, requestPermission: () => requestToolAccess(toolName) };
+}`}
+            />
+
+            <CodeBlock
+              language="typescript"
+              filename="hooks/useVirtualScroll.ts"
+              code={`// useVirtualScroll: 虚拟滚动核心算法
+// 只渲染可视区域内的列表项，O(n) → O(viewport)
+export function useVirtualScroll<T>(items: T[], itemHeight: number, containerHeight: number) {
+  const [scrollTop, setScrollTop] = useState(0);
+
+  // 计算可见范围
+  const { startIndex, endIndex, visibleItems, totalHeight } = useMemo(() => {
+    const totalHeight = items.length * itemHeight;
+    const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - BUFFER_SIZE);
+    const endIndex = Math.min(
+      items.length - 1,
+      Math.ceil((scrollTop + containerHeight) / itemHeight) + BUFFER_SIZE
+    );
+    const visibleItems = items.slice(startIndex, endIndex + 1);
+    return { startIndex, endIndex, visibleItems, totalHeight };
+  }, [items, scrollTop, itemHeight, containerHeight]);
+
+  const offsetY = startIndex * itemHeight; // 顶部偏移量
+  return { visibleItems, totalHeight, offsetY, setScrollTop };
+}
+
+const BUFFER_SIZE = 3; // 上下缓冲区大小`}
+            />
+
+            <CodeBlock
+              language="typescript"
+              filename="hooks/useMemoizedCallbacks.ts"
+              code={`// useMemoizedCallbacks: 稳定回调引用
+// 通过 ref + useMemo 确保回调集合在依赖不变时返回相同引用
+export function useMemoizedCallbacks<T extends Record<string, (...args: any[]) => any>>(
+  callbacks: T,
+  deps: DependencyList
+): T {
+  const callbacksRef = useRef(callbacks);
+  callbacksRef.current = callbacks;
+
+  const memoized = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(callbacks).map(([key, fn]) => [
+        key,
+        (...args: any[]) => callbacksRef.current[key](...args)
+      ])
+    ) as T;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return memoized;
+}`}
             />
           </div>
         </section>

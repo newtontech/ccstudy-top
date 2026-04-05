@@ -1,5 +1,6 @@
 import { ModuleLayout } from "@/components/ModuleLayout";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
+import { CodeBlock } from "@/components/CodeBlock";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
 
@@ -22,6 +23,30 @@ export default function CommandsPage() {
       href: "/ink",
       description: "终端 UI 渲染",
       icon: "\uD83C\uDFA8",
+    },
+    {
+      title: "查询引擎",
+      href: "/query-engine",
+      description: "Prompt 构建与查询",
+      icon: "\uD83D\uDD0D",
+    },
+    {
+      title: "上下文系统",
+      href: "/context",
+      description: "上下文管理",
+      icon: "\uD83D\uDCCB",
+    },
+    {
+      title: "记忆系统",
+      href: "/memory",
+      description: "会话记忆",
+      icon: "\uD83E\uDDE0",
+    },
+    {
+      title: "权限系统",
+      href: "/permissions",
+      description: "工具权限控制",
+      icon: "\uD83D\uDD12",
     },
   ];
 
@@ -777,6 +802,251 @@ export default function CommandsPage() {
             ]}
             width={640}
             height={280}
+          />
+        </section>
+      </ScrollReveal>
+
+      {/* Section A: 命令解析流程图 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="命令解析流程图"
+            subtitle="从用户输入到命令执行的完整生命周期"
+          />
+
+          <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
+            <p>
+              完整的命令解析流程包含参数解析、验证、初始化、执行和输出五个阶段，
+              同时在每个关键节点设置错误处理分支，确保系统的健壮性。
+            </p>
+          </div>
+
+          <ArchitectureDiagram
+            title="命令解析完整流程"
+            nodes={[
+              { id: "user", label: "用户输入", x: 10, y: 80, color: "var(--accent-purple)" },
+              { id: "commander", label: "Commander.js\n解析", x: 160, y: 80, color: "var(--accent-blue)" },
+              { id: "validate", label: "参数验证", x: 310, y: 80, color: "var(--accent-cyan)" },
+              { id: "preaction", label: "preAction\nHook", x: 460, y: 80, color: "#10b981" },
+              { id: "init", label: "init()", x: 610, y: 80, color: "#f59e0b" },
+              { id: "handler", label: "命令处理器", x: 760, y: 80, color: "#ec4899" },
+              { id: "output", label: "结果输出", x: 910, y: 80, color: "var(--accent-purple)" },
+              // Error branches
+              { id: "err-param", label: "参数错误", x: 310, y: 200, color: "#ef4444" },
+              { id: "err-perm", label: "权限不足", x: 460, y: 200, color: "#ef4444" },
+              { id: "err-exec", label: "执行失败", x: 760, y: 200, color: "#ef4444" },
+            ]}
+            edges={[
+              { from: "user", to: "commander", label: "" },
+              { from: "commander", to: "validate", label: "" },
+              { from: "validate", to: "preaction", label: "✓" },
+              { from: "validate", to: "err-param", label: "✗" },
+              { from: "preaction", to: "init", label: "✓" },
+              { from: "preaction", to: "err-perm", label: "✗" },
+              { from: "init", to: "handler", label: "" },
+              { from: "handler", to: "output", label: "✓" },
+              { from: "handler", to: "err-exec", label: "✗" },
+            ]}
+            width={1080}
+            height={280}
+          />
+        </section>
+      </ScrollReveal>
+
+      {/* Section B: 40+ 命令分类脑图 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="命令分类脑图"
+            subtitle="claude-code-main/commands/ 下 101 个文件/目录的完整分类树"
+          />
+
+          <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
+            <p>
+              Claude Code 的命令体系庞大而有序，<code className="px-1.5 py-0.5 rounded bg-[var(--card-bg)] border border-[var(--card-border)] text-sm font-mono text-[var(--accent-cyan)]">commands/</code> 目录下包含 101 个文件和目录，
+              覆盖核心操作、项目管理、Git 集成、开发辅助、工具链和扩展生态六大领域。
+            </p>
+          </div>
+
+          <ArchitectureDiagram
+            title="完整命令分类树"
+            nodes={[
+              { id: "root", label: "commands/\n(101 files)", x: 400, y: 10, color: "var(--accent-purple)" },
+              // Category nodes
+              { id: "core", label: "核心命令\ninit login logout\nhelp version config\ndoctor reset", x: 10, y: 140, color: "var(--accent-purple)" },
+              { id: "project", label: "项目命令\nadd-dir context\nmemory session\nresume status", x: 220, y: 140, color: "var(--accent-cyan)" },
+              { id: "git", label: "Git 命令\ncommit commit-push-pr\nbranch diff\nreview pr-comments", x: 430, y: 140, color: "var(--accent-blue)" },
+              { id: "dev", label: "开发命令\nadvisor autofix-pr\nbughunter compact\nagents ant-trace\nbrief btw", x: 640, y: 140, color: "#10b981" },
+              { id: "tool", label: "工具命令\ntasks skills\nplugins mcp\nbreak-cache color", x: 230, y: 320, color: "#f59e0b" },
+              { id: "ext", label: "扩展命令\nbridge chrome\nsandbox", x: 530, y: 320, color: "#ec4899" },
+            ]}
+            edges={[
+              { from: "root", to: "core", label: "" },
+              { from: "root", to: "project", label: "" },
+              { from: "root", to: "git", label: "" },
+              { from: "root", to: "dev", label: "" },
+              { from: "root", to: "tool", label: "" },
+              { from: "root", to: "ext", label: "" },
+            ]}
+            width={870}
+            height={440}
+          />
+        </section>
+      </ScrollReveal>
+
+      {/* Section C: 命令与 Tools 的调用关系 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="命令与 Tools 的调用关系"
+            subtitle="命令如何触发底层工具调用"
+          />
+
+          <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
+            <p>
+              命令是用户层面的接口，而实际的工作由底层 Tools 完成。每个命令根据职责调用不同的工具组合，
+              形成了清晰的命令→工具映射关系。
+            </p>
+          </div>
+
+          <ArchitectureDiagram
+            title="命令→工具调用映射"
+            nodes={[
+              // Commands
+              { id: "cmd-commit", label: "/commit", x: 10, y: 10, color: "var(--accent-blue)" },
+              { id: "cmd-review", label: "/review", x: 10, y: 120, color: "var(--accent-blue)" },
+              { id: "cmd-config", label: "/config", x: 10, y: 230, color: "var(--accent-cyan)" },
+              { id: "cmd-memory", label: "/memory", x: 10, y: 340, color: "var(--accent-cyan)" },
+              // Tools
+              { id: "bash", label: "BashTool\n(git commit)", x: 300, y: 10, color: "#f59e0b" },
+              { id: "fileread", label: "FileReadTool", x: 300, y: 100, color: "#10b981" },
+              { id: "filewrite", label: "FileWriteTool", x: 300, y: 190, color: "#10b981" },
+              { id: "gitdiff", label: "BashTool\n(git diff)", x: 300, y: 280, color: "#f59e0b" },
+              { id: "readfile", label: "ReadFileTool", x: 300, y: 360, color: "#ec4899" },
+              // Results
+              { id: "res-commit", label: "Git 提交完成", x: 560, y: 50, color: "var(--accent-purple)" },
+              { id: "res-review", label: "审查报告", x: 560, y: 180, color: "var(--accent-purple)" },
+              { id: "res-cfg", label: "配置更新", x: 560, y: 260, color: "var(--accent-purple)" },
+              { id: "res-mem", label: "记忆持久化", x: 560, y: 370, color: "var(--accent-purple)" },
+            ]}
+            edges={[
+              { from: "cmd-commit", to: "bash", label: "" },
+              { from: "cmd-commit", to: "fileread", label: "" },
+              { from: "cmd-commit", to: "filewrite", label: "" },
+              { from: "cmd-review", to: "gitdiff", label: "" },
+              { from: "cmd-review", to: "readfile", label: "" },
+              { from: "cmd-config", to: "fileread", label: "" },
+              { from: "cmd-config", to: "filewrite", label: "" },
+              { from: "cmd-memory", to: "fileread", label: "" },
+              { from: "cmd-memory", to: "filewrite", label: "" },
+              { from: "bash", to: "res-commit", label: "" },
+              { from: "gitdiff", to: "res-review", label: "" },
+              { from: "filewrite", to: "res-cfg", label: "" },
+              { from: "filewrite", to: "res-mem", label: "" },
+            ]}
+            width={760}
+            height={430}
+          />
+        </section>
+      </ScrollReveal>
+
+      {/* Section D: 源码片段 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="源码片段"
+            subtitle="命令系统的核心实现代码"
+          />
+
+          <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
+            <p>
+              以下展示了命令系统的三个关键实现：Commander.js 命令注册、preAction 钩子和命令处理器接口。
+            </p>
+          </div>
+
+          <CodeBlock
+            filename="commands/commit/index.ts"
+            language="typescript"
+            code={`import { Command } from "commander";
+
+export function registerCommitCommand(program: Command) {
+  program
+    .command("commit")
+    .description("AI-driven smart git commit")
+    .option("-m, --message <msg>", "commit message")
+    .option("--amend", "amend the last commit")
+    .option("--no-verify", "skip hooks")
+    .action(async (options) => {
+      const { message, amend, verify } = options;
+      // 1. Parse staged changes
+      const staged = await parseStagedFiles();
+      // 2. Generate commit message via AI
+      const commitMsg = message || await generateCommitMessage(staged);
+      // 3. Execute git commit
+      await executeGitCommit(commitMsg, { amend, verify });
+    });
+}`}
+          />
+
+          <CodeBlock
+            filename="hooks/preAction.ts"
+            language="typescript"
+            code={`import { Command } from "commander";
+
+export function setupPreAction(program: Command) {
+  program.hook("preAction", async (thisCommand) => {
+    // 1. Initialize entrypoint (SDK/API setup)
+    await initializeEntrypoint();
+    
+    // 2. Eager-load settings for faster access
+    await eagerLoadSettings();
+    
+    // 3. Check authentication
+    const isAuthenticated = await checkAuth();
+    if (!isAuthenticated) {
+      console.error("Authentication required. Run: claude login");
+      process.exit(1);
+    }
+    
+    // 4. Setup telemetry
+    setupTelemetry(thisCommand.name());
+  });
+}`}
+          />
+
+          <CodeBlock
+            filename="types/CommandHandler.ts"
+            language="typescript"
+            code={`export interface CommandContext {
+  commandName: string;
+  options: Record<string, any>;
+  args: string[];
+  projectRoot: string;
+  sessionId?: string;
+}
+
+export interface CommandResult {
+  success: boolean;
+  data?: unknown;
+  error?: {
+    code: string;
+    message: string;
+    details?: unknown;
+  };
+  metadata?: {
+    duration: number;
+    tokensUsed?: number;
+  };
+}
+
+export type CommandHandler = (
+  ctx: CommandContext
+) => Promise<CommandResult>;
+
+// Usage: register handler for a command
+export const commandRegistry = new Map<string, CommandHandler>();
+commandRegistry.set("commit", commitHandler);
+commandRegistry.set("review", reviewHandler);`}
           />
         </section>
       </ScrollReveal>

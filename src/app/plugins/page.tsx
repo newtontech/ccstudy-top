@@ -1,5 +1,6 @@
 import { ModuleLayout } from "@/components/ModuleLayout";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
+import { CodeBlock } from "@/components/CodeBlock";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
 
@@ -12,9 +13,21 @@ export default function PluginsPage() {
       icon: "\uD83D\uDD27",
     },
     {
+      title: "权限系统",
+      href: "/permissions",
+      description: "权限控制",
+      icon: "\uD83D\uDD12",
+    },
+    {
+      title: "状态系统",
+      href: "/state",
+      description: "全局状态",
+      icon: "\uD83D\uDCE6",
+    },
+    {
       title: "命令系统",
       href: "/commands",
-      description: "命令行界面",
+      description: "命令执行",
       icon: "\u2328\uFE0F",
     },
     {
@@ -696,6 +709,252 @@ export default function PluginsPage() {
             width={780}
             height={210}
           />
+        </section>
+      </ScrollReveal>
+
+      {/* Section 7: MCP 协议交互图 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="MCP 协议交互流程"
+            subtitle="从初始化到工具调用的完整通信序列"
+          />
+
+          <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
+            <p>
+              MCP 协议采用请求-响应模式，Claude Code 与 MCP Server 之间通过
+              <strong className="text-[var(--text-primary)]"> stdio</strong>（子进程管道）或
+              <strong className="text-[var(--text-primary)]"> SSE</strong>（HTTP Server-Sent Events）进行通信。
+              整个交互流程从握手初始化开始，经过能力协商、工具发现，最终完成工具调用。
+            </p>
+          </div>
+
+          <ArchitectureDiagram
+            title="MCP 完整交互流程"
+            nodes={[
+              { id: "claude", label: "Claude Code", x: 30, y: 120, color: "var(--accent-purple)" },
+              { id: "mcp-server", label: "MCP Server", x: 600, y: 120, color: "var(--accent-cyan)" },
+              { id: "s1", label: "1. initialize", x: 180, y: 20, color: "var(--accent-blue)" },
+              { id: "s2", label: "2. capabilities", x: 480, y: 20, color: "var(--accent-cyan)" },
+              { id: "s3", label: "3. tools/list", x: 180, y: 80, color: "var(--accent-blue)" },
+              { id: "s4", label: "4. tool 列表", x: 480, y: 80, color: "var(--accent-cyan)" },
+              { id: "s5", label: "5. tools/call", x: 180, y: 160, color: "var(--accent-blue)" },
+              { id: "s6", label: "6. 执行结果", x: 480, y: 160, color: "var(--accent-cyan)" },
+              { id: "stdio", label: "stdio / SSE", x: 340, y: 220, color: "var(--accent-purple)" },
+            ]}
+            edges={[
+              { from: "claude", to: "s1" },
+              { from: "s1", to: "s2", label: "请求" },
+              { from: "s2", to: "mcp-server" },
+              { from: "mcp-server", to: "s4" },
+              { from: "s4", to: "s3", label: "响应" },
+              { from: "s3", to: "claude" },
+              { from: "claude", to: "s5" },
+              { from: "s5", to: "s6", label: "请求" },
+              { from: "s6", to: "mcp-server" },
+              { from: "claude", to: "stdio" },
+              { from: "stdio", to: "mcp-server" },
+            ]}
+            width={800}
+            height={270}
+          />
+
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              {
+                title: "stdio 通信",
+                desc: "通过子进程的标准输入/输出进行通信，适用于本地 MCP Server。Claude Code 启动 Server 子进程，通过 stdin 发送请求、stdout 接收响应。低延迟、简单可靠。",
+                color: "var(--accent-cyan)",
+              },
+              {
+                title: "SSE 通信",
+                desc: "通过 HTTP Server-Sent Events 进行通信，适用于远程 MCP Server。客户端通过 POST 发送请求，服务器通过 SSE 流推送响应。支持网络部署和负载均衡。",
+                color: "var(--accent-purple)",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="p-5 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)]"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-3 h-3 rounded-full" style={{ background: item.color }} />
+                  <h5 className="text-base font-semibold text-[var(--text-primary)]">{item.title}</h5>
+                </div>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Section 8: Skills + Plugins 关系图 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="Skills + Plugins + MCP 关系"
+            subtitle="三大扩展机制的协作关系"
+          />
+
+          <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
+            <p>
+              Plugins、Skills 和 MCP 构成了 Claude Code 扩展体系的三层架构。
+              <strong className="text-[var(--text-primary)]">Plugins</strong> 是最强大的扩展方式，可以注册工具、命令和钩子；
+              <strong className="text-[var(--text-primary)]">Skills</strong> 是轻量级的提示词模板，通过斜杠命令触发；
+              <strong className="text-[var(--text-primary)]">MCP</strong> 则是标准化的外部工具协议。
+              三者之间可以组合使用：Plugin 可以注册 Skills，也可以包装 MCP Servers，而 Skills 执行时可以调用底层 Tools。
+            </p>
+          </div>
+
+          <ArchitectureDiagram
+            title="扩展机制关系图"
+            nodes={[
+              { id: "plugins", label: "Plugins", x: 80, y: 30, color: "var(--accent-purple)" },
+              { id: "skills", label: "Skills", x: 350, y: 30, color: "var(--accent-blue)" },
+              { id: "mcp", label: "MCP", x: 620, y: 30, color: "var(--accent-cyan)" },
+              { id: "p-tools", label: "注册 tools", x: 30, y: 120, color: "var(--accent-purple)" },
+              { id: "p-cmds", label: "注册 commands", x: 30, y: 180, color: "var(--accent-purple)" },
+              { id: "p-hooks", label: "注册 hooks", x: 30, y: 240, color: "var(--accent-purple)" },
+              { id: "p-skills", label: "注册 skills", x: 220, y: 120, color: "var(--accent-blue)" },
+              { id: "p-mcp", label: "包装 MCP Servers", x: 220, y: 200, color: "var(--accent-cyan)" },
+              { id: "s-cmd", label: "/command 触发", x: 400, y: 120, color: "var(--accent-blue)" },
+              { id: "s-prompt", label: "Markdown 模板", x: 400, y: 200, color: "var(--accent-blue)" },
+              { id: "m-stdio", label: "stdio", x: 620, y: 120, color: "var(--accent-cyan)" },
+              { id: "m-sse", label: "SSE", x: 620, y: 200, color: "var(--accent-cyan)" },
+              { id: "m-ext", label: "外部工具", x: 620, y: 260, color: "var(--accent-cyan)" },
+              { id: "s-to-tools", label: "Skills 通过 Tools 执行", x: 400, y: 270, color: "var(--accent-purple)" },
+            ]}
+            edges={[
+              { from: "plugins", to: "p-tools" },
+              { from: "plugins", to: "p-cmds" },
+              { from: "plugins", to: "p-hooks" },
+              { from: "plugins", to: "p-skills", label: "可以注册" },
+              { from: "plugins", to: "p-mcp", label: "可以包装" },
+              { from: "p-skills", to: "skills" },
+              { from: "p-mcp", to: "mcp" },
+              { from: "skills", to: "s-cmd" },
+              { from: "skills", to: "s-prompt" },
+              { from: "s-cmd", to: "s-to-tools" },
+              { from: "s-to-tools", to: "p-tools", label: "调用" },
+              { from: "mcp", to: "m-stdio" },
+              { from: "mcp", to: "m-sse" },
+              { from: "mcp", to: "m-ext" },
+            ]}
+            width={800}
+            height={310}
+          />
+
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              {
+                title: "Plugin → Skills",
+                desc: "插件可以在初始化时注册多个 Skills，将复杂功能封装为斜杠命令，用户无需了解底层实现细节。",
+                color: "var(--accent-purple)",
+              },
+              {
+                title: "Plugin → MCP",
+                desc: "插件可以包装一个或多个 MCP Server，为外部工具提供统一的权限控制和生命周期管理。",
+                color: "var(--accent-blue)",
+              },
+              {
+                title: "Skills → Tools",
+                desc: "Skills 执行时通过底层 Tools 完成实际操作，提示词模板 + 工具调用 = 强大的自动化工作流。",
+                color: "var(--accent-cyan)",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="p-5 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)]"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-3 h-3 rounded-full" style={{ background: item.color }} />
+                  <h5 className="text-base font-semibold text-[var(--text-primary)]">{item.title}</h5>
+                </div>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Section 9: 源码片段 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="源码参考"
+            subtitle="核心接口与配置示例"
+          />
+
+          <div className="space-y-8">
+            <div>
+              <h4 className="text-base font-semibold text-[var(--text-primary)] mb-3">Plugin 接口定义</h4>
+              <CodeBlock
+                code={`interface Plugin {
+  /** 插件元数据 */
+  name: string;
+  version: string;
+  description?: string;
+
+  /** 生命周期钩子 */
+  onLoad?(): Promise<void>;
+  onInit?(ctx: PluginContext): Promise<void>;
+  onCleanup?(): Promise<void>;
+
+  /** 扩展点声明 */
+  tools?: ToolDefinition[];
+  commands?: CommandDefinition[];
+  hooks?: HookDefinition[];
+  skills?: SkillDefinition[];
+}`}
+                language="typescript"
+              />
+            </div>
+
+            <div>
+              <h4 className="text-base font-semibold text-[var(--text-primary)] mb-3">MCP Server 注册配置</h4>
+              <CodeBlock
+                code={`// claude_desktop_config.json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/server-filesystem", "/path/to/dir"],
+      "env": { "NODE_ENV": "production" }
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/server-github"],
+      "env": { "GITHUB_TOKEN": "ghp_xxx" }
+    }
+  }
+}`}
+                language="json"
+              />
+            </div>
+
+            <div>
+              <h4 className="text-base font-semibold text-[var(--text-primary)] mb-3">Skill 文件格式示例</h4>
+              <CodeBlock
+                code={`---
+# .claude/skills/commit.md
+name: commit
+description: 生成规范的 Git commit message
+trigger: /commit
+---
+
+## Commit Message 生成
+
+1. 运行 \`git status\` 查看变更文件
+2. 运行 \`git diff --staged\` 查看暂存内容
+3. 分析变更类型 (feat|fix|docs|refactor|test)
+4. 按照约定式提交规范生成 message
+
+格式: <type>(<scope>): <subject>
+
+变量: $FILE_PATH, $BRANCH_NAME`}
+                language="markdown"
+              />
+            </div>
+          </div>
         </section>
       </ScrollReveal>
     </ModuleLayout>
