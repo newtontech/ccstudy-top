@@ -2,6 +2,8 @@ import { ModuleLayout } from "@/components/ModuleLayout";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
+import DirectoryTree from "@/components/DirectoryTree";
+import Link from "next/link";
 
 export default function ArchitecturePage() {
   const relatedModules = [
@@ -28,6 +30,24 @@ export default function ArchitecturePage() {
       href: "/plugins",
       description: "扩展机制",
       icon: "🔌",
+    },
+    {
+      title: "查询引擎",
+      href: "/query-engine",
+      description: "核心查询引擎",
+      icon: "⚡",
+    },
+    {
+      title: "上下文管理",
+      href: "/context",
+      description: "Context 系统",
+      icon: "📦",
+    },
+    {
+      title: "记忆系统",
+      href: "/memory",
+      description: "记忆持久化",
+      icon: "🧠",
     },
   ];
 
@@ -819,6 +839,145 @@ export default function ArchitecturePage() {
             ]}
             width={700}
             height={390}
+          />
+        </section>
+      </ScrollReveal>
+
+      {/* Section 8: 四大入口 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle title="四大入口" subtitle="Four Entry Points — 多样化的启动方式" />
+          <p className="text-[var(--text-secondary)] leading-relaxed mb-6">
+            Claude Code 提供 4 种入口方式，覆盖从命令行到远程协作的全部场景。每种入口最终都汇入共享的 QueryEngine、State 和 Bootstrap 核心。
+          </p>
+          <ArchitectureDiagram
+            nodes={[
+              { id: "cli", label: "CLI (cli/)", x: 100, y: 30, color: "var(--accent-blue)" },
+              { id: "repl", label: "REPL (replLauncher)", x: 300, y: 30, color: "var(--accent-green)" },
+              { id: "server", label: "Direct Connect (server/)", x: 500, y: 30, color: "var(--accent-orange)" },
+              { id: "remote", label: "Remote (remote/)", x: 700, y: 30, color: "var(--accent-pink)" },
+              { id: "core", label: "Shared Core", x: 400, y: 160, color: "var(--accent-purple)" },
+              { id: "qe", label: "QueryEngine", x: 200, y: 280, color: "var(--accent-cyan)" },
+              { id: "state", label: "State", x: 400, y: 280, color: "var(--accent-purple)" },
+              { id: "bootstrap", label: "Bootstrap", x: 600, y: 280, color: "var(--accent-blue)" },
+            ]}
+            edges={[
+              { from: "cli", to: "core", label: "启动" },
+              { from: "repl", to: "core", label: "启动" },
+              { from: "server", to: "core", label: "连接" },
+              { from: "remote", to: "core", label: "连接" },
+              { from: "core", to: "qe", label: "" },
+              { from: "core", to: "state", label: "" },
+              { from: "core", to: "bootstrap", label: "" },
+            ]}
+            width={800}
+            height={320}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            {[
+              { icon: "💻", title: "CLI", desc: "cli/ — 结构化 I/O、NDJSON 流式传输、Bash 命令处理", href: "/entry" },
+              { icon: "🔄", title: "REPL", desc: "replLauncher.tsx + entrypoints/cli.tsx — 交互式终端会话", href: "/entry" },
+              { icon: "🔗", title: "Direct Connect", desc: "server/ — 服务端直连：directConnectManager、会话创建" },
+              { icon: "🌐", title: "Remote", desc: "remote/ — 远程会话管理：WebSocket、权限桥接、SDK 适配" },
+            ].map((ep) => (
+              <div key={ep.title} className="p-4 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)]">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">{ep.icon}</span>
+                  <span className="font-semibold text-[var(--text-primary)]">{ep.title}</span>
+                  {ep.href && (
+                    <Link href={ep.href} className="text-xs text-[var(--accent-purple)] hover:underline ml-auto">
+                      详情 →
+                    </Link>
+                  )}
+                </div>
+                <p className="text-sm text-[var(--text-secondary)]">{ep.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Section 9: 完整目录结构树 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle title="完整目录结构树" subtitle="Interactive Directory Tree — 35+ 模块一览" />
+          <p className="text-[var(--text-secondary)] leading-relaxed mb-6">
+            点击含有子目录的模块可展开查看详细文件。带 <span className="text-[var(--accent-purple)]">→</span> 标记的模块有对应的深度分析页面。
+          </p>
+          <DirectoryTree />
+        </section>
+      </ScrollReveal>
+
+      {/* Section 10: 模块依赖 DAG 图 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle title="模块依赖 DAG 图" subtitle="Module Dependency Graph — 层级依赖关系" />
+          <p className="text-[var(--text-secondary)] leading-relaxed mb-6">
+            展示 Claude Code 各模块间的依赖关系。上层模块依赖下层模块，箭头表示「依赖」方向。核心层（QueryEngine、State、Context）位于底部，被多个上层模块共享依赖。
+          </p>
+          <ArchitectureDiagram
+            nodes={[
+              // Layer 0: Entry
+              { id: "main", label: "main.tsx", x: 350, y: 10 },
+              // Layer 1: Entrypoints
+              { id: "entry-cli", label: "entry/cli.tsx", x: 100, y: 90, color: "var(--accent-blue)" },
+              { id: "entry-mcp", label: "entry/mcp.ts", x: 300, y: 90, color: "var(--accent-blue)" },
+              { id: "cli", label: "cli/", x: 500, y: 90, color: "var(--accent-green)" },
+              // Layer 2: Server/Remote
+              { id: "server", label: "server/", x: 400, y: 180, color: "var(--accent-orange)" },
+              { id: "remote", label: "remote/", x: 600, y: 180, color: "var(--accent-pink)" },
+              // Layer 3: Core
+              { id: "qe", label: "QueryEngine", x: 200, y: 280, color: "var(--accent-purple)" },
+              { id: "coord", label: "coordinator", x: 450, y: 280, color: "var(--accent-purple)" },
+              { id: "bridge", label: "bridge", x: 650, y: 280 },
+              { id: "plugins", label: "plugins", x: 50, y: 280, color: "var(--accent-cyan)" },
+              { id: "skills", label: "skills", x: 800, y: 280, color: "var(--accent-cyan)" },
+              // Layer 4: Mid
+              { id: "tools", label: "tools", x: 150, y: 380, color: "var(--accent-orange)" },
+              { id: "commands", label: "commands", x: 350, y: 380 },
+              { id: "hooks", label: "hooks", x: 550, y: 380 },
+              { id: "context", label: "context", x: 700, y: 380, color: "var(--accent-green)" },
+              // Layer 5: Base
+              { id: "state", label: "state", x: 300, y: 480, color: "var(--accent-purple)" },
+              { id: "schemas", label: "schemas", x: 100, y: 480 },
+              { id: "utils", label: "utils", x: 500, y: 480 },
+              { id: "memdir", label: "memdir", x: 700, y: 480 },
+            ]}
+            edges={[
+              { from: "main", to: "entry-cli" },
+              { from: "main", to: "cli" },
+              { from: "entry-cli", to: "qe" },
+              { from: "entry-mcp", to: "tools" },
+              { from: "entry-mcp", to: "qe" },
+              { from: "cli", to: "server" },
+              { from: "cli", to: "remote" },
+              { from: "server", to: "qe" },
+              { from: "server", to: "tools" },
+              { from: "remote", to: "qe" },
+              { from: "remote", to: "tools" },
+              { from: "remote", to: "context" },
+              { from: "qe", to: "tools" },
+              { from: "qe", to: "commands" },
+              { from: "qe", to: "context" },
+              { from: "qe", to: "state" },
+              { from: "qe", to: "memdir" },
+              { from: "tools", to: "schemas" },
+              { from: "tools", to: "utils" },
+              { from: "commands", to: "tools" },
+              { from: "commands", to: "hooks" },
+              { from: "hooks", to: "context" },
+              { from: "hooks", to: "state" },
+              { from: "context", to: "state" },
+              { from: "coord", to: "qe" },
+              { from: "coord", to: "tools" },
+              { from: "bridge", to: "hooks" },
+              { from: "plugins", to: "tools" },
+              { from: "plugins", to: "qe" },
+              { from: "skills", to: "tools" },
+              { from: "skills", to: "qe" },
+            ]}
+            width={800}
+            height={530}
           />
         </section>
       </ScrollReveal>
