@@ -52,8 +52,8 @@ export function Navbar() {
                 className={`
                   relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200
                   ${isActive
-                    ? "text-[var(--accent-purple)] dark:text-[#a78bfa] bg-[var(--accent-purple)]/5 dark:bg-[#a78bfa]/10"
-                    : "text-[var(--text-secondary)] dark:text-[#cbd5e1] hover:text-[var(--accent-purple)] dark:hover:text-[#a78bfa] hover:bg-[var(--card-border)]/50 dark:hover:bg-white/5"
+                    ? "text-[#6B4CFF] dark:text-[#a78bfa] bg-[#6B4CFF]/8 dark:bg-[#a78bfa]/10 font-semibold"
+                    : "text-[#1A1A1A] dark:text-[#cbd5e1] hover:text-[#6B4CFF] dark:hover:text-[#a78bfa] hover:bg-[#6B4CFF]/5 dark:hover:bg-white/5"
                   }
                 `}
               >
@@ -170,8 +170,8 @@ export function Navbar() {
                   className={`
                     px-3 py-2 rounded-lg transition-colors text-sm font-medium
                     ${isActive
-                      ? "text-[var(--accent-purple)] dark:text-[#a78bfa] bg-[var(--accent-purple)]/5 dark:bg-[#a78bfa]/10"
-                      : "text-[var(--text-secondary)] dark:text-[#cbd5e1] hover:text-[var(--accent-purple)] dark:hover:text-[#a78bfa]"
+                      ? "text-[#6B4CFF] dark:text-[#a78bfa] bg-[#6B4CFF]/8 dark:bg-[#a78bfa]/10 font-semibold"
+                      : "text-[#1A1A1A] dark:text-[#cbd5e1] hover:text-[#6B4CFF] dark:hover:text-[#a78bfa]"
                     }
                   `}
                 >
