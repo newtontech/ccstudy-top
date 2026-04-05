@@ -23,7 +23,27 @@ jobs:
         with:
           node-version: "22"
       - run: npm install
-      - run: DEPLOY_TARGET=github npm run build
+      - run: npm run build
+      - name: Verify build output
+        run: |
+          echo "=== Checking build output ==="
+          ls dist/ | head -20
+          # Verify index.html has no basePath prefix in asset references
+          if grep -q '="/ccstudy-top/' dist/index.html; then
+            echo "ERROR: Found /ccstudy-top/ basePath in HTML — custom domain should not use basePath"
+            exit 1
+          fi
+          echo "✓ No basePath leak detected"
+          # Verify critical assets exist
+          FIRST_ASSET=$(grep -oP '/_next/static/chunks/[^"]+\.js' dist/index.html | head -1)
+          if [ -n "$FIRST_ASSET" ]; then
+            ASSET_FILE="dist${FIRST_ASSET}"
+            if [ ! -f "$ASSET_FILE" ]; then
+              echo "ERROR: Referenced asset not found: $ASSET_FILE"
+              exit 1
+            fi
+            echo "✓ Asset exists: $ASSET_FILE"
+          fi
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
