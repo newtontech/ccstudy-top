@@ -3,19 +3,21 @@
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useState } from "react";
-
-const navLinks = [
-  { href: "/", label: "首页" },
-  { href: "/architecture", label: "架构" },
-  { href: "/tools", label: "工具" },
-  { href: "/commands", label: "命令" },
-  { href: "/ink", label: "UI框架" },
-  { href: "/plugins", label: "插件" },
-];
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export function Navbar() {
   const { theme, setTheme } = useTheme();
+  const { t, locale, toggleLocale } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navLinks = [
+    { href: "/", label: t.nav.home },
+    { href: "/architecture", label: t.nav.architecture },
+    { href: "/tools", label: t.nav.tools },
+    { href: "/commands", label: t.nav.commands },
+    { href: "/ink", label: t.nav.ink },
+    { href: "/plugins", label: t.nav.plugins },
+  ];
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -45,8 +47,17 @@ export function Navbar() {
           ))}
         </div>
 
-        {/* Right side: theme toggle + mobile menu button */}
+        {/* Right side: language toggle + theme toggle + mobile menu button */}
         <div className="flex items-center gap-2">
+          {/* Language toggle */}
+          <button
+            onClick={toggleLocale}
+            className="px-2.5 py-1 rounded-lg text-xs font-bold hover:bg-[var(--card-border)] transition-colors border border-[var(--card-border)]"
+            aria-label="Toggle language"
+          >
+            {locale === "zh" ? "EN" : "中"}
+          </button>
+
           <button
             onClick={toggleTheme}
             className="p-2 rounded-lg hover:bg-[var(--card-border)] transition-colors"

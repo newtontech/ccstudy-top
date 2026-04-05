@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface CodeFlowStep {
   code: string;
@@ -21,6 +22,7 @@ export function CodeFlow({
   steps,
   language = "typescript",
 }: CodeFlowProps) {
+  const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [autoPlay, setAutoPlay] = useState(false);
   const autoPlayRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -134,7 +136,7 @@ export function CodeFlow({
         <div className="w-full md:w-80 border-t md:border-t-0 md:border-l border-gray-700/50 bg-[#161b22] p-4 flex flex-col">
           {/* Step indicator */}
           <div className="text-xs text-gray-500 mb-3 font-mono">
-            步骤 {currentStep + 1}/{totalSteps}
+            {t.codeFlow.step} {currentStep + 1}/{totalSteps}
           </div>
 
           <AnimatePresence mode="wait">
@@ -153,7 +155,7 @@ export function CodeFlow({
               {step.output && (
                 <div className="rounded-lg bg-[#0d1117] border border-gray-700/50 p-3">
                   <div className="text-xs text-gray-500 mb-2 font-mono">
-                    输出
+                    {t.codeFlow.output}
                   </div>
                   <pre className="text-sm text-green-400 font-mono whitespace-pre-wrap">
                     {step.output}
@@ -170,14 +172,14 @@ export function CodeFlow({
               disabled={currentStep === 0}
               className="px-3 py-1.5 text-xs font-medium rounded-md bg-gray-700/50 text-gray-300 hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
-              上一步
+              {t.codeFlow.prev}
             </button>
             <button
               onClick={goNext}
               disabled={currentStep === totalSteps - 1}
               className="px-3 py-1.5 text-xs font-medium rounded-md bg-gray-700/50 text-gray-300 hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
-              下一步
+              {t.codeFlow.next}
             </button>
             <button
               onClick={() => setAutoPlay((p) => !p)}
@@ -187,7 +189,7 @@ export function CodeFlow({
                   : "bg-gray-700/50 text-gray-300 hover:bg-gray-700"
               }`}
             >
-              {autoPlay ? "暂停" : "自动播放"}
+              {autoPlay ? t.codeFlow.pause : t.codeFlow.autoPlay}
             </button>
           </div>
         </div>

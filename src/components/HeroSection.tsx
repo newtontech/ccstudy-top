@@ -2,14 +2,17 @@
 
 import { motion } from "framer-motion";
 import { TypewriterText } from "./animations/TypewriterText";
-
-const stats = [
-  { label: "工具", value: "40+" },
-  { label: "命令", value: "40+" },
-  { label: "核心模块", value: "15+" },
-];
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export function HeroSection() {
+  const { t } = useLanguage();
+
+  const stats = [
+    { label: t.hero.stats.tools, value: "40+" },
+    { label: t.hero.stats.commands, value: "40+" },
+    { label: t.hero.stats.modules, value: "15+" },
+  ];
+
   return (
     <section className="relative min-h-[85vh] flex flex-col items-center justify-center overflow-hidden">
       {/* Animated gradient mesh background */}
@@ -49,7 +52,7 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          Claude Code 源码解读
+          {t.hero.title}
         </motion.h1>
 
         {/* Subtitle with typewriter */}
@@ -60,7 +63,7 @@ export function HeroSection() {
           transition={{ delay: 0.6, duration: 0.5 }}
         >
           <TypewriterText
-            text="深入探索 Anthropic 最强 AI 编程助手的源代码架构"
+            text={t.hero.subtitle}
             speed={60}
             delay={800}
             className="text-xl text-[var(--text-secondary)]"

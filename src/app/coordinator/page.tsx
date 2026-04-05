@@ -1,6 +1,4 @@
 import { ModuleLayout } from "@/components/ModuleLayout";
-import { CodeBlock } from "@/components/CodeBlock";
-import { CodeFlow } from "@/components/CodeFlow";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
@@ -11,19 +9,19 @@ export default function CoordinatorPage() {
       title: "工具系统",
       href: "/tools",
       description: "AgentTool 详解",
-      icon: "\uD83D\uDD27",
+      icon: "🔧",
     },
     {
       title: "KAIROS",
       href: "/assistant",
       description: "持久助手模式",
-      icon: "\uD83E\uDD16",
+      icon: "🤖",
     },
     {
       title: "插件系统",
       href: "/plugins",
       description: "扩展机制",
-      icon: "\uD83D\uDD0C",
+      icon: "🔌",
     },
   ];
 
@@ -31,7 +29,7 @@ export default function CoordinatorPage() {
     <ModuleLayout
       title="多智能体协调"
       subtitle="Claude Code 的 Coordinator 模式 — 多 Agent 编排、任务分解与团队协作"
-      icon="\uD83D\uDD78\uFE0F"
+      icon="🕸️"
       category="核心架构"
       relatedModules={relatedModules}
     >
@@ -107,36 +105,35 @@ export default function CoordinatorPage() {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 协调器角色
-interface CoordinatorAgent {
-  // 任务分解
-  decomposeTask(task: string): SubTask[];
-  // 任务分配
-  assignTask(agent: WorkerAgent, task: SubTask): void;
-  // 结果汇总
-  aggregateResults(results: TaskResult[]): FinalResult;
-  // 进度监控
-  monitorProgress(): ProgressReport;
-}
-
-// 子任务定义
-interface SubTask {
-  id: string;
-  description: string;
-  priority: 'high' | 'medium' | 'low';
-  dependencies: string[];  // 依赖的其他子任务 ID
-}
-
-// Worker 只拥有执行工具
-interface WorkerAgent {
-  name: string;
-  tools: ['FileReadTool', 'FileEditTool', 'BashTool', 'GrepTool'];
-  execute(task: SubTask): Promise<TaskResult>;
-}`}
-            language="typescript"
-            filename="coordinator/types.ts"
-            highlights={[2, 3, 4, 5, 6, 8, 9, 10, 14, 15, 16, 17, 18, 19]}
+          <ArchitectureDiagram
+            title="Coordinator vs Worker 角色与工具分层"
+            nodes={[
+              { id: "coord_role", label: "Coordinator", x: 300, y: 10, color: "var(--accent-cyan)" },
+              { id: "d1", label: "decomposeTask", x: 10, y: 100, color: "var(--accent-cyan)" },
+              { id: "d2", label: "assignTask", x: 170, y: 100, color: "var(--accent-cyan)" },
+              { id: "d3", label: "aggregateResults", x: 330, y: 100, color: "var(--accent-cyan)" },
+              { id: "d4", label: "monitorProgress", x: 490, y: 100, color: "var(--accent-cyan)" },
+              { id: "worker_role", label: "Worker Agent", x: 300, y: 200, color: "var(--accent-purple)" },
+              { id: "w1", label: "FileReadTool", x: 10, y: 290, color: "var(--accent-purple)" },
+              { id: "w2", label: "FileEditTool", x: 170, y: 290, color: "var(--accent-purple)" },
+              { id: "w3", label: "BashTool", x: 330, y: 290, color: "var(--accent-purple)" },
+              { id: "w4", label: "GrepTool", x: 490, y: 290, color: "var(--accent-purple)" },
+              { id: "w5", label: "GlobTool", x: 620, y: 290, color: "var(--accent-purple)" },
+            ]}
+            edges={[
+              { from: "coord_role", to: "d1", label: "" },
+              { from: "coord_role", to: "d2", label: "" },
+              { from: "coord_role", to: "d3", label: "" },
+              { from: "coord_role", to: "d4", label: "" },
+              { from: "coord_role", to: "worker_role", label: "分配" },
+              { from: "worker_role", to: "w1", label: "" },
+              { from: "worker_role", to: "w2", label: "" },
+              { from: "worker_role", to: "w3", label: "" },
+              { from: "worker_role", to: "w4", label: "" },
+              { from: "worker_role", to: "w5", label: "" },
+            ]}
+            width={800}
+            height={350}
           />
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -197,112 +194,93 @@ interface WorkerAgent {
             </p>
           </div>
 
-          <CodeFlow
-            title="Worker Agent 生命周期"
-            steps={[
-              {
-                code: `// Step 1: 创建 - Coordinator 使用 AgentTool 生成 Worker
-const worker = await AgentTool.call({
-  name: 'researcher',
-  prompt: '研究 tools/ 目录下的所有工具实现',
-  mode: 'subagent',
-});
-
-// Coordinator 在内部维护 Worker 注册表
-const workerRegistry = new Map<string, WorkerAgent>();
-workerRegistry.set('researcher', worker);`,
-                highlight: [2, 3, 4, 5, 6, 9],
-                description:
-                  "Coordinator 使用 AgentTool 创建新的 Worker Agent。每个 Worker 拥有唯一的名称和明确的任务提示，以 subagent 模式运行，继承父 Agent 的部分权限但拥有独立的工具集。",
-              },
-              {
-                code: `// Step 2: 分配任务 - Worker 接收具体子任务
-await TaskUpdate({
-  taskId: 'task-001',
-  owner: 'researcher',
-  status: 'in_progress',
-});
-
-// Worker 开始执行前会读取完整任务描述
-const taskDetails = await TaskGet({ taskId: 'task-001' });
-// taskDetails.description 包含具体的执行要求`,
-                highlight: [2, 3, 4, 5, 8, 9],
-                description:
-                  "Coordinator 通过 TaskUpdate 将子任务分配给指定的 Worker，并将状态标记为 in_progress。Worker 接收到任务后，读取完整描述，了解具体需要完成的工作。",
-              },
-              {
-                code: `// Step 3: 执行 - Worker 使用工具执行任务
-const files = await GlobTool.call({ pattern: 'tools/**/*.ts' });
-// 发现 45 个工具文件
-
-for (const file of files.slice(0, 10)) {
-  const content = await FileReadTool.call({ path: file });
-  // 分析每个工具的实现...
-}
-
-// Worker 可以并行使用只读工具提升效率
-const [types, registry] = await Promise.all([
-  FileReadTool.call({ path: 'tools/types.ts' }),
-  FileReadTool.call({ path: 'tools/registry.ts' }),
-]);`,
-                highlight: [2, 3, 5, 6, 7, 10, 11, 12, 13],
-                description:
-                  "Worker 使用执行工具完成具体任务。只读工具（如 FileReadTool、GlobTool）可以并发执行以提升效率，而写操作工具则串行执行以保证数据一致性。",
-              },
-              {
-                code: `// Step 4: 汇报 - Worker 通过 SendMessage 返回结果
-await SendMessageTool.call({
-  to: 'coordinator',
-  message: JSON.stringify({
-    status: 'completed',
-    summary: '完成分析，发现 40+ 工具实现',
-    details: {
-      totalFiles: 45,
-      categories: ['file', 'search', 'bash', 'agent', 'task'],
-      keyFindings: ['统一 Tool 接口', 'Zod Schema 校验', '并发调度器'],
-    },
-  }),
-});`,
-                highlight: [2, 3, 4, 5, 6, 7, 8, 9, 10],
-                description:
-                  "Worker 完成任务后，通过 SendMessage 将结构化的结果发送回 Coordinator。消息中包含任务状态、执行摘要和详细发现，Coordinator 据此进行结果汇总和后续决策。",
-              },
-              {
-                code: `// Step 5: 终止 - Coordinator 收到结果后终止 Worker
-const result = await receiveMessage('researcher');
-await TaskUpdate({
-  taskId: 'task-001',
-  status: 'completed',
-});
-
-// Worker 自动进入空闲状态
-// Coordinator 可以选择复用或释放 Worker 资源
-workerRegistry.delete('researcher');
-// 团队资源被清理，任务完成`,
-                highlight: [1, 2, 3, 4, 5, 8, 9],
-                description:
-                  "Coordinator 接收到 Worker 的结果消息后，将任务标记为 completed，并从注册表中移除 Worker。Worker 的资源被释放，整个生命周期结束。如果需要，Coordinator 可以创建新的 Worker 处理后续任务。",
-              },
+          <ArchitectureDiagram
+            title="Worker Agent 生命周期流程"
+            nodes={[
+              { id: "create", label: "1. 创建", x: 10, y: 30, color: "var(--accent-cyan)" },
+              { id: "assign", label: "2. 分配任务", x: 170, y: 30, color: "var(--accent-blue)" },
+              { id: "execute", label: "3. 执行任务", x: 330, y: 30, color: "var(--accent-purple)" },
+              { id: "report", label: "4. 汇报结果", x: 490, y: 30, color: "var(--accent-blue)" },
+              { id: "terminate", label: "5. 终止", x: 640, y: 30, color: "var(--accent-cyan)" },
+              { id: "agent_tool", label: "AgentTool", x: 10, y: 130, color: "var(--accent-cyan)" },
+              { id: "task_update", label: "TaskUpdate", x: 170, y: 130, color: "var(--accent-blue)" },
+              { id: "exec_tools", label: "FileRead/Bash/Grep", x: 330, y: 130, color: "var(--accent-purple)" },
+              { id: "send_msg", label: "SendMessage", x: 490, y: 130, color: "var(--accent-blue)" },
+              { id: "cleanup", label: "资源释放", x: 640, y: 130, color: "var(--accent-cyan)" },
+              { id: "coord_create", label: "Coordinator", x: 10, y: 230, color: "var(--accent-cyan)" },
+              { id: "coord_recv", label: "Coordinator", x: 490, y: 230, color: "var(--accent-cyan)" },
             ]}
+            edges={[
+              { from: "create", to: "assign", label: "" },
+              { from: "assign", to: "execute", label: "" },
+              { from: "execute", to: "report", label: "" },
+              { from: "report", to: "terminate", label: "" },
+              { from: "agent_tool", to: "create", label: "" },
+              { from: "task_update", to: "assign", label: "" },
+              { from: "exec_tools", to: "execute", label: "" },
+              { from: "send_msg", to: "report", label: "" },
+              { from: "cleanup", to: "terminate", label: "" },
+              { from: "coord_create", to: "agent_tool", label: "调用" },
+              { from: "send_msg", to: "coord_recv", label: "投递" },
+            ]}
+            width={820}
+            height={300}
           />
 
-          <CodeBlock
-            code={`// 生成 Worker Agent
-const worker = await AgentTool.call({
-  name: 'researcher',
-  prompt: '研究 tools/ 目录下的所有工具实现',
-  mode: 'subagent',
-});
-
-// Worker 通过 SendMessage 通信
-SendMessageTool.call({
-  to: 'coordinator',
-  message: '完成分析，发现 40+ 工具实现',
-});`}
-            language="typescript"
-            filename="coordinator/worker-lifecycle.ts"
-            highlights={[2, 3, 4, 5, 6, 9, 10, 11, 12]}
-          />
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-5 gap-3">
+            {[
+              {
+                step: "1",
+                title: "创建",
+                desc: "Coordinator 使用 AgentTool 以 subagent 模式生成 Worker，每个 Worker 拥有唯一名称和任务提示",
+                color: "var(--accent-cyan)",
+              },
+              {
+                step: "2",
+                title: "分配",
+                desc: "通过 TaskUpdate 将子任务分配给 Worker，状态标记为 in_progress",
+                color: "var(--accent-blue)",
+              },
+              {
+                step: "3",
+                title: "执行",
+                desc: "Worker 使用 FileRead/Bash/Grep 等工具执行任务，只读工具可并发运行",
+                color: "var(--accent-purple)",
+              },
+              {
+                step: "4",
+                title: "汇报",
+                desc: "Worker 通过 SendMessage 将结构化结果（状态/摘要/详细发现）发送给 Coordinator",
+                color: "var(--accent-blue)",
+              },
+              {
+                step: "5",
+                title: "终止",
+                desc: "Coordinator 收到结果后将任务标记为 completed，释放 Worker 资源",
+                color: "var(--accent-cyan)",
+              },
+            ].map((item) => (
+              <div
+                key={item.step}
+                className="p-4 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)]"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <div
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                    style={{ background: item.color }}
+                  >
+                    {item.step}
+                  </div>
+                  <span className="text-sm font-semibold text-[var(--text-primary)]">
+                    {item.title}
+                  </span>
+                </div>
+                <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
         </section>
       </ScrollReveal>
 
@@ -338,45 +316,34 @@ SendMessageTool.call({
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 创建任务
-await TaskCreate({
-  subject: "分析工具系统",
-  description: "研究 tools/ 目录下所有工具的接口定义和实现模式",
-});
-
-// 设置任务依赖关系
-await TaskCreate({
-  subject: "编写工具系统文档",
-  description: "基于分析结果编写工具系统文档",
-  // 此任务被上一个任务阻塞
-});
-await TaskUpdate({
-  taskId: "2",
-  addBlockedBy: ["1"],  // 任务 2 必须等任务 1 完成
-});
-
-// 分配给 Worker
-await TaskUpdate({
-  taskId: "1",
-  owner: "researcher",
-});
-
-// Worker 完成后更新
-await TaskUpdate({
-  taskId: "1",
-  status: "completed",
-});
-
-// 查看全局进度
-const tasks = await TaskList();
-// tasks: [
-//   { id: "1", status: "completed", owner: "researcher" },
-//   { id: "2", status: "pending", blockedBy: ["1"] },  // 现在已解锁
-// ]`}
-            language="typescript"
-            filename="coordinator/task-management.ts"
-            highlights={[2, 3, 4, 7, 8, 12, 13, 16, 17, 18, 21, 22, 25, 26, 27, 28, 29, 30, 31]}
+          <ArchitectureDiagram
+            title="任务生命周期与依赖管理"
+            nodes={[
+              { id: "tc1", label: "TaskCreate", x: 30, y: 20, color: "var(--accent-cyan)" },
+              { id: "task1", label: '任务1: "分析工具"', x: 30, y: 110, color: "var(--accent-blue)" },
+              { id: "tu1", label: "TaskUpdate", x: 30, y: 200, color: "var(--accent-blue)" },
+              { id: "tc2", label: "TaskCreate", x: 250, y: 20, color: "var(--accent-cyan)" },
+              { id: "task2", label: '任务2: "编写文档"', x: 250, y: 110, color: "var(--accent-blue)" },
+              { id: "tu2_dep", label: "TaskUpdate\nblockedBy: [1]", x: 250, y: 200, color: "var(--accent-purple)" },
+              { id: "tl", label: "TaskList", x: 470, y: 20, color: "var(--accent-purple)" },
+              { id: "progress", label: "全局进度面板", x: 470, y: 110, color: "var(--accent-purple)" },
+              { id: "done1", label: "任务1 completed", x: 30, y: 300, color: "#10b981" },
+              { id: "unblock", label: "任务2 已解锁", x: 250, y: 300, color: "#10b981" },
+              { id: "assign", label: "分配给 Worker", x: 470, y: 300, color: "var(--accent-cyan)" },
+            ]}
+            edges={[
+              { from: "tc1", to: "task1", label: "创建" },
+              { from: "task1", to: "tu1", label: "分配 owner" },
+              { from: "tc2", to: "task2", label: "创建" },
+              { from: "task2", to: "tu2_dep", label: "设置依赖" },
+              { from: "tl", to: "progress", label: "查看" },
+              { from: "tu1", to: "done1", label: "完成" },
+              { from: "done1", to: "unblock", label: "解锁" },
+              { from: "unblock", to: "assign", label: "继续执行" },
+              { from: "tu2_dep", to: "done1", label: "等待" },
+            ]}
+            width={660}
+            height={370}
           />
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -451,32 +418,35 @@ const tasks = await TaskList();
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 创建团队
-await TeamCreate({
-  team_name: "code-analysis",
-  description: "分析 Claude Code 源代码架构",
-});
-
-// 团队成员共享:
-// - 任务列表: ~/.claude/tasks/{team-name}/
-// - 配置文件: ~/.claude/teams/{team-name}/config.json
-
-// 添加 Worker 到团队
-const worker = await AgentTool.call({
-  name: 'researcher',
-  prompt: '你是 code-analysis 团队的研究员',
-  team_name: 'code-analysis',
-});
-
-// Worker 可以访问团队共享的任务列表
-const tasks = await TaskList();  // 返回团队内的所有任务
-
-// 团队工作完成后清理
-await TeamDelete();`}
-            language="typescript"
-            filename="coordinator/team-system.ts"
-            highlights={[2, 3, 4, 5, 8, 9, 12, 13, 14, 17, 18, 21, 22]}
+          <ArchitectureDiagram
+            title="团队系统架构与资源共享"
+            nodes={[
+              { id: "team_create", label: "TeamCreate", x: 300, y: 10, color: "var(--accent-cyan)" },
+              { id: "team", label: 'Team "code-analysis"', x: 300, y: 100, color: "var(--accent-cyan)" },
+              { id: "tasks_dir", label: "tasks/\n{team-name}/", x: 50, y: 210, color: "var(--accent-blue)" },
+              { id: "config_dir", label: "teams/\n{team-name}/\nconfig.json", x: 230, y: 210, color: "var(--accent-purple)" },
+              { id: "msg_channel", label: "通信信道", x: 420, y: 210, color: "var(--accent-blue)" },
+              { id: "worker_a", label: "Worker A", x: 100, y: 330, color: "var(--accent-purple)" },
+              { id: "worker_b", label: "Worker B", x: 300, y: 330, color: "var(--accent-purple)" },
+              { id: "worker_c", label: "Worker C", x: 480, y: 330, color: "var(--accent-purple)" },
+              { id: "team_del", label: "TeamDelete", x: 620, y: 100, color: "#f43f5e" },
+            ]}
+            edges={[
+              { from: "team_create", to: "team", label: "创建" },
+              { from: "team", to: "tasks_dir", label: "初始化" },
+              { from: "team", to: "config_dir", label: "初始化" },
+              { from: "team", to: "msg_channel", label: "初始化" },
+              { from: "team", to: "worker_a", label: "添加成员" },
+              { from: "team", to: "worker_b", label: "添加成员" },
+              { from: "team", to: "worker_c", label: "添加成员" },
+              { from: "worker_a", to: "tasks_dir", label: "读写" },
+              { from: "worker_b", to: "tasks_dir", label: "读写" },
+              { from: "worker_b", to: "msg_channel", label: "通信" },
+              { from: "worker_c", to: "config_dir", label: "读取" },
+              { from: "team", to: "team_del", label: "生命周期结束" },
+            ]}
+            width={800}
+            height={400}
           />
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -541,44 +511,33 @@ await TeamDelete();`}
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 点对点通信
-await SendMessage({
-  to: "researcher",
-  message: "请优先分析 tools/ 目录下的文件操作类工具",
-});
-
-// 广播通信
-await SendMessage({
-  to: "*",
-  message: "所有成员请汇报当前进度",
-});
-
-// Coordinator 向 Worker 发送调整指令
-await SendMessage({
-  to: "developer",
-  message: JSON.stringify({
-    type: "directive",
-    action: "switch_focus",
-    newTask: "修复 src/utils/validator.ts 中的类型错误",
-    priority: "high",
-  }),
-});
-
-// Worker 向 Coordinator 汇报结果
-await SendMessage({
-  to: "coordinator",
-  message: JSON.stringify({
-    type: "status_report",
-    taskId: "task-003",
-    progress: 75,
-    eta: "预计 5 分钟内完成",
-    blockers: ["发现一个未预期的依赖关系"],
-  }),
-});`}
-            language="typescript"
-            filename="coordinator/communication.ts"
-            highlights={[2, 3, 4, 7, 8, 9, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26]}
+          <ArchitectureDiagram
+            title="通信模式：点对点 vs 广播"
+            nodes={[
+              { id: "coord", label: "Coordinator", x: 300, y: 20, color: "var(--accent-cyan)" },
+              { id: "p2p_label", label: "点对点通信", x: 100, y: 110, color: "var(--accent-blue)" },
+              { id: "broadcast_label", label: "广播通信", x: 460, y: 110, color: "var(--accent-purple)" },
+              { id: "w1", label: "Worker A", x: 30, y: 210, color: "var(--accent-purple)" },
+              { id: "w2", label: "Worker B", x: 170, y: 210, color: "var(--accent-purple)" },
+              { id: "w3", label: "Worker C", x: 310, y: 210, color: "var(--accent-purple)" },
+              { id: "w4", label: "Worker D", x: 450, y: 210, color: "var(--accent-purple)" },
+              { id: "w5", label: "Worker E", x: 590, y: 210, color: "var(--accent-purple)" },
+              { id: "msg_p2p", label: 'to: "agent"', x: 100, y: 310, color: "var(--accent-blue)" },
+              { id: "msg_broad", label: 'to: "*"', x: 460, y: 310, color: "var(--accent-purple)" },
+            ]}
+            edges={[
+              { from: "coord", to: "p2p_label", label: "" },
+              { from: "coord", to: "broadcast_label", label: "" },
+              { from: "p2p_label", to: "w1", label: "指定" },
+              { from: "broadcast_label", to: "w3", label: "所有" },
+              { from: "broadcast_label", to: "w4", label: "所有" },
+              { from: "broadcast_label", to: "w5", label: "所有" },
+              { from: "p2p_label", to: "msg_p2p", label: "" },
+              { from: "broadcast_label", to: "msg_broad", label: "" },
+              { from: "w1", to: "coord", label: "汇报" },
+            ]}
+            width={760}
+            height={370}
           />
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">

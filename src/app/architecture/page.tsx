@@ -1,9 +1,9 @@
 import { ModuleLayout } from "@/components/ModuleLayout";
-import { CodeBlock } from "@/components/CodeBlock";
-import { CodeFlow } from "@/components/CodeFlow";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
+import DirectoryTree from "@/components/DirectoryTree";
+import Link from "next/link";
 
 export default function ArchitecturePage() {
   const relatedModules = [
@@ -11,25 +11,43 @@ export default function ArchitecturePage() {
       title: "入口与启动",
       href: "/entry",
       description: "启动流程详解",
-      icon: "\uD83D\uDE80",
+      icon: "🚀",
     },
     {
       title: "工具系统",
       href: "/tools",
       description: "40+ 工具实现",
-      icon: "\uD83D\uDD27",
+      icon: "🔧",
     },
     {
       title: "命令系统",
       href: "/commands",
       description: "命令行界面",
-      icon: "\u2328\uFE0F",
+      icon: "⌨️",
     },
     {
       title: "插件系统",
       href: "/plugins",
       description: "扩展机制",
-      icon: "\uD83D\uDD0C",
+      icon: "🔌",
+    },
+    {
+      title: "查询引擎",
+      href: "/query-engine",
+      description: "核心查询引擎",
+      icon: "⚡",
+    },
+    {
+      title: "上下文管理",
+      href: "/context",
+      description: "Context 系统",
+      icon: "📦",
+    },
+    {
+      title: "记忆系统",
+      href: "/memory",
+      description: "记忆持久化",
+      icon: "🧠",
     },
   ];
 
@@ -37,7 +55,7 @@ export default function ArchitecturePage() {
     <ModuleLayout
       title="系统架构"
       subtitle="Claude Code 核心架构的深度剖析 —— 分层设计、消息流、状态管理与性能策略"
-      icon="\uD83C\uDFD7\uFE0F"
+      icon="🏗️"
       category="核心架构"
       relatedModules={relatedModules}
     >
@@ -164,98 +182,105 @@ export default function ArchitecturePage() {
             </p>
           </div>
 
-          <CodeFlow
+          <ArchitectureDiagram
             title="消息处理管道"
-            steps={[
-              {
-                code: `// Step 1: 用户输入捕获
-function handleUserInput(input: string) {
-  // 用户输入: "fix the bug in app.ts"
-  const userMessage = {
-    role: 'user',
-    content: input,
-  };
+            nodes={[
+              { id: "msg-user", label: "用户输入", x: 30, y: 30, color: "var(--accent-cyan)" },
+              { id: "msg-textinput", label: "TextInput", x: 220, y: 30, color: "var(--accent-cyan)" },
+              { id: "msg-history", label: "对话历史", x: 410, y: 30, color: "var(--accent-cyan)" },
 
-  // 添加到消息历史
-  conversationHistory.push(userMessage);
-}`,
-                highlight: [2, 3, 4, 5],
-                description:
-                  '用户在终端中输入 "fix the bug in app.ts"。TextInput 组件捕获输入，构建标准化的用户消息对象，并追加到对话历史中。',
-              },
-              {
-                code: `// Step 2: QueryEngine 上下文增强
-async function prepareQuery(messages) {
-  // 注入系统上下文
-  const gitStatus = await getGitStatus();
-  const projectInfo = getProjectInfo();
-  const systemPrompt = buildSystemPrompt({
-    tools: registeredTools,
-    gitStatus,
-    projectInfo,
-    permissions: currentPermissions,
-  });
+              { id: "msg-query", label: "QueryEngine", x: 30, y: 120, color: "var(--accent-purple)" },
+              { id: "msg-git", label: "Git 状态", x: 220, y: 120, color: "var(--accent-purple)" },
+              { id: "msg-system", label: "System Prompt", x: 410, y: 120, color: "var(--accent-purple)" },
 
-  return { system: systemPrompt, messages };
-}`,
-                highlight: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                description:
-                  "QueryEngine 对消息进行上下文增强：获取 git 状态、项目信息、已注册工具列表和当前权限，构建完整的系统提示词。所有这些上下文信息帮助 Claude 更好地理解用户需求。",
-              },
-              {
-                code: `// Step 3: API 调用
-const response = await apiClient.messages.create({
-  model: 'claude-sonnet-4-20250514',
-  system: systemPrompt,
-  messages: conversationHistory,
-  tools: toolDefinitions,
-  stream: true,
-  onChunk: (chunk) => {
-    updateUI(chunk); // 流式更新终端
-  },
-});`,
-                highlight: [2, 3, 4, 5, 6, 7, 8, 9],
-                description:
-                  "将增强后的消息发送给 Claude API。启用流式响应（stream: true），每个 token 到达时立即更新终端显示，用户可以看到 Claude 的思考过程实时展开。",
-              },
-              {
-                code: `// Step 4: Claude 返回工具调用
-// Claude 决定先读取文件，了解 bug 的情况
-const toolCall = {
-  type: 'tool_use',
-  name: 'FileReadTool',
-  input: {
-    file_path: '/project/src/app.ts',
-    offset: 1,
-    limit: 50,
-  },
-};`,
-                highlight: [2, 3, 4, 5, 6, 7, 8, 9],
-                description:
-                  'Claude 分析用户请求后，决定使用 FileReadTool 读取 app.ts 文件。它返回一个结构化的工具调用请求，包含工具名称和参数。系统会先进行权限检查，然后执行工具。',
-              },
-              {
-                code: `// Step 5: 工具执行与结果反馈
-const result = await toolExecutor.execute(toolCall);
+              { id: "msg-api", label: "Claude API", x: 30, y: 210, color: "var(--accent-blue)" },
+              { id: "msg-stream", label: "流式响应", x: 220, y: 210, color: "var(--accent-blue)" },
+              { id: "msg-update", label: "UI 更新", x: 410, y: 210, color: "var(--accent-blue)" },
 
-// 将工具结果反馈给 Claude
-conversationHistory.push({
-  role: 'user',
-  content: [{
-    type: 'tool_result',
-    tool_use_id: toolCall.id,
-    content: result.output,
-  }],
-});
+              { id: "msg-toolcall", label: "工具调用", x: 30, y: 300, color: "var(--text-secondary)" },
+              { id: "msg-perm", label: "权限检查", x: 220, y: 300, color: "var(--text-secondary)" },
+              { id: "msg-exec", label: "工具执行", x: 410, y: 300, color: "var(--text-secondary)" },
 
-// 继续对话循环...
-renderUpdate();`,
-                highlight: [1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 14],
-                description:
-                  "工具执行完毕后，结果被包装为 tool_result 消息追加到对话历史，然后反馈给 Claude 继续推理。整个循环会持续进行，直到 Claude 给出最终回复。UI 在每个步骤都会实时更新。",
-              },
+              { id: "msg-result", label: "工具结果", x: 120, y: 390, color: "var(--accent-cyan)" },
+              { id: "msg-loop", label: "对话循环", x: 310, y: 390, color: "var(--accent-purple)" },
             ]}
+            edges={[
+              { from: "msg-user", to: "msg-textinput", label: "捕获" },
+              { from: "msg-textinput", to: "msg-history", label: "记录" },
+              { from: "msg-history", to: "msg-query", label: "传递" },
+              { from: "msg-query", to: "msg-git", label: "读取" },
+              { from: "msg-git", to: "msg-system", label: "构建" },
+              { from: "msg-system", to: "msg-api", label: "发送" },
+              { from: "msg-api", to: "msg-stream", label: "stream" },
+              { from: "msg-stream", to: "msg-update", label: "渲染" },
+              { from: "msg-api", to: "msg-toolcall", label: "返回" },
+              { from: "msg-toolcall", to: "msg-perm", label: "验证" },
+              { from: "msg-perm", to: "msg-exec", label: "批准" },
+              { from: "msg-exec", to: "msg-result", label: "输出" },
+              { from: "msg-result", to: "msg-loop", label: "反馈" },
+              { from: "msg-loop", to: "msg-api", label: "继续" },
+            ]}
+            width={560}
+            height={460}
           />
+
+          <div className="mt-6 space-y-3">
+            {[
+              {
+                step: "1",
+                title: "用户输入捕获",
+                desc: "用户在终端中输入指令，TextInput 组件捕获输入，构建标准化的用户消息对象，并追加到对话历史中。",
+                color: "var(--accent-cyan)",
+              },
+              {
+                step: "2",
+                title: "QueryEngine 上下文增强",
+                desc: "QueryEngine 对消息进行上下文增强：获取 git 状态、项目信息、已注册工具列表和当前权限，构建完整的系统提示词。",
+                color: "var(--accent-purple)",
+              },
+              {
+                step: "3",
+                title: "API 调用与流式响应",
+                desc: "将增强后的消息发送给 Claude API。启用流式响应（stream: true），每个 token 到达时立即更新终端显示，用户可以看到 Claude 的思考过程实时展开。",
+                color: "var(--accent-blue)",
+              },
+              {
+                step: "4",
+                title: "工具调用与权限验证",
+                desc: "Claude 分析请求后决定使用工具（如 FileReadTool），系统先进行权限检查，然后执行工具并将结果反馈给 Claude 继续推理。",
+                color: "var(--text-secondary)",
+              },
+              {
+                step: "5",
+                title: "工具结果反馈与对话循环",
+                desc: "工具执行完毕后，结果被包装为 tool_result 消息追加到对话历史，然后反馈给 Claude 继续推理。整个循环会持续进行，直到 Claude 给出最终回复。",
+                color: "var(--accent-cyan)",
+              },
+            ].map((item) => (
+              <div
+                key={item.step}
+                className="flex gap-4 p-4 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)]"
+              >
+                <span
+                  className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+                  style={{
+                    background: `${item.color}15`,
+                    color: item.color,
+                  }}
+                >
+                  {item.step}
+                </span>
+                <div>
+                  <span className="text-sm font-semibold text-[var(--text-primary)]">
+                    {item.title}
+                  </span>
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
       </ScrollReveal>
 
@@ -279,28 +304,49 @@ renderUpdate();`,
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 集中式状态 —— 应用运行时的核心数据
-type AppState = {
-  originalCwd: string;       // 原始工作目录（启动时锁定，不可变）
-  projectRoot: string;       // 项目根目录（向上查找 git/markdown 根）
-  totalCostUSD: number;      // 费用追踪（API 调用成本累计）
-  isInteractive: boolean;    // 交互模式（终端 vs 管道输入）
-  clientType: string;        // 客户端类型（CLI / SDK / CI）
-  sessionId: string;         // 会话唯一标识符
-  kairosActive: boolean;     // 企业定制版本标志
-};
+          <ArchitectureDiagram
+            title="状态管理架构"
+            nodes={[
+              // Global State row
+              { id: "gs-cwd", label: "originalCwd", x: 10, y: 30, color: "var(--accent-purple)" },
+              { id: "gs-project", label: "projectRoot", x: 180, y: 30, color: "var(--accent-purple)" },
+              { id: "gs-cost", label: "totalCostUSD", x: 350, y: 30, color: "var(--accent-purple)" },
+              { id: "gs-session", label: "sessionId", x: 520, y: 30, color: "var(--accent-purple)" },
 
-// React Context —— UI 层状态分发
-interface UIContextType {
-  notifications: Notification[];  // 通知队列
-  overlay: OverlayState | null;   // 叠加层状态
-  prompt: PromptState;            // 输入提示状态
-  isLoading: boolean;             // 加载指示器
-}`}
-            language="typescript"
-            filename="bootstrap/state.ts + UI Context"
-            highlights={[2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16]}
+              // Global State container label
+              { id: "gs-interactive", label: "isInteractive", x: 10, y: 100, color: "var(--accent-purple)" },
+              { id: "gs-client", label: "clientType", x: 180, y: 100, color: "var(--accent-purple)" },
+              { id: "gs-kairos", label: "kairosActive", x: 350, y: 100, color: "var(--accent-purple)" },
+
+              // UI Context row
+              { id: "ui-notif", label: "notifications", x: 10, y: 210, color: "var(--accent-cyan)" },
+              { id: "ui-overlay", label: "overlay", x: 180, y: 210, color: "var(--accent-cyan)" },
+              { id: "ui-prompt", label: "prompt", x: 350, y: 210, color: "var(--accent-cyan)" },
+              { id: "ui-loading", label: "isLoading", x: 520, y: 210, color: "var(--accent-cyan)" },
+
+              // Storage layer
+              { id: "store-bootstrap", label: "Bootstrap", x: 100, y: 320, color: "var(--text-secondary)" },
+              { id: "store-memdir", label: "memdir 持久化", x: 320, y: 320, color: "var(--text-secondary)" },
+            ]}
+            edges={[
+              // Global state internal connections
+              { from: "gs-cwd", to: "gs-project", label: "派生" },
+              { from: "gs-cost", to: "gs-session", label: "关联" },
+              { from: "gs-interactive", to: "gs-client", label: "决定" },
+              // Global state to UI Context
+              { from: "gs-session", to: "ui-loading", label: "驱动" },
+              { from: "gs-kairos", to: "ui-overlay", label: "控制" },
+              // UI Context internal
+              { from: "ui-notif", to: "ui-overlay", label: "触发" },
+              { from: "ui-prompt", to: "ui-loading", label: "联动" },
+              // Storage connections
+              { from: "store-bootstrap", to: "gs-cwd", label: "初始化" },
+              { from: "store-bootstrap", to: "gs-session", label: "创建" },
+              { from: "gs-session", to: "store-memdir", label: "写入" },
+              { from: "store-memdir", to: "ui-prompt", label: "恢复" },
+            ]}
+            width={680}
+            height={380}
           />
 
           <div className="mt-8 space-y-4 text-[var(--text-secondary)] leading-relaxed">
@@ -360,39 +406,46 @@ interface UIContextType {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// 基础工具接口 —— 所有工具的统一契约
-interface Tool {
-  name: string;              // 工具名称（全局唯一标识符）
-  description: string;       // 工具描述（帮助 Claude 理解何时使用）
-  inputSchema: object;       // JSON Schema 输入参数定义
-  execute: (input: ToolInput) => Promise<ToolResult>;  // 执行函数
-}
+          <ArchitectureDiagram
+            title="工具接口与注册架构"
+            nodes={[
+              // Tool interface
+              { id: "tool-name", label: "name: string", x: 10, y: 30, color: "var(--accent-blue)" },
+              { id: "tool-desc", label: "description", x: 180, y: 30, color: "var(--accent-blue)" },
+              { id: "tool-schema", label: "inputSchema", x: 350, y: 30, color: "var(--accent-blue)" },
+              { id: "tool-exec", label: "execute()", x: 520, y: 30, color: "var(--accent-blue)" },
 
-// 工具注册示例
-const tools: Tool[] = [
-  {
-    name: 'Read',
-    description: 'Reads a file from the local filesystem',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        file_path: { type: 'string', description: 'Absolute path' },
-        offset: { type: 'number' },
-        limit: { type: 'number' },
-      },
-      required: ['file_path'],
-    },
-    execute: async (input) => {
-      const content = await fs.readFile(input.file_path, 'utf-8');
-      return { output: content, success: true };
-    },
-  },
-  // ... 40+ more tools
-];`}
-            language="typescript"
-            filename="tools/types.ts"
-            highlights={[3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]}
+              // Tool instances
+              { id: "t-read", label: "Read", x: 10, y: 140, color: "var(--accent-cyan)" },
+              { id: "t-write", label: "Write", x: 140, y: 140, color: "var(--accent-cyan)" },
+              { id: "t-bash", label: "Bash", x: 270, y: 140, color: "var(--accent-cyan)" },
+              { id: "t-grep", label: "Grep", x: 400, y: 140, color: "var(--accent-cyan)" },
+              { id: "t-more", label: "40+ ...", x: 530, y: 140, color: "var(--accent-cyan)" },
+
+              // Registry & execution
+              { id: "reg-registry", label: "工具注册表", x: 100, y: 260, color: "var(--accent-purple)" },
+              { id: "reg-dispatch", label: "工具调度器", x: 320, y: 260, color: "var(--accent-purple)" },
+              { id: "reg-result", label: "ToolResult", x: 530, y: 260, color: "var(--accent-purple)" },
+            ]}
+            edges={[
+              // Interface connections
+              { from: "tool-name", to: "tool-desc", label: "标识" },
+              { from: "tool-desc", to: "tool-schema", label: "描述" },
+              { from: "tool-schema", to: "tool-exec", label: "验证" },
+              // Instances implement interface
+              { from: "tool-exec", to: "t-read", label: "实现" },
+              { from: "tool-exec", to: "t-write", label: "实现" },
+              { from: "tool-exec", to: "t-bash", label: "实现" },
+              // Instances register
+              { from: "t-read", to: "reg-registry", label: "注册" },
+              { from: "t-bash", to: "reg-registry", label: "注册" },
+              { from: "t-more", to: "reg-registry", label: "注册" },
+              // Registry to dispatch
+              { from: "reg-registry", to: "reg-dispatch", label: "查找" },
+              { from: "reg-dispatch", to: "reg-result", label: "执行" },
+            ]}
+            width={680}
+            height={320}
           />
 
           <div className="mt-8 mb-6">
@@ -460,6 +513,47 @@ const tools: Tool[] = [
             </p>
           </div>
 
+          <ArchitectureDiagram
+            title="性能优化策略全景图"
+            nodes={[
+              // Lazy Loading
+              { id: "perf-entry", label: "应用入口", x: 250, y: 20, color: "var(--accent-cyan)" },
+
+              // Branching to strategies
+              { id: "perf-lazy", label: "Lazy Loading", x: 10, y: 110, color: "var(--accent-purple)" },
+              { id: "perf-dynamic", label: "dynamic import", x: 210, y: 110, color: "var(--accent-purple)" },
+              { id: "perf-cond", label: "条件加载", x: 420, y: 110, color: "var(--accent-purple)" },
+
+              // Memoization
+              { id: "perf-memo", label: "Memoization", x: 10, y: 200, color: "var(--accent-blue)" },
+              { id: "perf-reactmemo", label: "React.memo", x: 210, y: 200, color: "var(--accent-blue)" },
+              { id: "perf-usememo", label: "useMemo", x: 420, y: 200, color: "var(--accent-blue)" },
+
+              // Virtual Scrolling + Background
+              { id: "perf-virtual", label: "Virtual Scroll", x: 80, y: 290, color: "var(--text-secondary)" },
+              { id: "perf-bg", label: "Background Tasks", x: 310, y: 290, color: "var(--text-secondary)" },
+
+              // Result
+              { id: "perf-fast", label: "流畅体验", x: 220, y: 370, color: "var(--accent-cyan)" },
+            ]}
+            edges={[
+              { from: "perf-entry", to: "perf-lazy", label: "启动时" },
+              { from: "perf-entry", to: "perf-memo", label: "运行时" },
+              { from: "perf-entry", to: "perf-virtual", label: "渲染时" },
+              { from: "perf-lazy", to: "perf-dynamic", label: "策略" },
+              { from: "perf-dynamic", to: "perf-cond", label: "按需" },
+              { from: "perf-memo", to: "perf-reactmemo", label: "避免" },
+              { from: "perf-memo", to: "perf-usememo", label: "缓存" },
+              { from: "perf-reactmemo", to: "perf-fast", label: "加速" },
+              { from: "perf-usememo", to: "perf-fast", label: "优化" },
+              { from: "perf-virtual", to: "perf-fast", label: "减少" },
+              { from: "perf-bg", to: "perf-fast", label: "不阻塞" },
+              { from: "perf-cond", to: "perf-bg", label: "后台" },
+            ]}
+            width={580}
+            height={430}
+          />
+
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               {
@@ -503,33 +597,6 @@ const tools: Tool[] = [
               </div>
             ))}
           </div>
-
-          <div className="mt-8">
-            <CodeBlock
-              code={`// 懒加载重型模块 —— 条件导入策略
-const coordinatorModule = feature('COORDINATOR_MODE')
-  ? require('./coordinator/coordinatorMode.js')
-  : null;
-
-// 并行预加载非关键模块（不阻塞主流程）
-void Promise.all([
-  import('./services/analytics/firstPartyEventLogger.js'),
-  import('./services/analytics/growthbook.js'),
-]);
-
-// React.memo 避免不必要的重渲染
-const ExpensiveComponent = React.memo(({ data, onAction }) => {
-  const processed = useMemo(
-    () => heavyTransform(data),
-    [data]
-  );
-  return <UIRenderer data={processed} onAction={onAction} />;
-});`}
-              language="typescript"
-              filename="performance/patterns.ts"
-              highlights={[2, 3, 4, 6, 7, 8, 9, 12, 13, 14, 15, 16]}
-            />
-          </div>
         </section>
       </ScrollReveal>
 
@@ -546,6 +613,50 @@ const ExpensiveComponent = React.memo(({ data, onAction }) => {
             </p>
           </div>
 
+          <ArchitectureDiagram
+            title="权限系统多层防御"
+            nodes={[
+              // Incoming request
+              { id: "sec-request", label: "工具调用请求", x: 220, y: 20, color: "var(--accent-cyan)" },
+
+              // Layer 1: Feature Flags
+              { id: "sec-flag", label: "Feature Flags", x: 10, y: 110, color: "var(--accent-purple)" },
+              { id: "sec-check", label: "功能是否启用", x: 280, y: 110, color: "var(--accent-purple)" },
+
+              // Layer 2: Permission Modes
+              { id: "sec-mode", label: "Permission Mode", x: 10, y: 200, color: "var(--accent-blue)" },
+              { id: "sec-auto", label: "auto", x: 200, y: 200, color: "var(--accent-blue)" },
+              { id: "sec-manual", label: "manual", x: 340, y: 200, color: "var(--accent-blue)" },
+              { id: "sec-bypass", label: "bypass", x: 480, y: 200, color: "var(--accent-blue)" },
+
+              // Layer 3: Tool-specific
+              { id: "sec-tool", label: "工具级权限", x: 10, y: 290, color: "var(--text-secondary)" },
+              { id: "sec-path", label: "路径检查", x: 200, y: 290, color: "var(--text-secondary)" },
+              { id: "sec-net", label: "网络白名单", x: 400, y: 290, color: "var(--text-secondary)" },
+
+              // Layer 4: User Consent
+              { id: "sec-consent", label: "用户确认", x: 120, y: 380, color: "var(--accent-cyan)" },
+              { id: "sec-exec", label: "执行工具", x: 360, y: 380, color: "var(--accent-purple)" },
+            ]}
+            edges={[
+              { from: "sec-request", to: "sec-flag", label: "第1层" },
+              { from: "sec-flag", to: "sec-check", label: "检查" },
+              { from: "sec-check", to: "sec-mode", label: "第2层" },
+              { from: "sec-mode", to: "sec-auto", label: "模式" },
+              { from: "sec-mode", to: "sec-manual", label: "模式" },
+              { from: "sec-mode", to: "sec-bypass", label: "模式" },
+              { from: "sec-manual", to: "sec-tool", label: "第3层" },
+              { from: "sec-auto", to: "sec-tool", label: "第3层" },
+              { from: "sec-tool", to: "sec-path", label: "验证" },
+              { from: "sec-tool", to: "sec-net", label: "验证" },
+              { from: "sec-path", to: "sec-consent", label: "第4层" },
+              { from: "sec-consent", to: "sec-exec", label: "批准" },
+              { from: "sec-net", to: "sec-exec", label: "通过" },
+            ]}
+            width={640}
+            height={440}
+          />
+
           <div className="mt-6 space-y-4">
             {[
               {
@@ -553,47 +664,24 @@ const ExpensiveComponent = React.memo(({ data, onAction }) => {
                 desc: "功能开关层",
                 detail:
                   "通过 feature flag 系统控制实验性功能的开启和关闭。新工具和新功能首先通过 flag 控制，经过充分测试后才会默认启用。这确保了只有经过验证的能力才会暴露给用户。",
-                example: `// 检查 feature flag
-if (feature('MCP_SERVERS')) {
-  enableMcpIntegration();
-}`,
               },
               {
                 layer: "Permission Modes",
                 desc: "权限模式层",
                 detail:
                   "三种权限模式满足不同安全需求：auto 模式自动批准安全操作；manual 模式对所有敏感操作弹出确认；bypass 模式用于 CI/CD 等自动化场景，通过环境变量控制。",
-                example: `// 权限模式配置
-const mode = process.env.PERMISSION_MODE || 'manual';
-// auto: 自动批准安全操作
-// manual: 每次敏感操作需确认
-// bypass: CI/CD 环境，受环境变量控制`,
               },
               {
                 layer: "Tool-Specific Permissions",
                 desc: "工具级权限层",
                 detail:
                   "每个工具可以定义自己的权限检查逻辑。例如文件操作工具会检查路径是否在项目目录内，网络工具会检查 URL 是否在白名单中。这种细粒度的控制确保了工具只能执行被允许的操作。",
-                example: `// 工具级权限检查
-async function checkPermission(tool, input) {
-  if (tool.name === 'Write') {
-    return isPathInProject(input.file_path);
-  }
-  return true;
-}`,
               },
               {
                 layer: "User Consent",
                 desc: "用户确认层",
                 detail:
                   "在 manual 模式下，敏感操作（如文件写入、命令执行）会弹出交互式确认对话框。用户可以一次性批准或拒绝，也可以选择\"本次会话始终允许\"，在安全性和便利性之间取得平衡。",
-                example: `// 用户确认对话框
-const consent = await showConsentDialog({
-  tool: 'Bash',
-  action: 'npm install express',
-  risk: 'medium',
-});
-if (!consent.approved) return;`,
               },
             ].map((item, i) => (
               <div
@@ -613,14 +701,9 @@ if (!consent.approved) return;`,
                     </p>
                   </div>
                 </div>
-                <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4">
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                   {item.detail}
                 </p>
-                <CodeBlock
-                  code={item.example}
-                  language="typescript"
-                  highlights={[2, 3]}
-                />
               </div>
             ))}
           </div>
@@ -721,34 +804,181 @@ if (!consent.approved) return;`,
             ))}
           </div>
 
-          <div className="mt-8">
-            <CodeBlock
-              code={`// 上下文组装 —— QueryEngine 的核心逻辑
-function assembleContext(state: AppState): SystemPrompt {
-  return {
-    // 1. 系统上下文
-    git: getGitStatus(),           // 当前分支、暂存区、未跟踪文件
-    system: getSystemInfo(),       // OS、Node.js 版本、Shell 类型
+          <ArchitectureDiagram
+            title="上下文组装流程 (QueryEngine 核心逻辑)"
+            nodes={[
+              // Context sources
+              { id: "ctx-git", label: "Git 状态", x: 10, y: 30, color: "var(--accent-cyan)" },
+              { id: "ctx-sys", label: "系统信息", x: 190, y: 30, color: "var(--accent-cyan)" },
+              { id: "ctx-claudemd", label: "CLAUDE.md", x: 370, y: 30, color: "var(--accent-purple)" },
+              { id: "ctx-settings", label: "用户配置", x: 540, y: 30, color: "var(--accent-purple)" },
 
-    // 2. 用户上下文
-    claudeMd: readClaudeMdFiles(), // 项目级 CLAUDE.md 指令
-    settings: loadUserSettings(),  // 用户偏好与配置
+              { id: "ctx-memdir", label: "memdir 记忆", x: 10, y: 120, color: "var(--accent-blue)" },
+              { id: "ctx-tools", label: "工具列表", x: 190, y: 120, color: "var(--accent-blue)" },
+              { id: "ctx-perm", label: "权限状态", x: 370, y: 120, color: "var(--accent-blue)" },
 
-    // 3. 记忆系统
-    memory: loadMemdir(state.projectRoot),  // 持久化上下文
+              // Assembler
+              { id: "ctx-assemble", label: "QueryEngine 上下文组装", x: 170, y: 230, color: "var(--accent-purple)" },
 
-    // 4. 工具定义
-    tools: getRegisteredTools(),   // 当前可用的工具列表
+              // Output
+              { id: "ctx-prompt", label: "SystemPrompt", x: 170, y: 330, color: "var(--accent-cyan)" },
+              { id: "ctx-api", label: "Claude API", x: 420, y: 330, color: "var(--accent-blue)" },
+            ]}
+            edges={[
+              // Sources to assembler
+              { from: "ctx-git", to: "ctx-assemble", label: "注入" },
+              { from: "ctx-sys", to: "ctx-assemble", label: "注入" },
+              { from: "ctx-claudemd", to: "ctx-assemble", label: "注入" },
+              { from: "ctx-settings", to: "ctx-assemble", label: "注入" },
+              { from: "ctx-memdir", to: "ctx-assemble", label: "加载" },
+              { from: "ctx-tools", to: "ctx-assemble", label: "注册" },
+              { from: "ctx-perm", to: "ctx-assemble", label: "附加" },
+              // Assembler to output
+              { from: "ctx-assemble", to: "ctx-prompt", label: "生成" },
+              { from: "ctx-prompt", to: "ctx-api", label: "发送" },
+            ]}
+            width={700}
+            height={390}
+          />
+        </section>
+      </ScrollReveal>
 
-    // 5. 权限上下文
-    permissions: getPermissionState(),  // 当前权限模式与规则
-  };
-}`}
-              language="typescript"
-              filename="core/context.ts"
-              highlights={[3, 5, 6, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19]}
-            />
+      {/* Section 8: 四大入口 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle title="四大入口" subtitle="Four Entry Points — 多样化的启动方式" />
+          <p className="text-[var(--text-secondary)] leading-relaxed mb-6">
+            Claude Code 提供 4 种入口方式，覆盖从命令行到远程协作的全部场景。每种入口最终都汇入共享的 QueryEngine、State 和 Bootstrap 核心。
+          </p>
+          <ArchitectureDiagram
+            nodes={[
+              { id: "cli", label: "CLI (cli/)", x: 100, y: 30, color: "var(--accent-blue)" },
+              { id: "repl", label: "REPL (replLauncher)", x: 300, y: 30, color: "var(--accent-green)" },
+              { id: "server", label: "Direct Connect (server/)", x: 500, y: 30, color: "var(--accent-orange)" },
+              { id: "remote", label: "Remote (remote/)", x: 700, y: 30, color: "var(--accent-pink)" },
+              { id: "core", label: "Shared Core", x: 400, y: 160, color: "var(--accent-purple)" },
+              { id: "qe", label: "QueryEngine", x: 200, y: 280, color: "var(--accent-cyan)" },
+              { id: "state", label: "State", x: 400, y: 280, color: "var(--accent-purple)" },
+              { id: "bootstrap", label: "Bootstrap", x: 600, y: 280, color: "var(--accent-blue)" },
+            ]}
+            edges={[
+              { from: "cli", to: "core", label: "启动" },
+              { from: "repl", to: "core", label: "启动" },
+              { from: "server", to: "core", label: "连接" },
+              { from: "remote", to: "core", label: "连接" },
+              { from: "core", to: "qe", label: "" },
+              { from: "core", to: "state", label: "" },
+              { from: "core", to: "bootstrap", label: "" },
+            ]}
+            width={800}
+            height={320}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            {[
+              { icon: "💻", title: "CLI", desc: "cli/ — 结构化 I/O、NDJSON 流式传输、Bash 命令处理", href: "/entry" },
+              { icon: "🔄", title: "REPL", desc: "replLauncher.tsx + entrypoints/cli.tsx — 交互式终端会话", href: "/entry" },
+              { icon: "🔗", title: "Direct Connect", desc: "server/ — 服务端直连：directConnectManager、会话创建" },
+              { icon: "🌐", title: "Remote", desc: "remote/ — 远程会话管理：WebSocket、权限桥接、SDK 适配" },
+            ].map((ep) => (
+              <div key={ep.title} className="p-4 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)]">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">{ep.icon}</span>
+                  <span className="font-semibold text-[var(--text-primary)]">{ep.title}</span>
+                  {ep.href && (
+                    <Link href={ep.href} className="text-xs text-[var(--accent-purple)] hover:underline ml-auto">
+                      详情 →
+                    </Link>
+                  )}
+                </div>
+                <p className="text-sm text-[var(--text-secondary)]">{ep.desc}</p>
+              </div>
+            ))}
           </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Section 9: 完整目录结构树 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle title="完整目录结构树" subtitle="Interactive Directory Tree — 35+ 模块一览" />
+          <p className="text-[var(--text-secondary)] leading-relaxed mb-6">
+            点击含有子目录的模块可展开查看详细文件。带 <span className="text-[var(--accent-purple)]">→</span> 标记的模块有对应的深度分析页面。
+          </p>
+          <DirectoryTree />
+        </section>
+      </ScrollReveal>
+
+      {/* Section 10: 模块依赖 DAG 图 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle title="模块依赖 DAG 图" subtitle="Module Dependency Graph — 层级依赖关系" />
+          <p className="text-[var(--text-secondary)] leading-relaxed mb-6">
+            展示 Claude Code 各模块间的依赖关系。上层模块依赖下层模块，箭头表示「依赖」方向。核心层（QueryEngine、State、Context）位于底部，被多个上层模块共享依赖。
+          </p>
+          <ArchitectureDiagram
+            nodes={[
+              // Layer 0: Entry
+              { id: "main", label: "main.tsx", x: 350, y: 10 },
+              // Layer 1: Entrypoints
+              { id: "entry-cli", label: "entry/cli.tsx", x: 100, y: 90, color: "var(--accent-blue)" },
+              { id: "entry-mcp", label: "entry/mcp.ts", x: 300, y: 90, color: "var(--accent-blue)" },
+              { id: "cli", label: "cli/", x: 500, y: 90, color: "var(--accent-green)" },
+              // Layer 2: Server/Remote
+              { id: "server", label: "server/", x: 400, y: 180, color: "var(--accent-orange)" },
+              { id: "remote", label: "remote/", x: 600, y: 180, color: "var(--accent-pink)" },
+              // Layer 3: Core
+              { id: "qe", label: "QueryEngine", x: 200, y: 280, color: "var(--accent-purple)" },
+              { id: "coord", label: "coordinator", x: 450, y: 280, color: "var(--accent-purple)" },
+              { id: "bridge", label: "bridge", x: 650, y: 280 },
+              { id: "plugins", label: "plugins", x: 50, y: 280, color: "var(--accent-cyan)" },
+              { id: "skills", label: "skills", x: 800, y: 280, color: "var(--accent-cyan)" },
+              // Layer 4: Mid
+              { id: "tools", label: "tools", x: 150, y: 380, color: "var(--accent-orange)" },
+              { id: "commands", label: "commands", x: 350, y: 380 },
+              { id: "hooks", label: "hooks", x: 550, y: 380 },
+              { id: "context", label: "context", x: 700, y: 380, color: "var(--accent-green)" },
+              // Layer 5: Base
+              { id: "state", label: "state", x: 300, y: 480, color: "var(--accent-purple)" },
+              { id: "schemas", label: "schemas", x: 100, y: 480 },
+              { id: "utils", label: "utils", x: 500, y: 480 },
+              { id: "memdir", label: "memdir", x: 700, y: 480 },
+            ]}
+            edges={[
+              { from: "main", to: "entry-cli" },
+              { from: "main", to: "cli" },
+              { from: "entry-cli", to: "qe" },
+              { from: "entry-mcp", to: "tools" },
+              { from: "entry-mcp", to: "qe" },
+              { from: "cli", to: "server" },
+              { from: "cli", to: "remote" },
+              { from: "server", to: "qe" },
+              { from: "server", to: "tools" },
+              { from: "remote", to: "qe" },
+              { from: "remote", to: "tools" },
+              { from: "remote", to: "context" },
+              { from: "qe", to: "tools" },
+              { from: "qe", to: "commands" },
+              { from: "qe", to: "context" },
+              { from: "qe", to: "state" },
+              { from: "qe", to: "memdir" },
+              { from: "tools", to: "schemas" },
+              { from: "tools", to: "utils" },
+              { from: "commands", to: "tools" },
+              { from: "commands", to: "hooks" },
+              { from: "hooks", to: "context" },
+              { from: "hooks", to: "state" },
+              { from: "context", to: "state" },
+              { from: "coord", to: "qe" },
+              { from: "coord", to: "tools" },
+              { from: "bridge", to: "hooks" },
+              { from: "plugins", to: "tools" },
+              { from: "plugins", to: "qe" },
+              { from: "skills", to: "tools" },
+              { from: "skills", to: "qe" },
+            ]}
+            width={800}
+            height={530}
+          />
         </section>
       </ScrollReveal>
     </ModuleLayout>

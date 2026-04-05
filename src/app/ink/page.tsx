@@ -1,9 +1,8 @@
 import { ModuleLayout } from "@/components/ModuleLayout";
-import { CodeBlock } from "@/components/CodeBlock";
-import { CodeFlow } from "@/components/CodeFlow";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
+import { CodeBlock } from "@/components/CodeBlock";
 
 export default function InkPage() {
   const relatedModules = [
@@ -11,19 +10,37 @@ export default function InkPage() {
       title: "系统架构",
       href: "/architecture",
       description: "整体架构概览",
-      icon: "\uD83C\uDFD7\uFE0F",
+      icon: "🏗️",
     },
     {
       title: "Hooks系统",
       href: "/hooks",
       description: "80+ React Hooks",
-      icon: "\uD83E\uDE9D",
+      icon: "🪝",
     },
     {
       title: "命令系统",
       href: "/commands",
       description: "命令行界面",
-      icon: "\u2328\uFE0F",
+      icon: "⌨️",
+    },
+    {
+      title: "查询引擎",
+      href: "/query-engine",
+      description: "Prompt 构建",
+      icon: "🔍",
+    },
+    {
+      title: "上下文系统",
+      href: "/context",
+      description: "上下文管理",
+      icon: "📋",
+    },
+    {
+      title: "状态系统",
+      href: "/state",
+      description: "全局状态管理",
+      icon: "📦",
     },
   ];
 
@@ -105,7 +122,7 @@ export default function InkPage() {
     <ModuleLayout
       title="Ink 终端 UI 框架"
       subtitle="基于 React 的声明式终端 UI 渲染引擎，250KB+ 代码实现从组件树到 ANSI 输出的完整桥梁"
-      icon="\uD83C\uDFA8"
+      icon="🎨"
       category="核心架构"
       relatedModules={relatedModules}
     >
@@ -242,97 +259,159 @@ export default function InkPage() {
             </p>
           </div>
 
-          <CodeBlock
-            code={`// React 组件 → 终端渲染
-// <Box padding={1}>        → ANSI 定位 + 空白
-//   <Text color="green">   → \\x1b[32m (绿色 ANSI 码)
-//     Hello World
-//   </Text>                 → \\x1b[0m (重置)
-// </Box>
-
-// 实际渲染到终端的 ANSI 输出：
-// \\x1b[1;1H  (光标移动到 1,1)
-// \\x1b[32mHello World\\x1b[0m  (绿色文字 + 重置)`}
-            language="typescript"
-            filename="ink-rendering.ts"
-            highlights={[2, 3, 4, 5, 6]}
+          {/* Replacement 1: JSX → ANSI escape code mapping */}
+          <ArchitectureDiagram
+            title="JSX 到 ANSI 转义码映射"
+            nodes={[
+              {
+                id: "jsx-box",
+                label: "<Box padding={1}>",
+                x: 20,
+                y: 20,
+                color: "var(--accent-purple)",
+              },
+              {
+                id: "jsx-text",
+                label: '<Text color="green">',
+                x: 20,
+                y: 80,
+                color: "var(--accent-purple)",
+              },
+              {
+                id: "jsx-content",
+                label: "Hello World",
+                x: 20,
+                y: 140,
+                color: "var(--accent-blue)",
+              },
+              {
+                id: "ansi-cursor",
+                label: "\\x1b[1;1H",
+                x: 350,
+                y: 20,
+                color: "var(--accent-cyan)",
+              },
+              {
+                id: "ansi-green",
+                label: "\\x1b[32m",
+                x: 350,
+                y: 80,
+                color: "#10b981",
+              },
+              {
+                id: "ansi-text",
+                label: "Hello World",
+                x: 350,
+                y: 140,
+                color: "var(--accent-blue)",
+              },
+              {
+                id: "ansi-reset",
+                label: "\\x1b[0m",
+                x: 350,
+                y: 200,
+                color: "#ef4444",
+              },
+              {
+                id: "mapping-label",
+                label: "ANSI 转义码",
+                x: 620,
+                y: 80,
+                color: "var(--accent-cyan)",
+              },
+              {
+                id: "jsx-label",
+                label: "JSX 组件",
+                x: 620,
+                y: 20,
+                color: "var(--accent-purple)",
+              },
+            ]}
+            edges={[
+              { from: "jsx-label", to: "jsx-box", label: "定位+空白" },
+              { from: "jsx-box", to: "ansi-cursor", label: "光标移动" },
+              { from: "jsx-text", to: "ansi-green", label: "颜色码" },
+              { from: "jsx-content", to: "ansi-text", label: "文本内容" },
+              { from: "jsx-text", to: "ansi-reset", label: "样式重置" },
+              { from: "ansi-green", to: "mapping-label", label: "" },
+            ]}
+            width={800}
+            height={280}
           />
 
+          {/* Replacement 2: Reconciler rendering flow (was CodeFlow) */}
           <div className="mt-8">
-            <CodeFlow
+            <ArchitectureDiagram
               title="Reconciler 渲染流程"
-              steps={[
+              nodes={[
                 {
-                  code: `// Step 1: React 组件树描述 UI 结构
-function App() {
-  return (
-    <Box flexDirection="column" padding={1}>
-      <Text color="green" bold>
-        Welcome to Claude Code
-      </Text>
-      <Text color="gray">
-        Type your message below
-      </Text>
-    </Box>
-  );
-}`,
-                  highlight: [2, 3, 4, 5, 6, 8, 9, 10, 12],
-                  description:
-                    "开发者使用熟悉的 JSX 语法编写终端 UI。React 组件树描述了 UI 的结构和属性，包括布局方向、内边距、文本颜色等。",
+                  id: "step1-jsx",
+                  label: "① JSX 组件树",
+                  x: 20,
+                  y: 40,
+                  color: "var(--accent-purple)",
                 },
                 {
-                  code: `// Step 2: 自定义 Reconciler 处理组件树
-const reconciler = Reconciler({
-  createInstance(type, props) {
-    // 根据组件类型创建终端节点
-    if (type === "box") return createYogaNode(props);
-    if (type === "text") return createTextNode(props);
-  },
-  appendChild(parent, child) {
-    // 构建节点树
-    parent.appendChild(child);
-  },
-  // ... 其他 reconciler 方法
-});`,
-                  highlight: [2, 3, 4, 5, 6, 8, 9, 10, 12],
-                  description:
-                    "自定义 Reconciler 拦截 React 的渲染指令。当 React 创建、更新、删除节点时，reconciler 将这些操作转换为对终端节点树的操作。",
+                  id: "step1-detail",
+                  label: "Box/Text 嵌套结构",
+                  x: 220,
+                  y: 40,
+                  color: "var(--accent-purple)",
                 },
                 {
-                  code: `// Step 3: Yoga 引擎计算布局
-const layout = yogaNode.computeLayout();
-// layout = {
-//   left: 1, top: 1,
-//   width: 40, height: 2
-// }
-
-// 将布局坐标映射到终端行列
-const terminalX = layout.left;
-const terminalY = layout.top;`,
-                  highlight: [2, 3, 4, 5, 6, 9, 10],
-                  description:
-                    "Yoga 布局引擎计算每个节点的精确位置和尺寸。这些坐标随后被映射到终端的行列系统中，确定每个元素在终端屏幕上的渲染位置。",
+                  id: "step2-reconciler",
+                  label: "② 自定义 Reconciler",
+                  x: 20,
+                  y: 130,
+                  color: "var(--accent-cyan)",
                 },
                 {
-                  code: `// Step 4: 生成 ANSI 输出并写入终端
-const output = [
-  "\\x1b[1;1H",              // 定位光标
-  "\\x1b[1m",                // 粗体
-  "\\x1b[32m",               // 绿色
-  "Welcome to Claude Code",  // 文本内容
-  "\\x1b[0m",                // 重置所有样式
-  "\\x1b[2;1H",              // 下一行
-  "\\x1b[90m",               // 灰色
-  "Type your message below",
-  "\\x1b[0m",                // 重置
-].join("");
-
-process.stdout.write(output);`,
-                  highlight: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14],
-                  description:
-                    "最终阶段：将节点树和布局信息转换为 ANSI 转义序列字符串，通过 process.stdout.write() 写入终端，完成渲染。",
+                  id: "step2-detail",
+                  label: "createInstance / appendChild",
+                  x: 220,
+                  y: 130,
+                  color: "var(--accent-cyan)",
+                },
+                {
+                  id: "step3-yoga",
+                  label: "③ Yoga 布局计算",
+                  x: 20,
+                  y: 220,
+                  color: "var(--accent-blue)",
+                },
+                {
+                  id: "step3-detail",
+                  label: "left/top/width/height",
+                  x: 220,
+                  y: 220,
+                  color: "var(--accent-blue)",
+                },
+                {
+                  id: "step4-ansi",
+                  label: "④ ANSI 输出",
+                  x: 450,
+                  y: 220,
+                  color: "#10b981",
+                },
+                {
+                  id: "step4-stdout",
+                  label: "process.stdout",
+                  x: 650,
+                  y: 220,
+                  color: "#10b981",
                 },
               ]}
+              edges={[
+                { from: "step1-jsx", to: "step1-detail", label: "描述 UI" },
+                { from: "step1-detail", to: "step2-reconciler", label: "拦截渲染" },
+                { from: "step2-reconciler", to: "step2-detail", label: "节点操作" },
+                { from: "step2-detail", to: "step3-yoga", label: "计算坐标" },
+                { from: "step3-yoga", to: "step3-detail", label: "布局结果" },
+                { from: "step3-detail", to: "step4-ansi", label: "生成序列" },
+                { from: "step4-ansi", to: "step4-stdout", label: "写入终端" },
+              ]}
+              width={800}
+              height={300}
             />
           </div>
         </section>
@@ -406,24 +485,102 @@ process.stdout.write(output);`,
             </p>
           </div>
 
-          <CodeBlock
-            code={`const theme = {
-  colors: {
-    primary: '#7c3aed',     // 紫色主色
-    secondary: '#2563eb',   // 蓝色辅色
-    success: '#10b981',     // 绿色成功
-    error: '#ef4444',       // 红色错误
-    muted: '#94a3b8',       // 灰色次要
-  },
-  font: {
-    bold: '\\x1b[1m',
-    italic: '\\x1b[3m',
-    underline: '\\x1b[4m',
-  }
-};`}
-            language="typescript"
-            filename="theme.ts"
-            highlights={[2, 3, 4, 5, 6, 7, 9, 10, 11, 12]}
+          {/* Replacement 3: Theme structure diagram */}
+          <ArchitectureDiagram
+            title="主题对象结构"
+            nodes={[
+              {
+                id: "theme",
+                label: "theme",
+                x: 300,
+                y: 20,
+                color: "var(--accent-purple)",
+              },
+              {
+                id: "colors",
+                label: "colors",
+                x: 100,
+                y: 120,
+                color: "var(--accent-cyan)",
+              },
+              {
+                id: "font",
+                label: "font",
+                x: 500,
+                y: 120,
+                color: "var(--accent-blue)",
+              },
+              {
+                id: "primary",
+                label: "primary #7c3aed",
+                x: 0,
+                y: 220,
+                color: "#7c3aed",
+              },
+              {
+                id: "secondary",
+                label: "secondary #2563eb",
+                x: 180,
+                y: 220,
+                color: "#2563eb",
+              },
+              {
+                id: "success",
+                label: "success #10b981",
+                x: 360,
+                y: 220,
+                color: "#10b981",
+              },
+              {
+                id: "error",
+                label: "error #ef4444",
+                x: 0,
+                y: 290,
+                color: "#ef4444",
+              },
+              {
+                id: "muted",
+                label: "muted #94a3b8",
+                x: 180,
+                y: 290,
+                color: "#94a3b8",
+              },
+              {
+                id: "bold",
+                label: "bold \\x1b[1m",
+                x: 450,
+                y: 220,
+                color: "var(--accent-blue)",
+              },
+              {
+                id: "italic",
+                label: "italic \\x1b[3m",
+                x: 620,
+                y: 220,
+                color: "var(--accent-blue)",
+              },
+              {
+                id: "underline",
+                label: "underline \\x1b[4m",
+                x: 450,
+                y: 290,
+                color: "var(--accent-blue)",
+              },
+            ]}
+            edges={[
+              { from: "theme", to: "colors", label: "颜色配置" },
+              { from: "theme", to: "font", label: "字体样式" },
+              { from: "colors", to: "primary", label: "" },
+              { from: "colors", to: "secondary", label: "" },
+              { from: "colors", to: "success", label: "" },
+              { from: "colors", to: "error", label: "" },
+              { from: "colors", to: "muted", label: "" },
+              { from: "font", to: "bold", label: "" },
+              { from: "font", to: "italic", label: "" },
+              { from: "font", to: "underline", label: "" },
+            ]}
+            width={800}
+            height={360}
           />
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -431,19 +588,19 @@ process.stdout.write(output);`,
               {
                 title: "ANSI 颜色",
                 desc: "支持标准 16 色、256 色扩展和 True Color 24 位全彩，自动检测终端能力降级显示",
-                icon: "\uD83C\uDFA8",
+                icon: "🎨",
                 color: "var(--accent-purple)",
               },
               {
                 title: "Flexbox 布局",
                 desc: "基于 Yoga 引擎实现，支持 flexDirection、gap、padding、margin 等完整 Flexbox 属性",
-                icon: "\uD83D\uDDC2\uFE0F",
+                icon: "📐️",
                 color: "var(--accent-cyan)",
               },
               {
                 title: "主题切换",
                 desc: "亮色/暗色终端自适应，统一管理颜色和样式，通过 ThemeProvider 注入全局主题",
-                icon: "\uD83C\uDF19",
+                icon: "🌙",
                 color: "var(--accent-blue)",
               },
             ].map((item) => (
@@ -462,28 +619,71 @@ process.stdout.write(output);`,
             ))}
           </div>
 
+          {/* Replacement 4: Flexbox layout in terminal diagram */}
           <div className="mt-8">
-            <CodeBlock
-              code={`// Flexbox 布局映射示例
-<Box flexDirection="column" gap={1}>
-  <Box flexDirection="row" justifyContent="space-between">
-    <Text color="primary">文件名</Text>
-    <Text color="muted">大小</Text>
-  </Box>
-  <Box paddingX={2}>
-    <Text>src/index.ts</Text>
-    <Text color="muted">2.4 KB</Text>
-  </Box>
-</Box>
-
-// 终端渲染效果：
-// ┌─────────────────────────┐
-// │ 文件名              大小 │
-// │   src/index.ts    2.4 KB│
-// └─────────────────────────┘`}
-              language="tsx"
-              filename="flexbox-layout.tsx"
-              highlights={[2, 3, 4, 5, 11, 12, 13, 14]}
+            <ArchitectureDiagram
+              title="Flexbox 布局在终端中的映射"
+              nodes={[
+                {
+                  id: "outer-box",
+                  label: 'Box flexDirection="column"',
+                  x: 260,
+                  y: 20,
+                  color: "var(--accent-purple)",
+                },
+                {
+                  id: "row1",
+                  label: 'Box row justifyContent="space-between"',
+                  x: 100,
+                  y: 110,
+                  color: "var(--accent-cyan)",
+                },
+                {
+                  id: "row2",
+                  label: 'Box paddingX={2}',
+                  x: 100,
+                  y: 200,
+                  color: "var(--accent-cyan)",
+                },
+                {
+                  id: "label-name",
+                  label: 'Text "文件名"',
+                  x: 0,
+                  y: 290,
+                  color: "#10b981",
+                },
+                {
+                  id: "label-size",
+                  label: 'Text "大小"',
+                  x: 320,
+                  y: 290,
+                  color: "#94a3b8",
+                },
+                {
+                  id: "file-name",
+                  label: 'Text "src/index.ts"',
+                  x: 0,
+                  y: 360,
+                  color: "#10b981",
+                },
+                {
+                  id: "file-size",
+                  label: 'Text "2.4 KB"',
+                  x: 320,
+                  y: 360,
+                  color: "#94a3b8",
+                },
+              ]}
+              edges={[
+                { from: "outer-box", to: "row1", label: "子元素" },
+                { from: "outer-box", to: "row2", label: "子元素" },
+                { from: "row1", to: "label-name", label: "primary" },
+                { from: "row1", to: "label-size", label: "muted" },
+                { from: "row2", to: "file-name", label: "" },
+                { from: "row2", to: "file-size", label: "muted" },
+              ]}
+              width={800}
+              height={430}
             />
           </div>
         </section>
@@ -512,70 +712,435 @@ process.stdout.write(output);`,
             </p>
           </div>
 
-          <CodeBlock
-            code={`function useVirtualScroll(options: {
-  itemCount: number;
-  itemHeight: number;
-  viewportHeight: number;
-  overscan?: number; // 额外渲染的行数
-}) {
-  // 只渲染可视区域 + overscan 范围内的项
-  // 返回：startIndex, endIndex, offsetY
-}`}
-            language="typescript"
-            filename="useVirtualScroll.ts"
-            highlights={[1, 2, 3, 4, 5, 6, 8, 9]}
+          {/* Replacement 5: useVirtualScroll parameters diagram */}
+          <ArchitectureDiagram
+            title="useVirtualScroll 参数与返回值"
+            nodes={[
+              {
+                id: "hook",
+                label: "useVirtualScroll",
+                x: 280,
+                y: 20,
+                color: "var(--accent-purple)",
+              },
+              {
+                id: "param-count",
+                label: "itemCount: number",
+                x: 20,
+                y: 120,
+                color: "var(--accent-cyan)",
+              },
+              {
+                id: "param-height",
+                label: "itemHeight: number",
+                x: 220,
+                y: 120,
+                color: "var(--accent-cyan)",
+              },
+              {
+                id: "param-viewport",
+                label: "viewportHeight: number",
+                x: 420,
+                y: 120,
+                color: "var(--accent-cyan)",
+              },
+              {
+                id: "param-overscan",
+                label: "overscan?: number",
+                x: 620,
+                y: 120,
+                color: "var(--accent-cyan)",
+              },
+              {
+                id: "ret-start",
+                label: "startIndex",
+                x: 80,
+                y: 230,
+                color: "#10b981",
+              },
+              {
+                id: "ret-end",
+                label: "endIndex",
+                x: 250,
+                y: 230,
+                color: "#10b981",
+              },
+              {
+                id: "ret-offset",
+                label: "offsetY",
+                x: 420,
+                y: 230,
+                color: "#10b981",
+              },
+            ]}
+            edges={[
+              { from: "param-count", to: "hook", label: "列表总数" },
+              { from: "param-height", to: "hook", label: "单项高度" },
+              { from: "param-viewport", to: "hook", label: "视口高度" },
+              { from: "param-overscan", to: "hook", label: "缓冲行数" },
+              { from: "hook", to: "ret-start", label: "起始索引" },
+              { from: "hook", to: "ret-end", label: "结束索引" },
+              { from: "hook", to: "ret-offset", label: "Y轴偏移" },
+            ]}
+            width={800}
+            height={300}
           />
 
+          {/* Replacement 6: Virtual scroll flow (was CodeFlow) */}
           <div className="mt-8">
-            <CodeFlow
+            <ArchitectureDiagram
               title="虚拟滚动工作原理"
-              steps={[
+              nodes={[
                 {
-                  code: `// Step 1: 计算可视范围
-const { scrollTop, viewportHeight } = state;
-const startIndex = Math.floor(scrollTop / itemHeight);
-const visibleCount = Math.ceil(viewportHeight / itemHeight);
-const endIndex = startIndex + visibleCount;`,
-                  highlight: [2, 3, 4, 5],
-                  description:
-                    "根据当前滚动位置和视口高度，计算出需要渲染的起止索引。这是虚拟滚动的核心计算步骤。",
+                  id: "input",
+                  label: "滚动状态",
+                  x: 20,
+                  y: 40,
+                  color: "var(--accent-purple)",
                 },
                 {
-                  code: `// Step 2: 加入 overscan 缓冲区
-const overscanStart = Math.max(
-  0, startIndex - overscan
-);
-const overscanEnd = Math.min(
-  itemCount - 1, endIndex + overscan
-);`,
-                  highlight: [2, 3, 4, 5, 6, 7],
-                  description:
-                    "为防止滚动时出现空白闪烁，在可视范围上下各增加 overscan 行的缓冲区域，提前渲染即将进入视口的项。",
+                  id: "calc",
+                  label: "① 计算可视范围",
+                  x: 220,
+                  y: 40,
+                  color: "var(--accent-cyan)",
                 },
                 {
-                  code: `// Step 3: 只渲染范围内的项
-const items = data.slice(overscanStart, overscanEnd + 1);
-const offsetY = overscanStart * itemHeight;
-
-return (
-  <Box height={viewportHeight} overflow="hidden">
-    <Box paddingTop={offsetY}>
-      {items.map(item => <Row key={item.id} />)}
-    </Box>
-  </Box>
-);`,
-                  highlight: [2, 3, 5, 6, 7, 8, 9],
-                  description:
-                    "只渲染经过 overscan 扩展后的列表项，通过 paddingTop 将渲染内容定位到正确的滚动位置。",
+                  id: "overscan",
+                  label: "② Overscan 缓冲",
+                  x: 440,
+                  y: 40,
+                  color: "var(--accent-blue)",
+                },
+                {
+                  id: "render",
+                  label: "③ 渲染可见项",
+                  x: 620,
+                  y: 40,
+                  color: "#10b981",
+                },
+                {
+                  id: "detail-scroll",
+                  label: "scrollTop + viewportHeight",
+                  x: 20,
+                  y: 150,
+                  color: "var(--accent-purple)",
+                },
+                {
+                  id: "detail-calc",
+                  label: "startIndex ~ endIndex",
+                  x: 220,
+                  y: 150,
+                  color: "var(--accent-cyan)",
+                },
+                {
+                  id: "detail-over",
+                  label: "overscanStart ~ overscanEnd",
+                  x: 440,
+                  y: 150,
+                  color: "var(--accent-blue)",
+                },
+                {
+                  id: "detail-render",
+                  label: "data.slice() + offsetY",
+                  x: 620,
+                  y: 150,
+                  color: "#10b981",
+                },
+                {
+                  id: "perf",
+                  label: "O(viewport) 渲染开销",
+                  x: 320,
+                  y: 250,
+                  color: "#f59e0b",
                 },
               ]}
+              edges={[
+                { from: "input", to: "calc", label: "" },
+                { from: "calc", to: "overscan", label: "" },
+                { from: "overscan", to: "render", label: "" },
+                { from: "detail-scroll", to: "input", label: "" },
+                { from: "detail-calc", to: "calc", label: "" },
+                { from: "detail-over", to: "overscan", label: "" },
+                { from: "detail-render", to: "render", label: "" },
+                { from: "render", to: "perf", label: "性能优化" },
+              ]}
+              width={800}
+              height={310}
             />
           </div>
         </section>
       </ScrollReveal>
 
-      {/* Section 6: 与 React DOM 的对比 */}
+      {/* Section 6: 渲染管线详细图 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="渲染管线详细图"
+            subtitle="从 React JSX 到终端输出的完整数据流"
+          />
+
+          <ArchitectureDiagram
+            title="完整渲染管线"
+            nodes={[
+              { id: "jsx", label: "React JSX", x: 10, y: 80, color: "var(--accent-purple)" },
+              { id: "vdom", label: "Virtual DOM", x: 170, y: 80, color: "var(--accent-purple)" },
+              { id: "reconciler", label: "Custom\nReconciler", x: 330, y: 80, color: "var(--accent-cyan)" },
+              { id: "yoga", label: "Yoga Layout\nEngine", x: 490, y: 80, color: "var(--accent-blue)" },
+              { id: "ansi", label: "ANSI Escape\nCodes", x: 650, y: 80, color: "#10b981" },
+              { id: "terminal", label: "Terminal\nOutput", x: 650, y: 220, color: "#f59e0b" },
+              { id: "d1", label: "createElement()\n描述 UI 结构", x: 10, y: 220, color: "var(--accent-purple)" },
+              { id: "d2", label: "diff() 算法\n最小化更新", x: 170, y: 220, color: "var(--accent-purple)" },
+              { id: "d3", label: "createInstance()\nappendChild()", x: 330, y: 220, color: "var(--accent-cyan)" },
+              { id: "d4", label: "calculateLayout()\nleft/top/width/height", x: 490, y: 220, color: "var(--accent-blue)" },
+              { id: "d5", label: "\x1b[32m\x1b[1m\n颜色+样式序列", x: 650, y: 320, color: "#10b981" },
+            ]}
+            edges={[
+              { from: "jsx", to: "vdom", label: "" },
+              { from: "vdom", to: "reconciler", label: "" },
+              { from: "reconciler", to: "yoga", label: "" },
+              { from: "yoga", to: "ansi", label: "" },
+              { from: "ansi", to: "terminal", label: "" },
+              { from: "jsx", to: "d1", label: "" },
+              { from: "vdom", to: "d2", label: "" },
+              { from: "reconciler", to: "d3", label: "" },
+              { from: "yoga", to: "d4", label: "" },
+              { from: "ansi", to: "d5", label: "" },
+            ]}
+            width={820}
+            height={400}
+          />
+        </section>
+      </ScrollReveal>
+
+      {/* Section 7: 组件层级树 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="组件层级树"
+            subtitle="Claude Code 的 30+ 组件架构全景"
+          />
+
+          <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
+            <p>
+              Claude Code 的 UI 由 <strong className="text-[var(--text-primary)]">30+</strong> 个组件文件组成，
+              按照 React 组件化的最佳实践，形成了清晰的层级结构。从顶层 App 组件到最小的原子组件，
+              每一层都有明确的职责划分。
+            </p>
+          </div>
+
+          <ArchitectureDiagram
+            title="Claude Code 组件层级"
+            nodes={[
+              { id: "app", label: "App", x: 350, y: 10, color: "var(--accent-purple)" },
+              { id: "devbar", label: "DevBar\n(状态栏)", x: 30, y: 100, color: "var(--accent-cyan)" },
+              { id: "input", label: "InputArea", x: 200, y: 100, color: "var(--accent-blue)" },
+              { id: "output", label: "OutputArea", x: 430, y: 100, color: "#10b981" },
+              { id: "dialogs", label: "Dialogs", x: 640, y: 100, color: "#f59e0b" },
+              { id: "base-input", label: "BaseTextInput", x: 80, y: 200, color: "var(--accent-blue)" },
+              { id: "context", label: "ContextSuggestions", x: 240, y: 200, color: "var(--accent-blue)" },
+              { id: "cmdkeys", label: "CommandKeybindings", x: 80, y: 280, color: "var(--accent-blue)" },
+              { id: "tool-result", label: "ToolResult", x: 340, y: 200, color: "#10b981" },
+              { id: "progress", label: "AgentProgressLine", x: 510, y: 200, color: "#10b981" },
+              { id: "streaming", label: "StreamingText", x: 340, y: 280, color: "#10b981" },
+              { id: "perm", label: "PermissionDialog", x: 560, y: 200, color: "#f59e0b" },
+              { id: "config", label: "ConfigDialog", x: 700, y: 200, color: "#f59e0b" },
+              { id: "bridge", label: "BridgeDialog", x: 700, y: 280, color: "#f59e0b" },
+            ]}
+            edges={[
+              { from: "app", to: "devbar", label: "" },
+              { from: "app", to: "input", label: "" },
+              { from: "app", to: "output", label: "" },
+              { from: "app", to: "dialogs", label: "" },
+              { from: "input", to: "base-input", label: "" },
+              { from: "input", to: "context", label: "" },
+              { from: "input", to: "cmdkeys", label: "" },
+              { from: "output", to: "tool-result", label: "" },
+              { from: "output", to: "progress", label: "" },
+              { from: "output", to: "streaming", label: "" },
+              { from: "dialogs", to: "perm", label: "" },
+              { from: "dialogs", to: "config", label: "" },
+              { from: "dialogs", to: "bridge", label: "" },
+            ]}
+            width={820}
+            height={340}
+          />
+        </section>
+      </ScrollReveal>
+
+      {/* Section 8: 输出样式预览 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="输出样式预览"
+            subtitle="不同输出风格的终端效果"
+          />
+
+          <div className="space-y-6">
+            {[
+              {
+                label: "Streaming — 流式文本输出",
+                lines: [
+                  { text: "claude> 帮我重构这个组件...", dim: true },
+                  { text: "" },
+                  { text: "我将帮你重构 UserCard 组件，主要改进：", dim: false },
+                  { text: "1. 将 Props 拆分为独立类型定义", dim: false },
+                  { text: "2. 添加 useMemo 优化渲染性能", dim: false },
+                  { text: "3. 抽离 Avatar 为独立子组件", dim: false },
+                  { text: "4. 使用 forwardRef 暴露实例方法█", dim: false, cursor: true },
+                ],
+              },
+              {
+                label: "Tool Call — 工具调用",
+                lines: [
+                  { text: "⏺ Read(file: \"src/components/UserCard.tsx\")", dim: false },
+                  { text: "⏺ Write(file: \"src/components/UserCard.tsx\", bytes: 2048)", dim: false },
+                  { text: "⏺ Exec(command: \"npm test -- --watch\")", dim: false },
+                ],
+              },
+              {
+                label: "Tool Result — 工具结果",
+                lines: [
+                  { text: "✓ Read — 读取成功 (42 lines)", color: "text-green-400" },
+                  { text: "✓ Write — 写入成功 (src/components/UserCard.tsx)", color: "text-green-400" },
+                  { text: "✗ Exec — 命令超时 (npm test)", color: "text-red-400" },
+                ],
+              },
+              {
+                label: "Thinking — 思考过程",
+                lines: [
+                  { text: "◇ thinking...", dim: true },
+                  { text: "  用户要求重构 UserCard 组件，我需要先", dim: true },
+                  { text: "  读取当前文件内容，分析结构后再进行", dim: true },
+                  { text: "  重构。注意保持 props 接口兼容性。", dim: true },
+                ],
+              },
+              {
+                label: "Error — 错误信息",
+                lines: [
+                  { text: "✗ Error: Cannot find module \"@/types/user\"", color: "text-red-400" },
+                  { text: "  at resolveModule (node:internal/modules/cjs/loader:1020)", color: "text-red-400/60" },
+                  { text: "  at Function._resolveFilename (node:internal/modules/cjs/loader:890)", color: "text-red-400/60" },
+                ],
+              },
+            ].map((block) => (
+              <div key={block.label} className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] overflow-hidden">
+                <div className="px-4 py-2 border-b border-[var(--card-border)] bg-[#0d1117]">
+                  <span className="text-xs font-mono text-gray-400">{block.label}</span>
+                </div>
+                <div className="p-4 bg-[#0d1117]">
+                  {block.lines.map((line, i) => (
+                    <div
+                      key={i}
+                      className={`text-sm font-mono leading-6 ${'dim' in line && line.dim ? "text-gray-500" : 'color' in line ? (line as {color:string}).color : "text-gray-200"}`}
+                    >
+                      {line.text || "\u00A0"}
+                      {'cursor' in line && line.cursor && (
+                        <span className="inline-block w-2 h-5 bg-white/80 ml-0.5 animate-pulse" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Section 9: 源码片段 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="源码片段"
+            subtitle="核心渲染逻辑实现"
+          />
+
+          <div className="space-y-8">
+            <CodeBlock
+              code={`// Custom Reconciler 创建
+import ReactReconciler from "react-reconciler";
+
+const reconciler = ReactReconciler({
+  createInstance(type, props) {
+    return { type, props, children: [] };
+  },
+  appendInitialChild(parent, child) {
+    parent.children.push(child);
+  },
+  appendChild(parent, child) {
+    parent.children.push(child);
+  },
+  removeChild(parent, child) {
+    const idx = parent.children.indexOf(child);
+    if (idx !== -1) parent.children.splice(idx, 1);
+  },
+  prepareUpdate(instance, type, oldProps, newProps) {
+    return true; // 简化：总是更新
+  },
+  commitUpdate(instance, updatePayload, type, oldProps, newProps) {
+    instance.props = newProps;
+  },
+  getRootHostContext() { return {}; },
+  getChildHostContext() { return {}; },
+  finalizeInitialChildren() { return false; },
+  prepareForCommit() { return null; },
+  resetAfterCommit(root) {
+    root.render(); // 触发终端重绘
+  },
+});`}
+              language="typescript"
+            />
+
+            <CodeBlock
+              code={`// Yoga 布局计算
+import Yoga from "yoga-layout";
+
+function calculateLayout(node, width, height) {
+  const yogaNode = Yoga.Node.create();
+
+  // 映射 Flexbox 属性
+  if (node.props.flexDirection) {
+    yogaNode.setFlexDirection(
+      Yoga.FLEX_DIRECTION[node.props.flexDirection.toUpperCase()]
+    );
+  }
+  if (node.props.padding) {
+    yogaNode.setPadding(Yoga.EDGE_ALL, node.props.padding);
+  }
+  if (node.props.gap) {
+    yogaNode.setGap(Yoga.GUTTER_ALL, node.props.gap);
+  }
+
+  // 递归添加子节点
+  node.children.forEach((child) => {
+    const childNode = calculateLayout(child);
+    yogaNode.insertChild(childNode, yogaNode.getChildCount());
+  });
+
+  // 执行布局计算
+  yogaNode.calculateLayout(width, height);
+
+  // 提取计算结果
+  return {
+    left: yogaNode.getComputedLeft(),
+    top: yogaNode.getComputedTop(),
+    width: yogaNode.getComputedWidth(),
+    height: yogaNode.getComputedHeight(),
+    yogaNode,
+  };
+}`}
+              language="typescript"
+            />
+
+            <CodeBlock
+              code={'// ANSI 输出生成\nfunction generateANSI(node, offsetX = 0, offsetY = 0) {\n  const { left, top, width, height } = node.layout;\n  const x = offsetX + left;\n  const y = offsetY + top;\n\n  let output = "";\n\n  // 移动光标到目标位置\n  output += String.raw\x60\\x1b[${y + 1};${x + 1}H\\x60;\n\n  // 应用样式\n  if (node.props.color) {\n    output += String.raw\x60\\x1b[${colorToANSI(node.props.color)}m\\x60;\n  }\n  if (node.props.bold) output += "\\x1b[1m";\n  if (node.props.dim) output += "\\x1b[2m";\n\n  // 渲染文本内容\n  if (node.props.children) {\n    const text = typeof node.props.children === "string"\n      ? node.props.children : "";\n    output += truncate(text, width);\n  }\n\n  // 重置样式\n  output += "\\x1b[0m";\n\n  // 递归渲染子节点\n  node.children.forEach((child) => {\n    output += generateANSI(child, x, y);\n  });\n\n  return output;\n}'}
+              language="typescript"
+            />
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Section 10: 与 React DOM 的对比 */}
       <ScrollReveal>
         <section className="mb-16">
           <SectionTitle
@@ -612,43 +1177,43 @@ return (
                     feature: "渲染目标",
                     dom: "DOM 节点",
                     ink: "ANSI 终端输出",
-                    icon: "\uD83D\uDDA5\uFE0F",
+                    icon: "🖥️",
                   },
                   {
                     feature: "布局系统",
                     dom: "CSS Flexbox/Grid",
                     ink: "Yoga (Flexbox only)",
-                    icon: "\uD83D\uDDC2\uFE0F",
+                    icon: "📐️",
                   },
                   {
                     feature: "事件系统",
                     dom: "鼠标+键盘+触摸",
                     ink: "键盘为主 + 终端鼠标",
-                    icon: "\u2328\uFE0F",
+                    icon: "⌨️",
                   },
                   {
                     feature: "样式",
                     dom: "CSS/SCSS",
                     ink: "ANSI 转义码",
-                    icon: "\uD83C\uDFA8",
+                    icon: "🎨",
                   },
                   {
                     feature: "滚动",
                     dom: "CSS overflow",
                     ink: "虚拟滚动",
-                    icon: "\uD83D\uDCD6",
+                    icon: "📖",
                   },
                   {
                     feature: "输入",
                     dom: "HTML Input",
                     ink: "原始 stdin",
-                    icon: "\u270F\uFE0F",
+                    icon: "✏️",
                   },
                   {
                     feature: "图片",
                     dom: "img 标签",
                     ink: "Sixel/iTerm2 协议",
-                    icon: "\uD83D\uDDBC\uFE0F",
+                    icon: "🖼️",
                   },
                 ].map((row, i) => (
                   <tr
@@ -685,21 +1250,87 @@ return (
             </p>
           </div>
 
+          {/* Replacement 7: react-dom vs ink side-by-side diagram */}
           <div className="mt-8">
-            <CodeBlock
-              code={`// Ink 的 Reconciler 与 react-dom 的 Reconciler 对比
-// react-dom 使用 createRoot() → DOM 节点
-import { createRoot } from "react-dom/client";
-const root = createRoot(document.getElementById("app"));
-root.render(<App />);
-
-// Ink 使用 render() → ANSI 输出流
-import { render } from "ink";
-render(<App />);
-// 内部调用 Reconciler，将组件树写入 process.stdout`}
-              language="typescript"
-              filename="reconciler-comparison.ts"
-              highlights={[2, 3, 4, 5, 8, 9, 10]}
+            <ArchitectureDiagram
+              title="Reconciler 对比：react-dom vs ink"
+              nodes={[
+                {
+                  id: "react",
+                  label: "React Core",
+                  x: 310,
+                  y: 20,
+                  color: "var(--accent-purple)",
+                },
+                {
+                  id: "dom-reconciler",
+                  label: "react-dom Reconciler",
+                  x: 40,
+                  y: 130,
+                  color: "var(--accent-blue)",
+                },
+                {
+                  id: "ink-reconciler",
+                  label: "ink Reconciler",
+                  x: 500,
+                  y: 130,
+                  color: "var(--accent-cyan)",
+                },
+                {
+                  id: "dom-create",
+                  label: "createRoot()",
+                  x: 40,
+                  y: 230,
+                  color: "var(--accent-blue)",
+                },
+                {
+                  id: "ink-render",
+                  label: "render()",
+                  x: 500,
+                  y: 230,
+                  color: "var(--accent-cyan)",
+                },
+                {
+                  id: "dom-target",
+                  label: "DOM 节点",
+                  x: 40,
+                  y: 330,
+                  color: "var(--accent-blue)",
+                },
+                {
+                  id: "ink-target",
+                  label: "process.stdout",
+                  x: 500,
+                  y: 330,
+                  color: "var(--accent-cyan)",
+                },
+                {
+                  id: "dom-label",
+                  label: "浏览器渲染",
+                  x: 220,
+                  y: 280,
+                  color: "var(--accent-blue)",
+                },
+                {
+                  id: "ink-label",
+                  label: "终端渲染",
+                  x: 620,
+                  y: 280,
+                  color: "var(--accent-cyan)",
+                },
+              ]}
+              edges={[
+                { from: "react", to: "dom-reconciler", label: "" },
+                { from: "react", to: "ink-reconciler", label: "" },
+                { from: "dom-reconciler", to: "dom-create", label: "入口" },
+                { from: "ink-reconciler", to: "ink-render", label: "入口" },
+                { from: "dom-create", to: "dom-target", label: "写入" },
+                { from: "ink-render", to: "ink-target", label: "写入" },
+                { from: "dom-target", to: "dom-label", label: "" },
+                { from: "ink-target", to: "ink-label", label: "" },
+              ]}
+              width={800}
+              height={400}
             />
           </div>
         </section>
