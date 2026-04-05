@@ -10,43 +10,43 @@ export default function CommandsPage() {
       title: "入口与启动",
       href: "/entry",
       description: "启动流程详解",
-      icon: "\uD83D\uDE80",
+      icon: "🚀",
     },
     {
       title: "工具系统",
       href: "/tools",
       description: "40+ 工具实现",
-      icon: "\uD83D\uDD27",
+      icon: "🔧",
     },
     {
       title: "UI框架",
       href: "/ink",
       description: "终端 UI 渲染",
-      icon: "\uD83C\uDFA8",
+      icon: "🎨",
     },
     {
       title: "查询引擎",
       href: "/query-engine",
       description: "Prompt 构建与查询",
-      icon: "\uD83D\uDD0D",
+      icon: "🔍",
     },
     {
       title: "上下文系统",
       href: "/context",
       description: "上下文管理",
-      icon: "\uD83D\uDCCB",
+      icon: "📋",
     },
     {
       title: "记忆系统",
       href: "/memory",
       description: "会话记忆",
-      icon: "\uD83E\uDDE0",
+      icon: "🧠",
     },
     {
       title: "权限系统",
       href: "/permissions",
       description: "工具权限控制",
-      icon: "\uD83D\uDD12",
+      icon: "🔒",
     },
   ];
 
@@ -135,7 +135,7 @@ export default function CommandsPage() {
     <ModuleLayout
       title="命令系统"
       subtitle="Claude Code CLI 40+ 命令的架构设计、分类体系与执行流程深度解析"
-      icon="\u2328\uFE0F"
+      icon="⌨️"
       category="核心架构"
       relatedModules={relatedModules}
     >

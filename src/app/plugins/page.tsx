@@ -10,31 +10,31 @@ export default function PluginsPage() {
       title: "工具系统",
       href: "/tools",
       description: "40+ 工具实现",
-      icon: "\uD83D\uDD27",
+      icon: "🔧",
     },
     {
       title: "权限系统",
       href: "/permissions",
       description: "权限控制",
-      icon: "\uD83D\uDD12",
+      icon: "🔒",
     },
     {
       title: "状态系统",
       href: "/state",
       description: "全局状态",
-      icon: "\uD83D\uDCE6",
+      icon: "📦",
     },
     {
       title: "命令系统",
       href: "/commands",
       description: "命令执行",
-      icon: "\u2328\uFE0F",
+      icon: "⌨️",
     },
     {
       title: "系统架构",
       href: "/architecture",
       description: "整体架构",
-      icon: "\uD83C\uDFD7\uFE0F",
+      icon: "🏗️",
     },
   ];
 
@@ -42,7 +42,7 @@ export default function PluginsPage() {
     <ModuleLayout
       title="插件与扩展"
       subtitle="Claude Code 的三大扩展机制 —— Plugins、Skills、MCP，打造无限可能的 AI 编程生态"
-      icon="\uD83D\uDD0C"
+      icon="🔌"
       category="核心架构"
       relatedModules={relatedModules}
     >
