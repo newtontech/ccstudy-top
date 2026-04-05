@@ -23,11 +23,11 @@ jobs:
         with:
           node-version: "22"
       - run: npm install
-      - run: DEPLOY_TARGET=local npm run build
+      - run: DEPLOY_TARGET=github npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: ./dist
 
   deploy:
     environment:

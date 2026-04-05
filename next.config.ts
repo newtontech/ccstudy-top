@@ -24,6 +24,7 @@ const basePath = getBasePath();
 const nextConfig: NextConfig = {
   output: "export",
   distDir: basePath ? 'dist' : 'out',
+  trailingSlash: true,
   images: {
     unoptimized: true,
   },
