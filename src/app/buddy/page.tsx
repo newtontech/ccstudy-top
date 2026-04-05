@@ -1,5 +1,6 @@
 import { ModuleLayout } from "@/components/ModuleLayout";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
+import { CodeBlock } from "@/components/CodeBlock";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
 
@@ -12,16 +13,34 @@ export default function BuddyPage() {
       icon: "🏗️",
     },
     {
-      title: "Hooks系统",
-      href: "/hooks",
-      description: "React Hooks",
-      icon: "🧩",
-    },
-    {
       title: "UI框架",
       href: "/ink",
       description: "终端 UI 渲染",
       icon: "🎨",
+    },
+    {
+      title: "查询引擎",
+      href: "/query-engine",
+      description: "Prompt 构建",
+      icon: "🔍",
+    },
+    {
+      title: "状态系统",
+      href: "/state",
+      description: "全局状态",
+      icon: "📦",
+    },
+    {
+      title: "上下文系统",
+      href: "/context",
+      description: "上下文管理",
+      icon: "📋",
+    },
+    {
+      title: "Hooks系统",
+      href: "/hooks",
+      description: "React Hooks",
+      icon: "🪝",
     },
   ];
 
@@ -732,6 +751,171 @@ export default function BuddyPage() {
               height={400}
             />
           </div>
+        </section>
+      </ScrollReveal>
+      {/* Section 7: Gacha 概率分布可视化 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="Gacha 概率分布"
+            subtitle="抽卡概率一目了然"
+          />
+
+          <div className="space-y-4">
+            {[
+              { name: "Common (普通)", pct: 65, color: "#9ca3af", count: "65/100" },
+              { name: "Rare (稀有)", pct: 20, color: "var(--accent-blue)", count: "20/100" },
+              { name: "Epic (史诗)", pct: 10, color: "var(--accent-purple)", count: "10/100" },
+              { name: "Legendary (传说)", pct: 4, color: "var(--accent-yellow, #f59e0b)", count: "4/100" },
+              { name: "Mythic (神话)", pct: 1, color: "#ef4444", count: "1/100" },
+            ].map((r) => (
+              <div key={r.name} className="flex items-center gap-4">
+                <span className="w-36 text-sm font-mono text-[var(--text-secondary)] text-right shrink-0">{r.name}</span>
+                <div className="flex-1 h-7 rounded-lg bg-[var(--card-bg)] border border-[var(--card-border)] overflow-hidden">
+                  <div
+                    className="h-full rounded-lg flex items-center justify-end pr-2 transition-all duration-700"
+                    style={{ width: `${Math.max(r.pct, 2)}%`, background: r.color }}
+                  >
+                    <span className="text-xs font-bold text-white drop-shadow">{r.count}</span>
+                  </div>
+                </div>
+                <span className="w-10 text-sm font-mono font-bold shrink-0" style={{ color: r.color }}>{r.pct}%</span>
+              </div>
+            ))}
+
+            <div className="mt-6 flex items-center gap-4">
+              <span className="w-36 text-sm font-mono text-[var(--text-secondary)] text-right shrink-0">Shiny (闪光)</span>
+              <div className="flex-1 h-7 rounded-lg bg-[var(--card-bg)] border border-[var(--card-border)] overflow-hidden">
+                <div
+                  className="h-full rounded-lg flex items-center justify-end pr-2"
+                  style={{ width: "2%", background: "linear-gradient(90deg, #f59e0b, #fbbf24)" }}
+                >
+                  <span className="text-xs font-bold text-white drop-shadow">1%</span>
+                </div>
+              </div>
+              <span className="w-28 text-xs font-mono text-[var(--text-secondary)] shrink-0">独立判定 ✦</span>
+            </div>
+          </div>
+
+          <div className="mt-6 p-4 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)]">
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+              💡 <strong className="text-[var(--text-primary)]">Shiny 判定独立于稀有度</strong>：任何稀有度的伙伴都有额外 1% 几率成为闪光变体。理论上 Mythic + Shiny 的概率为 0.01%。
+            </p>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Section 8: 18 物种图鉴 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="物种图鉴"
+            subtitle="18 个伙伴物种一览"
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              // Common
+              { zh: "小史莱姆", en: "Slime", rarity: "Common", color: "#9ca3af", desc: "最基础的伙伴，Q弹的身体总是蹦蹦跳跳", sprite: " (⌐■_■) " },
+              { zh: "像素猫", en: "PixelCat", rarity: "Common", color: "#9ca3af", desc: "用喵星人的方式帮你调试代码", sprite: " /\_/\\ " },
+              { zh: "代码虫", en: "CodeBug", rarity: "Common", color: "#9ca3af", desc: "对 Bug 有着天然的亲和力", sprite: " 🐛°~ " },
+              { zh: "终端龟", en: "ShellTurtle", rarity: "Common", color: "#9ca3af", desc: "慢而稳健，永不崩溃", sprite: " [■_■] " },
+              { zh: "调试蝇", en: "DebugFly", rarity: "Common", color: "#9ca3af", desc: "在代码间嗡嗡飞舞寻找线索", sprite: " ♪(´ε` ) " },
+              // Rare
+              { zh: "水晶狐", en: "CrystalFox", rarity: "Rare", color: "var(--accent-blue)", desc: "拥有水晶般的洞察力，能看穿逻辑漏洞", sprite: " <^•^> " },
+              { zh: "数据龙", en: "DataDragon", rarity: "Rare", color: "var(--accent-blue)", desc: "守护数据结构的远古巨龙", sprite: " 🐉~~ " },
+              { zh: "量子兔", en: "QuantumBunny", rarity: "Rare", color: "var(--accent-blue)", desc: "同时存在于多个分支中", sprite: " (•ᴗ•)💫 " },
+              { zh: "电路蛇", en: "CircuitSnake", rarity: "Rare", color: "var(--accent-blue)", desc: "沿着电路板蜿蜒爬行", sprite: " ≋≋≋ 「  " },
+              { zh: "二进制鸟", en: "BinaryBird", rarity: "Rare", color: "var(--accent-blue)", desc: "只唱 0 和 1 的歌", sprite: " 010🦅 " },
+              // Epic
+              { zh: "虚空凤凰", en: "VoidPhoenix", rarity: "Epic", color: "var(--accent-purple)", desc: "从编译错误的灰烬中浴火重生", sprite: " 🔥✧🔥 " },
+              { zh: "混沌狼", en: "ChaosWolf", rarity: "Epic", color: "var(--accent-purple)", desc: "在混乱中找到秩序的独狼", sprite: " 🐺◈◈ " },
+              { zh: "时间蛇", en: "TimeSerpent", rarity: "Epic", color: "var(--accent-purple)", desc: "盘绕在时间线上吞噬 Bug", sprite: " ∞⌒∞⌒ " },
+              { zh: "暗影豹", en: "ShadowLeopard", rarity: "Epic", color: "var(--accent-purple)", desc: "在暗处默默优化你的代码", sprite: " ▓░▒▓░ " },
+              // Legendary
+              { zh: "宇宙鲸", en: "CosmicWhale", rarity: "Legendary", color: "var(--accent-yellow, #f59e0b)", desc: "在代码宇宙中遨游的巨兽", sprite: " 🐋✦✧ " },
+              { zh: "永恒树", en: "EternalTree", rarity: "Legendary", color: "var(--accent-yellow, #f59e0b)", desc: "根植于架构深处，永不凋零", sprite: " 🌳❖❖ " },
+              { zh: "星辰鹰", en: "StarEagle", rarity: "Legendary", color: "var(--accent-yellow, #f59e0b)", desc: "俯瞰整个项目的鹰眼视角", sprite: " ✧🦅✧ " },
+              // Mythic
+              { zh: "源码之灵", en: "CodeSpirit", rarity: "Mythic", color: "#ef4444", desc: "传说中由第一行代码诞生的存在", sprite: " ⍟✧⍟✧ " },
+            ].map((s) => (
+              <div
+                key={s.en}
+                className="group p-4 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] hover:border-opacity-60 transition-all duration-300"
+                style={{ "--hover-color": s.color } as React.CSSProperties}
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <span className="text-sm font-bold text-[var(--text-primary)]">{s.zh}</span>
+                    <span className="text-xs font-mono text-[var(--text-secondary)] ml-2">{s.en}</span>
+                  </div>
+                  <span
+                    className="px-2 py-0.5 rounded-full text-[10px] font-bold"
+                    style={{ background: `${s.color}20`, color: s.color }}
+                  >
+                    {s.rarity}
+                  </span>
+                </div>
+                <div className="mb-2 font-mono text-lg leading-none text-[var(--text-secondary)] opacity-70">{s.sprite}</div>
+                <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Section 9: PRNG 算法演示 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="PRNG 算法深入"
+            subtitle="Mulberry32 位运算细节"
+          />
+
+          <ArchitectureDiagram
+            title="Mulberry32 逐步位运算"
+            nodes={[
+              { id: "s", label: "seed (32-bit)", x: 80, y: 20, color: "var(--accent-cyan)" },
+              { id: "s1", label: "t = seed + 0x6D2B79F5", x: 320, y: 20, color: "var(--accent-cyan)" },
+              { id: "s2", label: "t = imul(t ^ (t>>>15), t|1)", x: 80, y: 100, color: "var(--accent-purple)" },
+              { id: "s3", label: "t ^= t + imul(t ^ (t>>>7), t|61)", x: 320, y: 100, color: "var(--accent-purple)" },
+              { id: "s4", label: "return (t ^ (t>>>14))>>>0 / 2^32", x: 200, y: 180, color: "var(--accent-blue)" },
+              { id: "out", label: "[0, 1) float", x: 200, y: 260, color: "var(--accent-blue)" },
+            ]}
+            edges={[
+              { from: "s", to: "s1", label: "Step 1" },
+              { from: "s1", to: "s2", label: "Step 2" },
+              { from: "s2", to: "s3", label: "Step 3" },
+              { from: "s3", to: "s4", label: "Step 4" },
+              { from: "s4", to: "out", label: "归一化" },
+            ]}
+            width={520}
+            height={320}
+          />
+
+          <CodeBlock
+            code={`function mulberry32(seed: number) {
+  // Step 1: 加上魔数
+  let t = seed + 0x6D2B79F5;
+
+  // Step 2: 第一次 imul 变换
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+
+  // Step 3: XOR + 第二次 imul
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+
+  // Step 4: 最终混合 + 归一化
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+
+// 使用：基于用户 ID 生成确定性序列
+const seed = hashCode(userId);
+const rng = () => mulberry32(seed++);
+
+// 物种、稀有度、属性全部由 rng() 序列决定`}
+            language="typescript"
+            filename="mulberry32.ts"
+          />
         </section>
       </ScrollReveal>
     </ModuleLayout>

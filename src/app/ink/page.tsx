@@ -2,6 +2,7 @@ import { ModuleLayout } from "@/components/ModuleLayout";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { SectionTitle } from "@/components/SectionTitle";
+import { CodeBlock } from "@/components/CodeBlock";
 
 export default function InkPage() {
   const relatedModules = [
@@ -22,6 +23,24 @@ export default function InkPage() {
       href: "/commands",
       description: "命令行界面",
       icon: "⌨️",
+    },
+    {
+      title: "查询引擎",
+      href: "/query-engine",
+      description: "Prompt 构建",
+      icon: "🔍",
+    },
+    {
+      title: "上下文系统",
+      href: "/context",
+      description: "上下文管理",
+      icon: "📋",
+    },
+    {
+      title: "状态系统",
+      href: "/state",
+      description: "全局状态管理",
+      icon: "📦",
     },
   ];
 
@@ -853,7 +872,275 @@ export default function InkPage() {
         </section>
       </ScrollReveal>
 
-      {/* Section 6: 与 React DOM 的对比 */}
+      {/* Section 6: 渲染管线详细图 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="渲染管线详细图"
+            subtitle="从 React JSX 到终端输出的完整数据流"
+          />
+
+          <ArchitectureDiagram
+            title="完整渲染管线"
+            nodes={[
+              { id: "jsx", label: "React JSX", x: 10, y: 80, color: "var(--accent-purple)" },
+              { id: "vdom", label: "Virtual DOM", x: 170, y: 80, color: "var(--accent-purple)" },
+              { id: "reconciler", label: "Custom\nReconciler", x: 330, y: 80, color: "var(--accent-cyan)" },
+              { id: "yoga", label: "Yoga Layout\nEngine", x: 490, y: 80, color: "var(--accent-blue)" },
+              { id: "ansi", label: "ANSI Escape\nCodes", x: 650, y: 80, color: "#10b981" },
+              { id: "terminal", label: "Terminal\nOutput", x: 650, y: 220, color: "#f59e0b" },
+              { id: "d1", label: "createElement()\n描述 UI 结构", x: 10, y: 220, color: "var(--accent-purple)" },
+              { id: "d2", label: "diff() 算法\n最小化更新", x: 170, y: 220, color: "var(--accent-purple)" },
+              { id: "d3", label: "createInstance()\nappendChild()", x: 330, y: 220, color: "var(--accent-cyan)" },
+              { id: "d4", label: "calculateLayout()\nleft/top/width/height", x: 490, y: 220, color: "var(--accent-blue)" },
+              { id: "d5", label: "\x1b[32m\x1b[1m\n颜色+样式序列", x: 650, y: 320, color: "#10b981" },
+            ]}
+            edges={[
+              { from: "jsx", to: "vdom", label: "" },
+              { from: "vdom", to: "reconciler", label: "" },
+              { from: "reconciler", to: "yoga", label: "" },
+              { from: "yoga", to: "ansi", label: "" },
+              { from: "ansi", to: "terminal", label: "" },
+              { from: "jsx", to: "d1", label: "" },
+              { from: "vdom", to: "d2", label: "" },
+              { from: "reconciler", to: "d3", label: "" },
+              { from: "yoga", to: "d4", label: "" },
+              { from: "ansi", to: "d5", label: "" },
+            ]}
+            width={820}
+            height={400}
+          />
+        </section>
+      </ScrollReveal>
+
+      {/* Section 7: 组件层级树 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="组件层级树"
+            subtitle="Claude Code 的 30+ 组件架构全景"
+          />
+
+          <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
+            <p>
+              Claude Code 的 UI 由 <strong className="text-[var(--text-primary)]">30+</strong> 个组件文件组成，
+              按照 React 组件化的最佳实践，形成了清晰的层级结构。从顶层 App 组件到最小的原子组件，
+              每一层都有明确的职责划分。
+            </p>
+          </div>
+
+          <ArchitectureDiagram
+            title="Claude Code 组件层级"
+            nodes={[
+              { id: "app", label: "App", x: 350, y: 10, color: "var(--accent-purple)" },
+              { id: "devbar", label: "DevBar\n(状态栏)", x: 30, y: 100, color: "var(--accent-cyan)" },
+              { id: "input", label: "InputArea", x: 200, y: 100, color: "var(--accent-blue)" },
+              { id: "output", label: "OutputArea", x: 430, y: 100, color: "#10b981" },
+              { id: "dialogs", label: "Dialogs", x: 640, y: 100, color: "#f59e0b" },
+              { id: "base-input", label: "BaseTextInput", x: 80, y: 200, color: "var(--accent-blue)" },
+              { id: "context", label: "ContextSuggestions", x: 240, y: 200, color: "var(--accent-blue)" },
+              { id: "cmdkeys", label: "CommandKeybindings", x: 80, y: 280, color: "var(--accent-blue)" },
+              { id: "tool-result", label: "ToolResult", x: 340, y: 200, color: "#10b981" },
+              { id: "progress", label: "AgentProgressLine", x: 510, y: 200, color: "#10b981" },
+              { id: "streaming", label: "StreamingText", x: 340, y: 280, color: "#10b981" },
+              { id: "perm", label: "PermissionDialog", x: 560, y: 200, color: "#f59e0b" },
+              { id: "config", label: "ConfigDialog", x: 700, y: 200, color: "#f59e0b" },
+              { id: "bridge", label: "BridgeDialog", x: 700, y: 280, color: "#f59e0b" },
+            ]}
+            edges={[
+              { from: "app", to: "devbar", label: "" },
+              { from: "app", to: "input", label: "" },
+              { from: "app", to: "output", label: "" },
+              { from: "app", to: "dialogs", label: "" },
+              { from: "input", to: "base-input", label: "" },
+              { from: "input", to: "context", label: "" },
+              { from: "input", to: "cmdkeys", label: "" },
+              { from: "output", to: "tool-result", label: "" },
+              { from: "output", to: "progress", label: "" },
+              { from: "output", to: "streaming", label: "" },
+              { from: "dialogs", to: "perm", label: "" },
+              { from: "dialogs", to: "config", label: "" },
+              { from: "dialogs", to: "bridge", label: "" },
+            ]}
+            width={820}
+            height={340}
+          />
+        </section>
+      </ScrollReveal>
+
+      {/* Section 8: 输出样式预览 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="输出样式预览"
+            subtitle="不同输出风格的终端效果"
+          />
+
+          <div className="space-y-6">
+            {[
+              {
+                label: "Streaming — 流式文本输出",
+                lines: [
+                  { text: "claude> 帮我重构这个组件...", dim: true },
+                  { text: "" },
+                  { text: "我将帮你重构 UserCard 组件，主要改进：", dim: false },
+                  { text: "1. 将 Props 拆分为独立类型定义", dim: false },
+                  { text: "2. 添加 useMemo 优化渲染性能", dim: false },
+                  { text: "3. 抽离 Avatar 为独立子组件", dim: false },
+                  { text: "4. 使用 forwardRef 暴露实例方法█", dim: false, cursor: true },
+                ],
+              },
+              {
+                label: "Tool Call — 工具调用",
+                lines: [
+                  { text: "⏺ Read(file: \"src/components/UserCard.tsx\")", dim: false },
+                  { text: "⏺ Write(file: \"src/components/UserCard.tsx\", bytes: 2048)", dim: false },
+                  { text: "⏺ Exec(command: \"npm test -- --watch\")", dim: false },
+                ],
+              },
+              {
+                label: "Tool Result — 工具结果",
+                lines: [
+                  { text: "✓ Read — 读取成功 (42 lines)", color: "text-green-400" },
+                  { text: "✓ Write — 写入成功 (src/components/UserCard.tsx)", color: "text-green-400" },
+                  { text: "✗ Exec — 命令超时 (npm test)", color: "text-red-400" },
+                ],
+              },
+              {
+                label: "Thinking — 思考过程",
+                lines: [
+                  { text: "◇ thinking...", dim: true },
+                  { text: "  用户要求重构 UserCard 组件，我需要先", dim: true },
+                  { text: "  读取当前文件内容，分析结构后再进行", dim: true },
+                  { text: "  重构。注意保持 props 接口兼容性。", dim: true },
+                ],
+              },
+              {
+                label: "Error — 错误信息",
+                lines: [
+                  { text: "✗ Error: Cannot find module \"@/types/user\"", color: "text-red-400" },
+                  { text: "  at resolveModule (node:internal/modules/cjs/loader:1020)", color: "text-red-400/60" },
+                  { text: "  at Function._resolveFilename (node:internal/modules/cjs/loader:890)", color: "text-red-400/60" },
+                ],
+              },
+            ].map((block) => (
+              <div key={block.label} className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] overflow-hidden">
+                <div className="px-4 py-2 border-b border-[var(--card-border)] bg-[#0d1117]">
+                  <span className="text-xs font-mono text-gray-400">{block.label}</span>
+                </div>
+                <div className="p-4 bg-[#0d1117]">
+                  {block.lines.map((line, i) => (
+                    <div
+                      key={i}
+                      className={`text-sm font-mono leading-6 ${'dim' in line && line.dim ? "text-gray-500" : 'color' in line ? (line as {color:string}).color : "text-gray-200"}`}
+                    >
+                      {line.text || "\u00A0"}
+                      {'cursor' in line && line.cursor && (
+                        <span className="inline-block w-2 h-5 bg-white/80 ml-0.5 animate-pulse" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Section 9: 源码片段 */}
+      <ScrollReveal>
+        <section className="mb-16">
+          <SectionTitle
+            title="源码片段"
+            subtitle="核心渲染逻辑实现"
+          />
+
+          <div className="space-y-8">
+            <CodeBlock
+              code={`// Custom Reconciler 创建
+import ReactReconciler from "react-reconciler";
+
+const reconciler = ReactReconciler({
+  createInstance(type, props) {
+    return { type, props, children: [] };
+  },
+  appendInitialChild(parent, child) {
+    parent.children.push(child);
+  },
+  appendChild(parent, child) {
+    parent.children.push(child);
+  },
+  removeChild(parent, child) {
+    const idx = parent.children.indexOf(child);
+    if (idx !== -1) parent.children.splice(idx, 1);
+  },
+  prepareUpdate(instance, type, oldProps, newProps) {
+    return true; // 简化：总是更新
+  },
+  commitUpdate(instance, updatePayload, type, oldProps, newProps) {
+    instance.props = newProps;
+  },
+  getRootHostContext() { return {}; },
+  getChildHostContext() { return {}; },
+  finalizeInitialChildren() { return false; },
+  prepareForCommit() { return null; },
+  resetAfterCommit(root) {
+    root.render(); // 触发终端重绘
+  },
+});`}
+              language="typescript"
+            />
+
+            <CodeBlock
+              code={`// Yoga 布局计算
+import Yoga from "yoga-layout";
+
+function calculateLayout(node, width, height) {
+  const yogaNode = Yoga.Node.create();
+
+  // 映射 Flexbox 属性
+  if (node.props.flexDirection) {
+    yogaNode.setFlexDirection(
+      Yoga.FLEX_DIRECTION[node.props.flexDirection.toUpperCase()]
+    );
+  }
+  if (node.props.padding) {
+    yogaNode.setPadding(Yoga.EDGE_ALL, node.props.padding);
+  }
+  if (node.props.gap) {
+    yogaNode.setGap(Yoga.GUTTER_ALL, node.props.gap);
+  }
+
+  // 递归添加子节点
+  node.children.forEach((child) => {
+    const childNode = calculateLayout(child);
+    yogaNode.insertChild(childNode, yogaNode.getChildCount());
+  });
+
+  // 执行布局计算
+  yogaNode.calculateLayout(width, height);
+
+  // 提取计算结果
+  return {
+    left: yogaNode.getComputedLeft(),
+    top: yogaNode.getComputedTop(),
+    width: yogaNode.getComputedWidth(),
+    height: yogaNode.getComputedHeight(),
+    yogaNode,
+  };
+}`}
+              language="typescript"
+            />
+
+            <CodeBlock
+              code={'// ANSI 输出生成\nfunction generateANSI(node, offsetX = 0, offsetY = 0) {\n  const { left, top, width, height } = node.layout;\n  const x = offsetX + left;\n  const y = offsetY + top;\n\n  let output = "";\n\n  // 移动光标到目标位置\n  output += String.raw\x60\\x1b[${y + 1};${x + 1}H\\x60;\n\n  // 应用样式\n  if (node.props.color) {\n    output += String.raw\x60\\x1b[${colorToANSI(node.props.color)}m\\x60;\n  }\n  if (node.props.bold) output += "\\x1b[1m";\n  if (node.props.dim) output += "\\x1b[2m";\n\n  // 渲染文本内容\n  if (node.props.children) {\n    const text = typeof node.props.children === "string"\n      ? node.props.children : "";\n    output += truncate(text, width);\n  }\n\n  // 重置样式\n  output += "\\x1b[0m";\n\n  // 递归渲染子节点\n  node.children.forEach((child) => {\n    output += generateANSI(child, x, y);\n  });\n\n  return output;\n}'}
+              language="typescript"
+            />
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Section 10: 与 React DOM 的对比 */}
       <ScrollReveal>
         <section className="mb-16">
           <SectionTitle
