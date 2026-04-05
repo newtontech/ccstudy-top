@@ -89,7 +89,7 @@ export const nodes: MapNodeData[] = [
     label: "main.tsx",
     description:
       "Application entry point. Initializes Claude Code and wires up the entire system.",
-    href: "/modules/main",
+    href: "/entry",
     icon: "🚀",
     x: 650,
     y: 60,
@@ -104,7 +104,7 @@ export const nodes: MapNodeData[] = [
     label: "Bootstrap",
     description:
       "System bootstrap and initialization. Sets up configuration, plugins, and the runtime environment.",
-    href: "/modules/bootstrap",
+    href: "/entry",
     icon: "🔧",
     x: 430,
     y: 175,
@@ -117,7 +117,7 @@ export const nodes: MapNodeData[] = [
     label: "CLI",
     description:
       "Command-line interface layer. Parses arguments, routes commands, and manages the REPL loop.",
-    href: "/modules/cli",
+    href: "/entry",
     icon: "⌨️",
     x: 870,
     y: 175,
@@ -132,7 +132,7 @@ export const nodes: MapNodeData[] = [
     label: "Query Engine",
     description:
       "The query engine orchestrates conversations, manages message history, and streams API responses.",
-    href: "/modules/query",
+    href: "/query-engine",
     icon: "🔍",
     x: 270,
     y: 300,
@@ -145,7 +145,7 @@ export const nodes: MapNodeData[] = [
     label: "Context",
     description:
       "Context window management. Tracks token usage, compiles system prompts, and manages conversation state.",
-    href: "/modules/context",
+    href: "/context",
     icon: "🧠",
     x: 510,
     y: 300,
@@ -158,7 +158,7 @@ export const nodes: MapNodeData[] = [
     label: "Tools",
     description:
       "Tool registry and execution engine. Manages built-in tools like Read, Write, Bash, Grep, and more.",
-    href: "/modules/tools",
+    href: "/tools",
     icon: "🛠️",
     x: 750,
     y: 300,
@@ -171,7 +171,7 @@ export const nodes: MapNodeData[] = [
     label: "Commands",
     description:
       "Slash command handler. Processes user commands like /help, /clear, /compact and extensibility hooks.",
-    href: "/modules/commands",
+    href: "/commands",
     icon: "📋",
     x: 1000,
     y: 300,
@@ -186,7 +186,7 @@ export const nodes: MapNodeData[] = [
     label: "Ink Renderer",
     description:
       "React-based terminal renderer using Ink. Renders the interactive CLI UI with components and hooks.",
-    href: "/modules/ink",
+    href: "/ink",
     icon: "🎨",
     x: 180,
     y: 430,
@@ -199,7 +199,7 @@ export const nodes: MapNodeData[] = [
     label: "Components",
     description:
       "UI component library for the terminal. Includes ToolUse, Message, DiffView, Permission and more.",
-    href: "/modules/components",
+    href: "/ink",
     icon: "🧩",
     x: 420,
     y: 430,
@@ -212,7 +212,7 @@ export const nodes: MapNodeData[] = [
     label: "Hooks",
     description:
       "React hooks for state management and side effects. useTool, useAutoApprove, useConversation, etc.",
-    href: "/modules/hooks",
+    href: "/hooks",
     icon: "🪝",
     x: 670,
     y: 430,
@@ -225,7 +225,7 @@ export const nodes: MapNodeData[] = [
     label: "State Manager",
     description:
       "Global state management. Centralized store for conversation state, user preferences, and tool results.",
-    href: "/modules/state",
+    href: "/state",
     icon: "💾",
     x: 920,
     y: 430,
@@ -240,7 +240,7 @@ export const nodes: MapNodeData[] = [
     label: "Plugins",
     description:
       "Plugin system for extending Claude Code. Supports custom tools, commands, and MCP server integration.",
-    href: "/modules/plugins",
+    href: "/plugins",
     icon: "🔌",
     x: 180,
     y: 560,
@@ -253,7 +253,7 @@ export const nodes: MapNodeData[] = [
     label: "Skills",
     description:
       "Skill framework for composable workflows. Enables complex multi-step agent behaviors and automation.",
-    href: "/modules/skills",
+    href: "/plugins",
     icon: "✨",
     x: 420,
     y: 560,
@@ -266,7 +266,7 @@ export const nodes: MapNodeData[] = [
     label: "Assistant",
     description:
       "The main agent loop. Manages the conversation flow, tool calls, permission checks, and response streaming.",
-    href: "/modules/assistant",
+    href: "/assistant",
     icon: "🤖",
     x: 660,
     y: 560,
@@ -279,7 +279,7 @@ export const nodes: MapNodeData[] = [
     label: "Coordinator",
     description:
       "Multi-agent coordination. Orchestrates parallel sub-agents, task distribution, and result aggregation.",
-    href: "/modules/coordinator",
+    href: "/coordinator",
     icon: "🌐",
     x: 910,
     y: 560,
@@ -294,7 +294,7 @@ export const nodes: MapNodeData[] = [
     label: "Memory Dir",
     description:
       "Persistent memory and file-based storage. Manages CLAUDE.md files, session state, and project config.",
-    href: "/modules/memdir",
+    href: "/memory",
     icon: "📁",
     x: 330,
     y: 685,
@@ -307,7 +307,7 @@ export const nodes: MapNodeData[] = [
     label: "Bridge",
     description:
       "Inter-process communication bridge. Connects the CLI to VS Code extension and external integrations.",
-    href: "/modules/bridge",
+    href: "/bridge",
     icon: "🌍",
     x: 630,
     y: 685,
@@ -320,7 +320,7 @@ export const nodes: MapNodeData[] = [
     label: "Buddy",
     description:
       "Background companion process. Manages long-running tasks, notifications, and scheduled operations.",
-    href: "/modules/buddy",
+    href: "/buddy",
     icon: "🤝",
     x: 950,
     y: 685,
@@ -335,7 +335,7 @@ export const nodes: MapNodeData[] = [
     label: "Query Engine",
     description:
       "Orchestrates conversations, manages message history, and streams API responses with tool execution.",
-    href: "/modules/query-engine",
+    href: "/query-engine",
     icon: "🔍",
     x: 180,
     y: 810,
@@ -348,7 +348,7 @@ export const nodes: MapNodeData[] = [
     label: "Context Mgr",
     description:
       "Token budget management, system prompt compilation, and conversation context tracking.",
-    href: "/modules/context",
+    href: "/context",
     icon: "🧠",
     x: 430,
     y: 810,
@@ -361,7 +361,7 @@ export const nodes: MapNodeData[] = [
     label: "Memory",
     description:
       "Persistent memory system. CLAUDE.md files, session state, and project-level configuration.",
-    href: "/modules/memory",
+    href: "/memory",
     icon: "💾",
     x: 680,
     y: 810,
@@ -374,7 +374,7 @@ export const nodes: MapNodeData[] = [
     label: "Permissions",
     description:
       "Permission system for tool execution. Auto-approve, ask, and deny policies for security.",
-    href: "/modules/permissions",
+    href: "/permissions",
     icon: "🛡️",
     x: 930,
     y: 810,
@@ -387,7 +387,7 @@ export const nodes: MapNodeData[] = [
     label: "Cost Tracker",
     description:
       "API usage and cost tracking. Monitors token consumption, spend limits, and usage analytics.",
-    href: "/modules/cost",
+    href: "/cost",
     icon: "💰",
     x: 180,
     y: 935,
