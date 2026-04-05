@@ -38,6 +38,29 @@ const en: Translations = {
       title: "Explore Modules",
       subtitle: "Click cards to dive deeper into each module",
     },
+    learningPath: {
+      title: "Learning Paths",
+      subtitle: "Choose your adventure — from quick start to deep architecture",
+      paths: {
+        "quick-start": {
+          title: "Quick Start",
+          description: "Get up and running with Claude Code's core concepts in minutes",
+        },
+        "deep-source": {
+          title: "Deep Source Code",
+          description: "Dive into the implementation details of key subsystems",
+        },
+        architecture: {
+          title: "Architecture Design",
+          description: "Understand the high-level design patterns and system boundaries",
+        },
+      },
+    },
+    glossary: {
+      title: "Glossary",
+      subtitle: "Key terms and concepts in Claude Code's architecture",
+      learnMore: "Learn more",
+    },
   },
 
   // Feature Grid - module cards

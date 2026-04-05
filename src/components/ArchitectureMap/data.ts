@@ -328,6 +328,73 @@ export const nodes: MapNodeData[] = [
     width: 125,
     height: 52,
   },
+
+  // Row 6: New modules
+  {
+    id: "query-engine",
+    label: "Query Engine",
+    description:
+      "Orchestrates conversations, manages message history, and streams API responses with tool execution.",
+    href: "/modules/query-engine",
+    icon: "\u{1F50D}",
+    x: 180,
+    y: 810,
+    category: "core",
+    width: 150,
+    height: 52,
+  },
+  {
+    id: "context",
+    label: "Context Mgr",
+    description:
+      "Token budget management, system prompt compilation, and conversation context tracking.",
+    href: "/modules/context",
+    icon: "\u{1F9E0}",
+    x: 430,
+    y: 810,
+    category: "core",
+    width: 145,
+    height: 52,
+  },
+  {
+    id: "memory",
+    label: "Memory",
+    description:
+      "Persistent memory system. CLAUDE.md files, session state, and project-level configuration.",
+    href: "/modules/memory",
+    icon: "\u{1F4BE}",
+    x: 680,
+    y: 810,
+    category: "infra",
+    width: 125,
+    height: 52,
+  },
+  {
+    id: "permissions",
+    label: "Permissions",
+    description:
+      "Permission system for tool execution. Auto-approve, ask, and deny policies for security.",
+    href: "/modules/permissions",
+    icon: "\u{1F6E1}\u{FE0F}",
+    x: 930,
+    y: 810,
+    category: "infra",
+    width: 150,
+    height: 52,
+  },
+  {
+    id: "cost",
+    label: "Cost Tracker",
+    description:
+      "API usage and cost tracking. Monitors token consumption, spend limits, and usage analytics.",
+    href: "/modules/cost",
+    icon: "\u{1F4B0}",
+    x: 180,
+    y: 935,
+    category: "infra",
+    width: 145,
+    height: 52,
+  },
 ];
 
 export const edges: MapEdgeData[] = [
@@ -369,7 +436,15 @@ export const edges: MapEdgeData[] = [
   // Extensions
   { source: "plugins", target: "skills" },
   { source: "assistant", target: "coordinator" },
-  { source: "coordinator", target: "bridge" },
-  { source: "assistant", target: "hooks" },
   { source: "coordinator", target: "buddy" },
+  { source: "coordinator", target: "bridge" },
+
+  // New module connections
+  { source: "query", target: "query-engine" },
+  { source: "context", target: "context" },
+  { source: "memdir", target: "memory" },
+  { source: "hooks", target: "permissions" },
+  { source: "query-engine", target: "cost" },
+  { source: "assistant", target: "query-engine" },
+  { source: "context", target: "memory" },
 ];
