@@ -42,7 +42,7 @@ export default function PluginsPage() {
     <ModuleLayout
       title="插件与扩展"
       subtitle="Claude Code 的三大扩展机制 —— Plugins、Skills、MCP，打造无限可能的 AI 编程生态"
-      icon="\uD83D\uDD0C"
+      icon="🔌"
       category="核心架构"
       relatedModules={relatedModules}
     >
