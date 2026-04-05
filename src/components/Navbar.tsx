@@ -2,13 +2,20 @@
 
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { usePathname } from "next/navigation";
 
 export function Navbar() {
   const { theme, setTheme } = useTheme();
   const { t, locale, toggleLocale } = useLanguage();
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const navLinks = [
     { href: "/", label: t.nav.home },
@@ -24,7 +31,7 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-[#0a0a1a]/80 border-b border-[var(--card-border)] dark:border-b dark:border-purple-900/30 dark:shadow-[0_1px_12px_rgba(124,58,237,0.15)]">
+    <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-[#0a0a1a]/90 border-b border-transparent dark:border-transparent dark:shadow-[0_1px_12px_rgba(124,58,237,0.15)]">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link
@@ -35,16 +42,29 @@ export function Navbar() {
         </Link>
 
         {/* Desktop nav links */}
-        <div className="hidden md:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-[var(--text-secondary)] hover:text-[var(--accent-purple)] transition-colors text-sm font-medium"
-            >
-              {link.label}
-            </Link>
-          ))}
+        <div className="hidden md:flex items-center gap-1">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`
+                  relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                  ${isActive
+                    ? "text-[#6B4CFF] dark:text-[#a78bfa] bg-[#6B4CFF]/8 dark:bg-[#a78bfa]/10 font-semibold"
+                    : "text-[#1A1A1A] dark:text-[#cbd5e1] hover:text-[#6B4CFF] dark:hover:text-[#a78bfa] hover:bg-[#6B4CFF]/5 dark:hover:bg-white/5"
+                  }
+                `}
+              >
+                {link.label}
+                {/* Active indicator - gradient underline */}
+                {isActive && mounted && (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500" />
+                )}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Right side: language toggle + theme toggle + mobile menu button */}
@@ -52,7 +72,7 @@ export function Navbar() {
           {/* Language toggle */}
           <button
             onClick={toggleLocale}
-            className="px-2.5 py-1 rounded-lg text-xs font-bold hover:bg-[var(--card-border)] transition-colors border border-[var(--card-border)]"
+            className="px-2.5 py-1 rounded-lg text-xs font-bold hover:bg-[var(--card-border)] transition-colors border border-[var(--card-border)] text-[var(--text-primary)] dark:text-[#e2e8f0]"
             aria-label="Toggle language"
           >
             {locale === "zh" ? "EN" : "中"}
@@ -60,7 +80,7 @@ export function Navbar() {
 
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg hover:bg-[var(--card-border)] transition-colors"
+            className="p-2 rounded-lg hover:bg-[var(--card-border)] transition-colors text-[var(--text-primary)] dark:text-[#e2e8f0]"
             aria-label="Toggle theme"
           >
             {theme === "dark" ? (
@@ -104,7 +124,7 @@ export function Navbar() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-[var(--card-border)] transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-[var(--card-border)] transition-colors text-[var(--text-primary)] dark:text-[#e2e8f0]"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -140,16 +160,25 @@ export function Navbar() {
       {mobileOpen && (
         <div className="md:hidden border-t border-[var(--card-border)] bg-white/95 dark:bg-[#0a0a1a]/95 backdrop-blur-md">
           <div className="px-4 py-3 flex flex-col gap-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="text-[var(--text-secondary)] hover:text-[var(--accent-purple)] transition-colors text-sm font-medium py-2"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`
+                    px-3 py-2 rounded-lg transition-colors text-sm font-medium
+                    ${isActive
+                      ? "text-[#6B4CFF] dark:text-[#a78bfa] bg-[#6B4CFF]/8 dark:bg-[#a78bfa]/10 font-semibold"
+                      : "text-[#1A1A1A] dark:text-[#cbd5e1] hover:text-[#6B4CFF] dark:hover:text-[#a78bfa]"
+                    }
+                  `}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}

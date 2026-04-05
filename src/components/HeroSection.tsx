@@ -14,7 +14,7 @@ export function HeroSection() {
   ];
 
   return (
-    <section className="relative min-h-[85vh] flex flex-col items-center justify-center overflow-hidden">
+    <section className="relative min-h-[85vh] flex flex-col items-center justify-center overflow-hidden bg-[var(--bg-primary)]">
       {/* Animated gradient mesh background */}
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         {/* Purple circle - top left */}
