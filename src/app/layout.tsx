@@ -50,7 +50,7 @@ export default function RootLayout({
         <ThemeProvider>
           <LanguageProvider>
             <Navbar />
-            <main className="pt-16">{children}</main>
+            <main className="pt-16 bg-[var(--bg-primary)]">{children}</main>
             <Footer />
           </LanguageProvider>
         </ThemeProvider>
